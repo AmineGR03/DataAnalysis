@@ -1,0 +1,1155 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{MongoDB}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{green!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{green!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration pour le code
+\lstset{
+    language=JavaScript,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Métadonnées
+\title{Résumé Complet MongoDB\\
+\large CRUD, Filtrage, Pipeline, Agrégation}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Opérations CRUD}
+
+\subsection{Create (Insertion)}
+
+\subsubsection{Insertion d'un document}
+
+\begin{lstlisting}
+db.collection.insertOne({
+    nom: "Dupont",
+    age: 30,
+    ville: "Paris"
+})
+\end{lstlisting}
+
+\subsubsection{Insertion de plusieurs documents}
+
+\begin{lstlisting}
+db.collection.insertMany([
+    {nom: "Martin", age: 25, ville: "Lyon"},
+    {nom: "Bernard", age: 35, ville: "Marseille"}
+])
+\end{lstlisting}
+
+\subsubsection{Insertion avec \texttt{insert()}}
+
+\begin{lstlisting}
+db.collection.insert({
+    nom: "Durand",
+    age: 28,
+    ville: "Toulouse"
+})
+\end{lstlisting}
+
+\subsection{Read (Lecture)}
+
+\subsubsection{Lecture de tous les documents}
+
+\begin{lstlisting}
+db.collection.find()
+\end{lstlisting}
+
+\subsubsection{Lecture avec formatage}
+
+\begin{lstlisting}
+db.collection.find().pretty()
+\end{lstlisting}
+
+\subsubsection{Lecture d'un seul document}
+
+\begin{lstlisting}
+db.collection.findOne({age: 30})
+\end{lstlisting}
+
+\subsubsection{Projection (sélection de champs)}
+
+\begin{lstlisting}
+// Inclure seulement nom et age
+db.collection.find({}, {nom: 1, age: 1, _id: 0})
+
+// Exclure ville
+db.collection.find({}, {ville: 0})
+\end{lstlisting}
+
+\subsection{Update (Mise à jour)}
+
+\subsubsection{Mise à jour d'un document}
+
+\begin{lstlisting}
+db.collection.updateOne(
+    {nom: "Dupont"},
+    {$set: {age: 31}}
+)
+\end{lstlisting}
+
+\subsubsection{Mise à jour de plusieurs documents}
+
+\begin{lstlisting}
+db.collection.updateMany(
+    {ville: "Paris"},
+    {$set: {pays: "France"}}
+)
+\end{lstlisting}
+
+\subsubsection{Opérateurs de mise à jour}
+
+\begin{lstlisting}
+// $set : définir une valeur
+{$set: {age: 30}}
+
+// $inc : incrémenter
+{$inc: {age: 1}}
+
+// $unset : supprimer un champ
+{$unset: {ville: ""}}
+
+// $push : ajouter à un tableau
+{$push: {hobbies: "lecture"}}
+
+// $pull : retirer d'un tableau
+{$pull: {hobbies: "lecture"}}
+
+// $addToSet : ajouter si n'existe pas
+{$addToSet: {tags: "important"}}
+\end{lstlisting}
+
+\subsubsection{Replace (remplacement)}
+
+\begin{lstlisting}
+db.collection.replaceOne(
+    {nom: "Dupont"},
+    {nom: "Dupont", age: 32, ville: "Lyon"}
+)
+\end{lstlisting}
+
+\subsection{Delete (Suppression)}
+
+\subsubsection{Suppression d'un document}
+
+\begin{lstlisting}
+db.collection.deleteOne({nom: "Dupont"})
+\end{lstlisting}
+
+\subsubsection{Suppression de plusieurs documents}
+
+\begin{lstlisting}
+db.collection.deleteMany({ville: "Paris"})
+\end{lstlisting}
+
+\subsubsection{Suppression de tous les documents}
+
+\begin{lstlisting}
+db.collection.deleteMany({})
+\end{lstlisting}
+
+\newpage
+
+\section{Filtrage et Requêtes}
+
+\subsection{Opérateurs de Comparaison}
+
+\begin{lstlisting}
+// Égalité
+db.collection.find({age: 30})
+
+// Plus grand que
+db.collection.find({age: {$gt: 25}})
+
+// Plus grand ou égal
+db.collection.find({age: {$gte: 25}})
+
+// Plus petit que
+db.collection.find({age: {$lt: 40}})
+
+// Plus petit ou égal
+db.collection.find({age: {$lte: 40}})
+
+// Différent de
+db.collection.find({age: {$ne: 30}})
+
+// Dans une liste
+db.collection.find({ville: {$in: ["Paris", "Lyon"]}})
+
+// Pas dans une liste
+db.collection.find({ville: {$nin: ["Paris", "Lyon"]}})
+\end{lstlisting}
+
+\subsection{Opérateurs Logiques}
+
+\begin{lstlisting}
+// ET (AND)
+db.collection.find({
+    $and: [
+        {age: {$gt: 25}},
+        {ville: "Paris"}
+    ]
+})
+
+// OU (OR)
+db.collection.find({
+    $or: [
+        {age: {$lt: 30}},
+        {ville: "Lyon"}
+    ]
+})
+
+// NON (NOT)
+db.collection.find({
+    $not: {age: {$gt: 30}}
+})
+
+// NOR
+db.collection.find({
+    $nor: [
+        {age: {$lt: 25}},
+        {ville: "Paris"}
+    ]
+})
+\end{lstlisting}
+
+\subsection{Opérateurs pour Tableaux}
+
+\begin{lstlisting}
+// Tous les éléments du tableau correspondent
+db.collection.find({
+    tags: {$all: ["important", "urgent"]}
+})
+
+// Taille du tableau
+db.collection.find({
+    hobbies: {$size: 3}
+})
+
+// Élément existe dans le tableau
+db.collection.find({
+    hobbies: "lecture"
+})
+
+// Élément à une position spécifique
+db.collection.find({
+    "hobbies.0": "lecture"
+})
+\end{lstlisting}
+
+\subsection{Opérateurs pour Chaînes de Caractères}
+
+\begin{lstlisting}
+// Commence par
+db.collection.find({
+    nom: {$regex: "^Dup", $options: "i"}
+})
+
+// Contient
+db.collection.find({
+    nom: {$regex: "pont", $options: "i"}
+})
+
+// Se termine par
+db.collection.find({
+    nom: {$regex: "ont$", $options: "i"}
+})
+\end{lstlisting}
+
+\subsection{Opérateur Exists}
+
+\begin{lstlisting}
+// Champ existe
+db.collection.find({
+    email: {$exists: true}
+})
+
+// Champ n'existe pas
+db.collection.find({
+    email: {$exists: false}
+})
+\end{lstlisting}
+
+\subsection{Opérateur Type}
+
+\begin{lstlisting}
+// Vérifier le type
+db.collection.find({
+    age: {$type: "number"}
+})
+
+// Types possibles: double, string, object, array, bool, date, null, int, long, decimal
+\end{lstlisting}
+
+\newpage
+
+\section{Requêtes Imbriquées}
+
+\subsection{Accès aux Champs Imbriqués}
+
+\begin{lstlisting}
+// Document avec structure imbriquée
+{
+    nom: "Dupont",
+    adresse: {
+        rue: "123 Main St",
+        ville: "Paris",
+        codePostal: "75001"
+    }
+}
+
+// Requête sur champ imbriqué
+db.collection.find({
+    "adresse.ville": "Paris"
+})
+
+// Mise à jour d'un champ imbriqué
+db.collection.updateOne(
+    {nom: "Dupont"},
+    {$set: {"adresse.codePostal": "75002"}}
+)
+\end{lstlisting}
+
+\subsection{Tableaux d'Objets}
+
+\begin{lstlisting}
+// Document avec tableau d'objets
+{
+    nom: "Dupont",
+    commandes: [
+        {produit: "Livre", prix: 20},
+        {produit: "Stylo", prix: 5}
+    ]
+}
+
+// Recherche dans tableau d'objets
+db.collection.find({
+    "commandes.prix": {$gt: 10}
+})
+
+// Recherche avec $elemMatch
+db.collection.find({
+    commandes: {
+        $elemMatch: {
+            produit: "Livre",
+            prix: {$gt: 15}
+        }
+    }
+})
+\end{lstlisting}
+
+\subsection{Requêtes Complexes Imbriquées}
+
+\begin{lstlisting}
+// Structure complexe
+{
+    entreprise: {
+        nom: "TechCorp",
+        employes: [
+            {
+                nom: "Martin",
+                departement: {
+                    nom: "IT",
+                    budget: 100000
+                }
+            }
+        ]
+    }
+}
+
+// Requête multi-niveaux
+db.collection.find({
+    "entreprise.employes.departement.budget": {$gt: 50000}
+})
+
+// Avec $elemMatch
+db.collection.find({
+    "entreprise.employes": {
+        $elemMatch: {
+            "departement.nom": "IT",
+            "departement.budget": {$gt: 50000}
+        }
+    }
+})
+\end{lstlisting}
+
+\newpage
+
+\section{Tri et Limitation}
+
+\subsection{Tri}
+
+\begin{lstlisting}
+// Tri croissant
+db.collection.find().sort({age: 1})
+
+// Tri décroissant
+db.collection.find().sort({age: -1})
+
+// Tri multiple
+db.collection.find().sort({ville: 1, age: -1})
+\end{lstlisting}
+
+\subsection{Limitation}
+
+\begin{lstlisting}
+// Limiter le nombre de résultats
+db.collection.find().limit(10)
+
+// Ignorer les premiers résultats
+db.collection.find().skip(5)
+
+// Combinaison
+db.collection.find()
+    .sort({age: -1})
+    .skip(10)
+    .limit(5)
+\end{lstlisting}
+
+\newpage
+
+\section{Pipeline d'Agrégation}
+
+\subsection{Introduction}
+
+Le pipeline d'agrégation permet de traiter et transformer des documents à travers plusieurs étapes.
+
+\subsection{Stages Principaux}
+
+\subsubsection{\$match - Filtrage}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $match: {
+            age: {$gt: 25},
+            ville: "Paris"
+        }
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$project - Projection et Transformation}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $project: {
+            nom: 1,
+            age: 1,
+            ageAnneeProchaine: {$add: ["$age", 1]},
+            estMajeur: {$gte: ["$age", 18]},
+            _id: 0
+        }
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$group - Regroupement}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $group: {
+            _id: "$ville",
+            nombrePersonnes: {$sum: 1},
+            ageMoyen: {$avg: "$age"},
+            ageMin: {$min: "$age"},
+            ageMax: {$max: "$age"}
+        }
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$sort - Tri}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $sort: {age: -1}
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$limit - Limitation}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $limit: 10
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$skip - Ignorer}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $skip: 5
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$unwind - Déplier un Tableau}
+
+\begin{lstlisting}
+// Avant unwind
+{
+    nom: "Dupont",
+    hobbies: ["lecture", "sport", "musique"]
+}
+
+// Après unwind
+db.collection.aggregate([
+    {
+        $unwind: "$hobbies"
+    }
+])
+
+// Résultat: 3 documents séparés, un pour chaque hobby
+\end{lstlisting}
+
+\subsubsection{\$lookup - Jointure}
+
+\begin{lstlisting}
+db.commandes.aggregate([
+    {
+        $lookup: {
+            from: "clients",
+            localField: "clientId",
+            foreignField: "_id",
+            as: "clientInfo"
+        }
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$addFields - Ajouter des Champs}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $addFields: {
+            agePlusUn: {$add: ["$age", 1]},
+            nomComplet: {
+                $concat: ["$prenom", " ", "$nom"]
+            }
+        }
+    }
+])
+\end{lstlisting}
+
+\subsubsection{\$count - Compter}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $match: {age: {$gt: 25}}
+    },
+    {
+        $count: "nombrePersonnes"
+    }
+])
+\end{lstlisting}
+
+\newpage
+
+\section{Opérateurs d'Agrégation}
+
+\subsection{Opérateurs Arithmétiques}
+
+\begin{lstlisting}
+// Addition
+{$add: ["$prix", "$taxe"]}
+
+// Soustraction
+{$subtract: ["$prix", "$remise"]}
+
+// Multiplication
+{$multiply: ["$quantite", "$prixUnitaire"]}
+
+// Division
+{$divide: ["$total", "$nombre"]}
+
+// Modulo
+{$mod: ["$nombre", 2]}
+
+// Puissance
+{$pow: ["$base", "$exposant"]}
+
+// Racine carrée
+{$sqrt: "$nombre"}
+
+// Valeur absolue
+{$abs: "$difference"}
+\end{lstlisting}
+
+\subsection{Opérateurs de Comparaison}
+
+\begin{lstlisting}
+// Égalité
+{$eq: ["$a", "$b"]}
+
+// Plus grand que
+{$gt: ["$a", "$b"]}
+
+// Plus grand ou égal
+{$gte: ["$a", "$b"]}
+
+// Plus petit que
+{$lt: ["$a", "$b"]}
+
+// Plus petit ou égal
+{$lte: ["$a", "$b"]}
+
+// Différent de
+{$ne: ["$a", "$b"]}
+
+// Comparaison multiple
+{$cmp: ["$a", "$b"]}  // Retourne -1, 0, ou 1
+\end{lstlisting}
+
+\subsection{Opérateurs Logiques}
+
+\begin{lstlisting}
+// ET
+{$and: [condition1, condition2]}
+
+// OU
+{$or: [condition1, condition2]}
+
+// NON
+{$not: condition}
+
+// Condition ternaire
+{$cond: {
+    if: condition,
+    then: valeurSiVrai,
+    else: valeurSiFaux
+}}
+\end{lstlisting}
+
+\subsection{Opérateurs pour Chaînes}
+
+\begin{lstlisting}
+// Concaténation
+{$concat: ["$prenom", " ", "$nom"]}
+
+// Sous-chaîne
+{$substr: ["$texte", 0, 5]}
+
+// Longueur
+{$strLenCP: "$texte"}
+
+// Convertir en minuscules
+{$toLower: "$texte"}
+
+// Convertir en majuscules
+{$toUpper: "$texte"}
+\end{lstlisting}
+
+\subsection{Opérateurs de Date}
+
+\begin{lstlisting}
+// Année
+{$year: "$date"}
+
+// Mois
+{$month: "$date"}
+
+// Jour
+{$dayOfMonth: "$date"}
+
+// Jour de la semaine
+{$dayOfWeek: "$date"}
+
+// Heure
+{$hour: "$date"}
+
+// Différence entre dates (en millisecondes)
+{$subtract: ["$dateFin", "$dateDebut"]}
+\end{lstlisting}
+
+\subsection{Opérateurs de Tableau}
+
+\begin{lstlisting}
+// Taille du tableau
+{$size: "$tableau"}
+
+// Filtrer un tableau
+{$filter: {
+    input: "$tableau",
+    as: "item",
+    cond: {$gt: ["$$item.prix", 10]}
+}}
+
+// Prendre les n premiers éléments
+{$slice: ["$tableau", 3]}
+
+// Concaténer des tableaux
+{$concatArrays: ["$tableau1", "$tableau2"]}
+\end{lstlisting}
+
+\newpage
+
+\section{Agrégation Avancée}
+
+\subsection{Group avec Accumulateurs}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $group: {
+            _id: "$ville",
+            // Compter
+            nombre: {$sum: 1},
+            
+            // Somme
+            totalAge: {$sum: "$age"},
+            
+            // Moyenne
+            ageMoyen: {$avg: "$age"},
+            
+            // Minimum
+            ageMin: {$min: "$age"},
+            
+            // Maximum
+            ageMax: {$max: "$age"},
+            
+            // Premier élément
+            premier: {$first: "$nom"},
+            
+            // Dernier élément
+            dernier: {$last: "$nom"},
+            
+            // Ajouter à un tableau
+            tousLesNoms: {$push: "$nom"},
+            
+            // Ajouter à un ensemble
+            nomsUniques: {$addToSet: "$nom"},
+            
+            // Écart-type
+            ecartType: {$stdDevPop: "$age"},
+            
+            // Écart-type échantillon
+            ecartTypeEchantillon: {$stdDevSamp: "$age"}
+        }
+    }
+])
+\end{lstlisting}
+
+\subsection{Group Multi-Niveaux}
+
+\begin{lstlisting}
+db.collection.aggregate([
+    {
+        $group: {
+            _id: {
+                ville: "$ville",
+                age: "$age"
+            },
+            nombre: {$sum: 1}
+        }
+    },
+    {
+        $group: {
+            _id: "$_id.ville",
+            groupes: {$push: {
+                age: "$_id.age",
+                nombre: "$nombre"
+            }}
+        }
+    }
+])
+\end{lstlisting}
+
+\subsection{Pipeline Complexe - Exemple Complet}
+
+\begin{lstlisting}
+db.ventes.aggregate([
+    // Étape 1: Filtrer
+    {
+        $match: {
+            date: {$gte: ISODate("2024-01-01")},
+            montant: {$gt: 0}
+        }
+    },
+    
+    // Étape 2: Déplier les produits
+    {
+        $unwind: "$produits"
+    },
+    
+    // Étape 3: Calculer le total par produit
+    {
+        $project: {
+            produitId: "$produits.id",
+            quantite: "$produits.quantite",
+            prixUnitaire: "$produits.prix",
+            total: {
+                $multiply: [
+                    "$produits.quantite",
+                    "$produits.prix"
+                ]
+            },
+            date: 1
+        }
+    },
+    
+    // Étape 4: Regrouper par produit
+    {
+        $group: {
+            _id: "$produitId",
+            quantiteTotale: {$sum: "$quantite"},
+            revenuTotal: {$sum: "$total"},
+            nombreVentes: {$sum: 1},
+            prixMoyen: {$avg: "$prixUnitaire"}
+        }
+    },
+    
+    // Étape 5: Trier par revenu
+    {
+        $sort: {revenuTotal: -1}
+    },
+    
+    // Étape 6: Limiter aux 10 premiers
+    {
+        $limit: 10
+    },
+    
+    // Étape 7: Formater la sortie
+    {
+        $project: {
+            _id: 0,
+            produitId: "$_id",
+            quantiteTotale: 1,
+            revenuTotal: {
+                $round: ["$revenuTotal", 2]
+            },
+            nombreVentes: 1,
+            prixMoyen: {
+                $round: ["$prixMoyen", 2]
+            }
+        }
+    }
+])
+\end{lstlisting}
+
+\newpage
+
+\section{Index et Performance}
+
+\subsection{Création d'Index}
+
+\begin{lstlisting}
+// Index simple
+db.collection.createIndex({nom: 1})
+
+// Index composé
+db.collection.createIndex({ville: 1, age: -1})
+
+// Index unique
+db.collection.createIndex({email: 1}, {unique: true})
+
+// Index sur champ imbriqué
+db.collection.createIndex({"adresse.ville": 1})
+
+// Index sur tableau
+db.collection.createIndex({tags: 1})
+\end{lstlisting}
+
+\subsection{Analyse de Performance}
+
+\begin{lstlisting}
+// Expliquer une requête
+db.collection.find({age: 30}).explain("executionStats")
+
+// Analyser le plan d'exécution
+db.collection.find({age: 30}).explain("queryPlanner")
+\end{lstlisting}
+
+\newpage
+
+\section{Exemples Pratiques}
+
+\subsection{Exemple 1 : Statistiques par Ville}
+
+\begin{lstlisting}
+db.personnes.aggregate([
+    {
+        $group: {
+            _id: "$ville",
+            nombre: {$sum: 1},
+            ageMoyen: {$avg: "$age"},
+            ageMin: {$min: "$age"},
+            ageMax: {$max: "$age"}
+        }
+    },
+    {
+        $sort: {nombre: -1}
+    }
+])
+\end{lstlisting}
+
+\subsection{Exemple 2 : Top 5 des Produits les Plus Vendus}
+
+\begin{lstlisting}
+db.ventes.aggregate([
+    {
+        $unwind: "$produits"
+    },
+    {
+        $group: {
+            _id: "$produits.nom",
+            quantiteTotale: {$sum: "$produits.quantite"},
+            revenuTotal: {
+                $sum: {
+                    $multiply: [
+                        "$produits.quantite",
+                        "$produits.prix"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        $sort: {quantiteTotale: -1}
+    },
+    {
+        $limit: 5
+    }
+])
+\end{lstlisting}
+
+\subsection{Exemple 3 : Requête avec Jointure}
+
+\begin{lstlisting}
+db.commandes.aggregate([
+    {
+        $lookup: {
+            from: "clients",
+            localField: "clientId",
+            foreignField: "_id",
+            as: "client"
+        }
+    },
+    {
+        $unwind: "$client"
+    },
+    {
+        $project: {
+            numeroCommande: 1,
+            date: 1,
+            montant: 1,
+            clientNom: "$client.nom",
+            clientVille: "$client.ville"
+        }
+    }
+])
+\end{lstlisting}
+
+\subsection{Exemple 4 : Calcul de Statistiques Mensuelles}
+
+\begin{lstlisting}
+db.ventes.aggregate([
+    {
+        $project: {
+            annee: {$year: "$date"},
+            mois: {$month: "$date"},
+            montant: 1
+        }
+    },
+    {
+        $group: {
+            _id: {
+                annee: "$annee",
+                mois: "$mois"
+            },
+            nombreVentes: {$sum: 1},
+            montantTotal: {$sum: "$montant"},
+            montantMoyen: {$avg: "$montant"}
+        }
+    },
+    {
+        $sort: {
+            "_id.annee": 1,
+            "_id.mois": 1
+        }
+    }
+])
+\end{lstlisting}
+
+\newpage
+
+\section{Résumé des Opérations Essentielles}
+
+\subsection{CRUD}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opération} & \textbf{Commande} \\
+\hline
+Insert & \texttt{insertOne()}, \texttt{insertMany()} \\
+\hline
+Read & \texttt{find()}, \texttt{findOne()} \\
+\hline
+Update & \texttt{updateOne()}, \texttt{updateMany()} \\
+\hline
+Delete & \texttt{deleteOne()}, \texttt{deleteMany()} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Opérateurs de Filtrage}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opérateur} & \textbf{Description} \\
+\hline
+\texttt{\$gt} & Plus grand que \\
+\hline
+\texttt{\$gte} & Plus grand ou égal \\
+\hline
+\texttt{\$lt} & Plus petit que \\
+\hline
+\texttt{\$lte} & Plus petit ou égal \\
+\hline
+\texttt{\$in} & Dans une liste \\
+\hline
+\texttt{\$nin} & Pas dans une liste \\
+\hline
+\texttt{\$and} & ET logique \\
+\hline
+\texttt{\$or} & OU logique \\
+\hline
+\texttt{\$regex} & Expression régulière \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Stages d'Agrégation}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Stage} & \textbf{Description} \\
+\hline
+\texttt{\$match} & Filtrer les documents \\
+\hline
+\texttt{\$project} & Sélectionner/transformer les champs \\
+\hline
+\texttt{\$group} & Regrouper et agréger \\
+\hline
+\texttt{\$sort} & Trier les résultats \\
+\hline
+\texttt{\$limit} & Limiter le nombre de résultats \\
+\hline
+\texttt{\$skip} & Ignorer des résultats \\
+\hline
+\texttt{\$unwind} & Déplier un tableau \\
+\hline
+\texttt{\$lookup} & Effectuer une jointure \\
+\hline
+\texttt{\$addFields} & Ajouter des champs calculés \\
+\hline
+\texttt{\$count} & Compter les documents \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Accumulateurs de Group}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Accumulateur} & \textbf{Description} \\
+\hline
+\texttt{\$sum} & Somme \\
+\hline
+\texttt{\$avg} & Moyenne \\
+\hline
+\texttt{\$min} & Minimum \\
+\hline
+\texttt{\$max} & Maximum \\
+\hline
+\texttt{\$first} & Premier élément \\
+\hline
+\texttt{\$last} & Dernier élément \\
+\hline
+\texttt{\$push} & Ajouter à un tableau \\
+\hline
+\texttt{\$addToSet} & Ajouter à un ensemble \\
+\hline
+\texttt{\$stdDevPop} & Écart-type population \\
+\hline
+\texttt{\$stdDevSamp} & Écart-type échantillon \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{document}
+
