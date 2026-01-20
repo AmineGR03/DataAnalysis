@@ -1,0 +1,709 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Chapitre 5}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Commandes personnalisées
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\text{Var}}
+
+% Métadonnées
+\title{Résumé Complet - Chapitre 5\\
+\large Lois de Probabilité}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Variables Aléatoires}
+
+\subsection{Définition}
+
+Une \textbf{variable aléatoire} est une fonction qui associe à chaque issue d'une expérience aléatoire un nombre réel.
+
+\subsection{Types de variables aléatoires}
+
+\begin{itemize}
+    \item \textbf{Discrète} : Prend un nombre fini ou dénombrable de valeurs isolées
+    \item \textbf{Continue} : Peut prendre une infinité de valeurs sur un intervalle
+\end{itemize}
+
+\newpage
+
+\section{Variables Aléatoires Discrètes}
+
+\subsection{Fonction de masse de probabilité (fmp)}
+
+Pour une variable aléatoire discrète $X$, la fonction de masse de probabilité est :
+
+\begin{align}
+p(x) = P(X = x)
+\end{align}
+
+\subsubsection{Propriétés}
+
+\begin{enumerate}
+    \item $p(x) \geq 0$ pour tout $x$
+    \item $\sum_{x} p(x) = 1$
+\end{enumerate}
+
+\subsection{Espérance (moyenne)}
+
+\begin{align}
+E(X) = \sum_{x} x \cdot p(x)
+\end{align}
+
+L'espérance représente la \textbf{valeur moyenne attendue} de $X$.
+
+\subsection{Variance}
+
+\begin{align}
+\Var(X) = E[(X - E(X))^2] = E(X^2) - [E(X)]^2
+\end{align}
+
+où :
+\begin{align}
+E(X^2) = \sum_{x} x^2 \cdot p(x)
+\end{align}
+
+\subsection{Écart-type}
+
+\begin{align}
+\sigma(X) = \sqrt{\Var(X)}
+\end{align}
+
+\newpage
+
+\section{Variables Aléatoires Continues}
+
+\subsection{Fonction de densité de probabilité (fdp)}
+
+Pour une variable aléatoire continue $X$, la fonction de densité de probabilité est notée $f(x)$.
+
+\subsubsection{Propriétés}
+
+\begin{enumerate}
+    \item $f(x) \geq 0$ pour tout $x$
+    \item $\int_{-\infty}^{+\infty} f(x)\,dx = 1$
+\end{enumerate}
+
+\subsection{Probabilité sur un intervalle}
+
+\begin{align}
+P(a \leq X \leq b) = \int_{a}^{b} f(x)\,dx
+\end{align}
+
+\subsection{Espérance}
+
+\begin{align}
+E(X) = \int_{-\infty}^{+\infty} x \cdot f(x)\,dx
+\end{align}
+
+\subsection{Variance}
+
+\begin{align}
+\Var(X) = \int_{-\infty}^{+\infty} (x - E(X))^2 f(x)\,dx = E(X^2) - [E(X)]^2
+\end{align}
+
+où :
+\begin{align}
+E(X^2) = \int_{-\infty}^{+\infty} x^2 \cdot f(x)\,dx
+\end{align}
+
+\subsection{Écart-type}
+
+\begin{align}
+\sigma(X) = \sqrt{\Var(X)}
+\end{align}
+
+\newpage
+
+\section{Fonction de Répartition}
+
+\subsection{Définition}
+
+La fonction de répartition d'une variable aléatoire $X$ est :
+
+\begin{align}
+F(x) = P(X \leq x)
+\end{align}
+
+\subsection{Propriétés}
+
+\begin{enumerate}
+    \item $F$ est croissante
+    \item $\lim_{x \to -\infty} F(x) = 0$
+    \item $\lim_{x \to +\infty} F(x) = 1$
+    \item $F$ est continue à droite
+\end{enumerate}
+
+\subsection{Relation avec la densité (cas continu)}
+
+\begin{align}
+F(x) = \int_{-\infty}^{x} f(t)\,dt
+\end{align}
+
+et donc :
+
+\begin{align}
+f(x) = \frac{dF(x)}{dx}
+\end{align}
+
+\newpage
+
+\section{Lois de Probabilité Discrètes}
+
+\subsection{Loi de Bernoulli}
+
+\subsubsection{Définition}
+
+La loi de Bernoulli modélise une expérience aléatoire avec deux résultats possibles :
+\begin{itemize}
+    \item \textbf{Succès} : $X = 1$ (probabilité $p$)
+    \item \textbf{Échec} : $X = 0$ (probabilité $1-p$)
+\end{itemize}
+
+\subsubsection{Paramètre}
+
+\begin{itemize}
+    \item $p$ : probabilité de succès, où $0 \leq p \leq 1$
+\end{itemize}
+
+\subsubsection{Fonction de masse de probabilité}
+
+\begin{align}
+P(X = x) = p^x(1-p)^{1-x}, \quad x \in \{0, 1\}
+\end{align}
+
+ou de manière équivalente :
+\begin{itemize}
+    \item $P(X = 1) = p$
+    \item $P(X = 0) = 1-p$
+\end{itemize}
+
+\subsubsection{Espérance et variance}
+
+\begin{align}
+E(X) = p, \quad \Var(X) = p(1-p)
+\end{align}
+
+\subsubsection{Notation}
+
+\[
+X \sim \text{Ber}(p)
+\]
+
+\subsection{Loi Binomiale}
+
+\subsubsection{Définition}
+
+La loi binomiale modélise le \textbf{nombre de succès} dans $n$ essais indépendants de Bernoulli, chacun ayant une probabilité de succès $p$.
+
+\subsubsection{Paramètres}
+
+\begin{itemize}
+    \item $n$ : nombre d'essais
+    \item $p$ : probabilité de succès à chaque essai
+\end{itemize}
+
+\subsubsection{Fonction de masse de probabilité}
+
+\begin{align}
+P(X = k) = \binom{n}{k} p^k(1-p)^{n-k}, \quad k = 0, 1, 2, \ldots, n
+\end{align}
+
+où le coefficient binomial est :
+
+\begin{align}
+\binom{n}{k} = \frac{n!}{k!(n-k)!}
+\end{align}
+
+\subsubsection{Espérance et variance}
+
+\begin{align}
+E(X) = np, \quad \Var(X) = np(1-p)
+\end{align}
+
+\subsubsection{Notation}
+
+\[
+X \sim B(n, p)
+\]
+
+\subsubsection{Relation avec Bernoulli}
+
+Si $X_1, X_2, \ldots, X_n$ sont $n$ variables de Bernoulli indépendantes avec $P(X_i = 1) = p$, alors :
+
+\begin{align}
+Y = \sum_{i=1}^{n} X_i \sim B(n, p)
+\end{align}
+
+\newpage
+
+\section{Lois de Probabilité Continues}
+
+\subsection{Loi Exponentielle}
+
+\subsubsection{Définition}
+
+La loi exponentielle modélise le \textbf{temps entre deux événements} dans un processus de Poisson (ex: temps d'attente entre des appels).
+
+\subsubsection{Paramètre}
+
+\begin{itemize}
+    \item $\lambda > 0$ : taux (paramètre d'échelle)
+\end{itemize}
+
+\subsubsection{Fonction de densité de probabilité}
+
+\begin{align}
+f_X(x) = \lambda e^{-\lambda x}, \quad x \geq 0
+\end{align}
+
+\subsubsection{Fonction de répartition}
+
+\begin{align}
+F_X(x) = 1 - e^{-\lambda x}, \quad x \geq 0
+\end{align}
+
+\subsubsection{Espérance et variance}
+
+\begin{align}
+E(X) = \frac{1}{\lambda}, \quad \Var(X) = \frac{1}{\lambda^2}
+\end{align}
+
+\subsubsection{Propriété importante : Absence de mémoire}
+
+\begin{align}
+P(X > s + t | X > s) = P(X > t)
+\end{align}
+
+\subsubsection{Notation}
+
+\[
+X \sim \text{Exp}(\lambda)
+\]
+
+\subsection{Loi Normale (Gaussienne)}
+
+\subsubsection{Définition}
+
+La loi normale est une loi de probabilité continue, souvent utilisée pour modéliser des phénomènes naturels (erreurs de mesure, tailles, poids, etc.).
+
+\subsubsection{Paramètres}
+
+\begin{itemize}
+    \item $\mu$ : moyenne (ou espérance)
+    \item $\sigma > 0$ : écart-type (mesure la dispersion)
+\end{itemize}
+
+\subsubsection{Fonction de densité de probabilité}
+
+\begin{align}
+f_X(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad x \in \R
+\end{align}
+
+\subsubsection{Propriétés}
+
+\begin{enumerate}
+    \item \textbf{Symétrie} : La courbe est symétrique par rapport à la moyenne $\mu$
+    \item \textbf{Espérance et variance} :
+    \begin{align}
+    E(X) = \mu, \quad \Var(X) = \sigma^2
+    \end{align}
+\end{enumerate}
+
+\subsubsection{Fonction de répartition}
+
+\begin{align}
+F_X(x) = P(X \leq x) = \frac{1}{2}\left[1 + \text{erf}\left(\frac{x-\mu}{\sigma\sqrt{2}}\right)\right]
+\end{align}
+
+où la fonction d'erreur est :
+
+\begin{align}
+\text{erf}(z) = \frac{2}{\sqrt{\pi}} \int_0^z e^{-t^2} \, dt
+\end{align}
+
+\subsubsection{Notation}
+
+\[
+X \sim N(\mu, \sigma^2)
+\]
+
+\subsection{Loi Normale Centrée Réduite}
+
+\subsubsection{Définition}
+
+Si $X \sim N(\mu, \sigma^2)$, alors la variable centrée réduite :
+
+\begin{align}
+Z = \frac{X - \mu}{\sigma} \sim N(0, 1)
+\end{align}
+
+\subsubsection{Fonction de densité}
+
+\begin{align}
+\phi(z) = \frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}}, \quad z \in \R
+\end{align}
+
+\subsubsection{Fonction de répartition}
+
+\begin{align}
+\Phi(z) = P(Z \leq z) = \int_{-\infty}^{z} \phi(t) \, dt
+\end{align}
+
+\subsubsection{Propriétés importantes}
+
+\begin{itemize}
+    \item $\Phi(-z) = 1 - \Phi(z)$
+    \item $P(a \leq Z \leq b) = \Phi(b) - \Phi(a)$
+    \item Pour $X \sim N(\mu, \sigma^2)$ : $P(a \leq X \leq b) = \Phi\left(\frac{b-\mu}{\sigma}\right) - \Phi\left(\frac{a-\mu}{\sigma}\right)$
+\end{itemize}
+
+\subsubsection{Règle des 3 sigmas}
+
+Pour $X \sim N(\mu, \sigma^2)$ :
+\begin{itemize}
+    \item $P(\mu - \sigma \leq X \leq \mu + \sigma) \approx 0.68$ (68\%)
+    \item $P(\mu - 2\sigma \leq X \leq \mu + 2\sigma) \approx 0.95$ (95\%)
+    \item $P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) \approx 0.997$ (99.7\%)
+\end{itemize}
+
+\newpage
+
+\section{Opérations sur les Variables Aléatoires}
+
+\subsection{Transformation linéaire}
+
+Si $Y = aX + b$ où $a, b$ sont des constantes :
+
+\begin{align}
+E(Y) = aE(X) + b, \quad \Var(Y) = a^2 \Var(X)
+\end{align}
+
+\subsection{Somme de variables indépendantes}
+
+Si $X$ et $Y$ sont indépendantes :
+
+\begin{align}
+E(X + Y) = E(X) + E(Y)
+\end{align}
+
+\begin{align}
+\Var(X + Y) = \Var(X) + \Var(Y)
+\end{align}
+
+\subsection{Produit de variables indépendantes}
+
+Si $X$ et $Y$ sont indépendantes :
+
+\begin{align}
+E(XY) = E(X)E(Y)
+\end{align}
+
+\newpage
+
+\section{Résumé des Formules Clés}
+
+\subsection{Variables discrètes}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Concept} & \textbf{Formule} \\
+\hline
+Espérance & $E(X) = \sum_x x \cdot p(x)$ \\
+\hline
+Variance & $\Var(X) = E(X^2) - [E(X)]^2$ \\
+\hline
+Écart-type & $\sigma(X) = \sqrt{\Var(X)}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Variables continues}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Concept} & \textbf{Formule} \\
+\hline
+Probabilité & $P(a \leq X \leq b) = \int_a^b f(x)\,dx$ \\
+\hline
+Espérance & $E(X) = \int_{-\infty}^{+\infty} x f(x)\,dx$ \\
+\hline
+Variance & $\Var(X) = E(X^2) - [E(X)]^2$ \\
+\hline
+Écart-type & $\sigma(X) = \sqrt{\Var(X)}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Lois discrètes}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Loi} & \textbf{Paramètres} & \textbf{$E(X)$} & \textbf{$\Var(X)$} \\
+\hline
+Bernoulli & $p$ & $p$ & $p(1-p)$ \\
+\hline
+Binomiale & $n, p$ & $np$ & $np(1-p)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Lois continues}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Loi} & \textbf{Paramètres} & \textbf{$E(X)$} & \textbf{$\Var(X)$} \\
+\hline
+Exponentielle & $\lambda$ & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ \\
+\hline
+Normale & $\mu, \sigma^2$ & $\mu$ & $\sigma^2$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{Exercice d'Application}
+
+\subsection{Énoncé}
+
+Une entreprise fabrique des composants électroniques. On sait que :
+\begin{itemize}
+    \item La probabilité qu'un composant soit défectueux est $p = 0.05$
+    \item La durée de vie d'un composant (en heures) suit une loi exponentielle de paramètre $\lambda = 0.001$ (1 composant par 1000 heures en moyenne)
+    \item Le poids d'un composant (en grammes) suit une loi normale $N(50, 4)$ (moyenne 50g, variance 4g²)
+\end{itemize}
+
+\textbf{Questions} :
+
+\begin{enumerate}
+    \item \textbf{Loi Binomiale} : Sur un lot de 100 composants, quelle est la probabilité qu'exactement 3 composants soient défectueux ? Quelle est la probabilité qu'au moins 2 composants soient défectueux ?
+    \item \textbf{Loi Exponentielle} : 
+    \begin{itemize}
+        \item Quelle est la probabilité qu'un composant dure plus de 2000 heures ?
+        \item Quelle est la durée de vie moyenne d'un composant ?
+        \item Quelle est la probabilité qu'un composant dure entre 500 et 1500 heures ?
+    \end{itemize}
+    \item \textbf{Loi Normale} :
+    \begin{itemize}
+        \item Quelle est la probabilité qu'un composant pèse moins de 48 grammes ?
+        \item Quelle est la probabilité qu'un composant pèse entre 48 et 52 grammes ?
+        \item Quel poids ne sera dépassé que par 10\% des composants ?
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Solution guidée}
+
+\subsubsection{1. Loi Binomiale}
+
+Soit $X$ le nombre de composants défectueux parmi 100. Alors $X \sim B(100, 0.05)$.
+
+\textbf{a) Probabilité d'exactement 3 défectueux}
+
+\begin{align}
+P(X = 3) = \binom{100}{3} (0.05)^3 (0.95)^{97}
+\end{align}
+
+\begin{align}
+= \frac{100!}{3!97!} \times 0.000125 \times 0.95^{97}
+\end{align}
+
+\begin{align}
+= \frac{100 \times 99 \times 98}{3 \times 2 \times 1} \times 0.000125 \times 0.95^{97}
+\end{align}
+
+\begin{align}
+= 161700 \times 0.000125 \times 0.95^{97}
+\end{align}
+
+En utilisant une calculatrice ou un logiciel :
+\begin{align}
+P(X = 3) \approx 0.1396 \text{ (environ 14\%)}
+\end{align}
+
+\textbf{b) Probabilité d'au moins 2 défectueux}
+
+\begin{align}
+P(X \geq 2) = 1 - P(X = 0) - P(X = 1)
+\end{align}
+
+\begin{align}
+P(X = 0) = \binom{100}{0} (0.05)^0 (0.95)^{100} = (0.95)^{100} \approx 0.0059
+\end{align}
+
+\begin{align}
+P(X = 1) = \binom{100}{1} (0.05)^1 (0.95)^{99} = 100 \times 0.05 \times (0.95)^{99} \approx 0.0312
+\end{align}
+
+\begin{align}
+P(X \geq 2) = 1 - 0.0059 - 0.0312 = 0.9629 \text{ (environ 96.3\%)}
+\end{align}
+
+\subsubsection{2. Loi Exponentielle}
+
+Soit $T$ la durée de vie d'un composant. Alors $T \sim \text{Exp}(0.001)$.
+
+\textbf{a) Probabilité que $T > 2000$ heures}
+
+\begin{align}
+P(T > 2000) = 1 - F_T(2000) = 1 - (1 - e^{-0.001 \times 2000}) = e^{-2} \approx 0.1353
+\end{align}
+
+\textbf{b) Durée de vie moyenne}
+
+\begin{align}
+E(T) = \frac{1}{\lambda} = \frac{1}{0.001} = 1000 \text{ heures}
+\end{align}
+
+\textbf{c) Probabilité que $500 \leq T \leq 1500$}
+
+\begin{align}
+P(500 \leq T \leq 1500) = F_T(1500) - F_T(500)
+\end{align}
+
+\begin{align}
+= (1 - e^{-0.001 \times 1500}) - (1 - e^{-0.001 \times 500})
+\end{align}
+
+\begin{align}
+= e^{-0.5} - e^{-1.5} \approx 0.6065 - 0.2231 = 0.3834
+\end{align}
+
+\subsubsection{3. Loi Normale}
+
+Soit $W$ le poids d'un composant. Alors $W \sim N(50, 4)$, donc $\mu = 50$ et $\sigma = 2$.
+
+\textbf{a) Probabilité que $W < 48$ grammes}
+
+On standardise : $Z = \frac{W - 50}{2}$
+
+\begin{align}
+P(W < 48) = P\left(Z < \frac{48 - 50}{2}\right) = P(Z < -1) = \Phi(-1)
+\end{align}
+
+\begin{align}
+= 1 - \Phi(1) = 1 - 0.8413 = 0.1587 \text{ (environ 15.9\%)}
+\end{align}
+
+\textbf{b) Probabilité que $48 \leq W \leq 52$}
+
+\begin{align}
+P(48 \leq W \leq 52) = P\left(\frac{48-50}{2} \leq Z \leq \frac{52-50}{2}\right)
+\end{align}
+
+\begin{align}
+= P(-1 \leq Z \leq 1) = \Phi(1) - \Phi(-1) = \Phi(1) - (1 - \Phi(1))
+\end{align}
+
+\begin{align}
+= 2\Phi(1) - 1 = 2 \times 0.8413 - 1 = 0.6826 \text{ (environ 68.3\%)}
+\end{align}
+
+\textbf{c) Poids tel que $P(W > w) = 0.10$}
+
+On cherche $w$ tel que $P(W > w) = 0.10$, donc $P(W \leq w) = 0.90$.
+
+\begin{align}
+P(W \leq w) = 0.90 \Rightarrow P\left(Z \leq \frac{w-50}{2}\right) = 0.90
+\end{align}
+
+\begin{align}
+\Rightarrow \frac{w-50}{2} = \Phi^{-1}(0.90) \approx 1.28
+\end{align}
+
+\begin{align}
+\Rightarrow w = 50 + 2 \times 1.28 = 52.56 \text{ grammes}
+\end{align}
+
+\textbf{Réponse} : 10\% des composants pèsent plus de \textbf{52.56 grammes}.
+
+\newpage
+
+\section{Table de la Loi Normale Standard (Valeurs importantes)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c||c|c|}
+\hline
+$z$ & $\Phi(z)$ & $z$ & $\Phi(z)$ \\
+\hline
+$0.0$ & $0.5000$ & $1.0$ & $0.8413$ \\
+\hline
+$0.5$ & $0.6915$ & $1.5$ & $0.9332$ \\
+\hline
+$0.67$ & $0.7486$ & $1.96$ & $0.9750$ \\
+\hline
+$0.84$ & $0.7995$ & $2.0$ & $0.9772$ \\
+\hline
+$0.90$ & $0.8159$ & $2.5$ & $0.9938$ \\
+\hline
+& & $3.0$ & $0.9987$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Valeurs critiques importantes} :
+\begin{itemize}
+    \item $\Phi^{-1}(0.95) = 1.645$
+    \item $\Phi^{-1}(0.975) = 1.96$
+    \item $\Phi^{-1}(0.99) = 2.326$
+\end{itemize}
+
+\end{document}
+

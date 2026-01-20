@@ -1,0 +1,576 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Chapitre 3}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Commandes personnalisées
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Cov}{\text{Cov}}
+
+% Métadonnées
+\title{Résumé Complet - Chapitre 3\\
+\large Corrélation et Régression}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Corrélation et Coefficient de Corrélation de Pearson}
+
+\subsection{Définitions}
+
+\textbf{Relation entre deux variables} : Lien ou dépendance entre deux variables quantitatives.
+
+\textbf{Types de relations} :
+\begin{itemize}
+    \item Relation linéaire (droite)
+    \item Relation non linéaire (courbe, parabole)
+    \item Absence de relation (données dispersées)
+\end{itemize}
+
+\textbf{Corrélation} : Mesure statistique qui exprime la force et la direction de la relation entre deux variables quantitatives.
+
+\vspace{0.5cm}
+\noindent\textcolor{red}{\textbf{⚠ Important}} : Corrélation $\neq$ Causalité !
+
+\subsection{Types de corrélation}
+
+\begin{itemize}
+    \item \textbf{Positive} : Les deux variables augmentent ensemble
+    \item \textbf{Négative} : Une variable augmente, l'autre diminue
+    \item \textbf{Nulle} : Absence de relation linéaire
+\end{itemize}
+
+\subsection{Coefficient de corrélation de Pearson}
+
+\subsubsection{Formule principale}
+
+\begin{align}
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2 \sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $x_i, y_i$ : valeurs observées
+    \item $\bar{x}, \bar{y}$ : moyennes des variables $X$ et $Y$
+    \item $n$ : nombre d'observations
+\end{itemize}
+
+\subsubsection{Propriétés}
+
+\begin{itemize}
+    \item $-1 \leq r \leq 1$
+    \item $r = 1$ : corrélation positive parfaite
+    \item $r = -1$ : corrélation négative parfaite
+    \item $r = 0$ : absence de corrélation linéaire
+\end{itemize}
+
+\subsubsection{Interprétation de $r$}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Valeur de $|r|$} & \textbf{Interprétation} \\
+\hline
+$0.9 \leq |r| \leq 1$ & Très forte corrélation \\
+\hline
+$0.7 \leq |r| < 0.9$ & Forte corrélation \\
+\hline
+$0.5 \leq |r| < 0.7$ & Corrélation modérée \\
+\hline
+$0.3 \leq |r| < 0.5$ & Faible corrélation \\
+\hline
+$0 \leq |r| < 0.3$ & Très faible ou aucune corrélation \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Précautions}
+
+\begin{itemize}
+    \item Corrélation $\neq$ causalité
+    \item Présence de valeurs extrêmes (outliers) $\rightarrow$ influence sur $r$
+    \item Relation non linéaire non détectée par Pearson
+    \item Toujours visualiser les données
+\end{itemize}
+
+\subsection{Autres coefficients de corrélation}
+
+\begin{itemize}
+    \item \textbf{Spearman} : pour données ordinales ou non linéaires
+    \item \textbf{Kendall} : pour petites séries ordinales
+    \item \textbf{Pearson} : uniquement pour relation linéaire et données quantitatives
+\end{itemize}
+
+\newpage
+
+\section{Régression Linéaire Simple}
+
+\subsection{Définition}
+
+\textbf{Régression linéaire simple} : Méthode statistique permettant de modéliser la relation entre une variable expliquée (réponse) $Y$ et une variable explicative (prédicteur) $X$ via une relation linéaire.
+
+\subsubsection{Modèle mathématique}
+
+\begin{align}
+Y = \beta_0 + \beta_1 X + \varepsilon
+\end{align}
+
+où :
+\begin{itemize}
+    \item $\beta_0$ : ordonnée à l'origine (intercept)
+    \item $\beta_1$ : coefficient directeur (pente)
+    \item $\varepsilon$ : erreur aléatoire
+\end{itemize}
+
+\subsection{Hypothèses du modèle}
+
+\begin{enumerate}
+    \item Relation linéaire entre $X$ et $Y$
+    \item Espérance nulle des erreurs : $E[\varepsilon] = 0$
+    \item Variance constante des erreurs : homoscédasticité
+    \item Indépendance des erreurs
+    \item Normalité des erreurs (optionnelle pour estimation, nécessaire pour les tests)
+\end{enumerate}
+
+\subsection{Estimation des paramètres par moindres carrés}
+
+\subsubsection{Objectif}
+
+Minimiser la somme des carrés des erreurs :
+
+\begin{align}
+S(\beta_0, \beta_1) = \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2
+\end{align}
+
+\subsubsection{Solutions (estimateurs)}
+
+\begin{align}
+\hat{\beta}_1 &= \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}(x_i - \bar{x})^2} \\
+\hat{\beta}_0 &= \bar{y} - \hat{\beta}_1\bar{x}
+\end{align}
+
+\subsubsection{Équation estimée}
+
+\begin{align}
+\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X
+\end{align}
+
+\subsection{Coefficient de détermination R²}
+
+\subsubsection{Définition}
+
+\begin{align}
+R^2 = \frac{SS_{\text{exp}}}{SS_{\text{tot}}} = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $SS_{\text{tot}} = \sum_{i=1}^{n}(y_i - \bar{y})^2$ : variabilité totale
+    \item $SS_{\text{res}} = \sum_{i=1}^{n}(y_i - \hat{y}_i)^2$ : variabilité non expliquée (résiduelle)
+    \item $SS_{\text{exp}} = \sum_{i=1}^{n}(\hat{y}_i - \bar{y})^2$ : variabilité expliquée
+\end{itemize}
+
+\subsubsection{Interprétation de R²}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{R²} & \textbf{Interprétation} \\
+\hline
+$1$ & Le modèle explique parfaitement les données \\
+\hline
+$0$ & Le modèle n'explique aucune variance \\
+\hline
+$0 < R^2 < 1$ & Le modèle explique partiellement la variance \\
+\hline
+\end{tabular}
+\end{table}
+
+Plus $R^2$ est proche de 1, plus le modèle est performant.
+
+\subsection{Résidus}
+
+\subsubsection{Définition}
+
+Un résidu est la différence entre la valeur observée et la valeur prédite :
+
+\begin{align}
+e_i = y_i - \hat{y}_i
+\end{align}
+
+\subsubsection{Rôle des résidus}
+
+\begin{itemize}
+    \item Évaluer la qualité de l'ajustement
+    \item Identifier les valeurs aberrantes
+    \item Vérifier les hypothèses (linéarité, homoscédasticité, indépendance, normalité)
+\end{itemize}
+
+\newpage
+
+\section{Régression Linéaire Multiple}
+
+\subsection{Définition}
+
+\textbf{Régression linéaire multiple} : Modélisation d'une variable réponse $Y$ en fonction de plusieurs variables explicatives $X_1, X_2, \ldots, X_p$.
+
+\subsubsection{Modèle mathématique}
+
+\begin{align}
+Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \cdots + \beta_p X_{ip} + \varepsilon_i
+\end{align}
+
+\subsubsection{Notation matricielle}
+
+\begin{align}
+\mathbf{Y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $\mathbf{Y}$ : vecteur des observations ($n \times 1$)
+    \item $\mathbf{X}$ : matrice des données ($n \times (p+1)$), première colonne = 1 pour l'intercept
+    \item $\boldsymbol{\beta}$ : vecteur des coefficients de régression ($(p+1) \times 1$)
+    \item $\boldsymbol{\varepsilon}$ : vecteur des erreurs aléatoires ($n \times 1$)
+\end{itemize}
+
+\subsection{Hypothèses du modèle}
+
+\begin{enumerate}
+    \item \textbf{Linéarité} : relation linéaire entre chaque $X_j$ et $Y$
+    \item \textbf{Espérance nulle} : $E[\varepsilon_i] = 0$
+    \item \textbf{Homoscédasticité} : $\Var(\varepsilon_i) = \sigma^2$ (constante)
+    \item \textbf{Indépendance} : les erreurs sont indépendantes
+    \item \textbf{Normalité} : $\varepsilon_i \sim N(0, \sigma^2)$ (pour les tests)
+\end{enumerate}
+
+\subsection{Estimation par moindres carrés ordinaires (MCO)}
+
+\subsubsection{Objectif}
+
+Minimiser : $\min_{\boldsymbol{\beta}} \|\mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\|^2$
+
+\subsubsection{Solution}
+
+\begin{align}
+\hat{\boldsymbol{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+\end{align}
+
+\noindent\textcolor{red}{\textbf{⚠ Condition}} : $(\mathbf{X}^T\mathbf{X})$ doit être inversible (pas de colinéarité parfaite).
+
+\subsection{Interprétation des coefficients}
+
+\begin{itemize}
+    \item $\hat{\beta}_j$ : variation moyenne de $Y$ lorsque $X_j$ augmente d'une unité, toutes les autres variables étant maintenues constantes
+    \item $\hat{\beta}_0$ : valeur prédite de $Y$ lorsque toutes les variables explicatives valent 0 (intercept)
+\end{itemize}
+
+\subsection{Qualité de l'ajustement}
+
+\subsubsection{R² (coefficient de détermination)}
+
+\begin{align}
+R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{align}
+
+\subsubsection{R² ajusté}
+
+\begin{align}
+R^2_{\text{ajusté}} = 1 - (n-1)\frac{1-R^2}{n-p-1}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $n$ : nombre d'observations
+    \item $p$ : nombre de variables explicatives
+\end{itemize}
+
+\textbf{Remarque} : $R^2_{\text{ajusté}} \leq R^2$
+
+Le R² ajusté pénalise l'ajout de variables non pertinentes.
+
+\newpage
+
+\section{Opérations sur Matrices (Rappels)}
+
+\subsection{Multiplication matricielle}
+
+Pour $\mathbf{A}$ ($m \times n$) et $\mathbf{B}$ ($n \times p$) :
+
+\begin{align}
+(\mathbf{AB})_{ij} = \sum_{k=1}^{n} a_{ik}b_{kj}
+\end{align}
+
+\subsection{Transposée}
+
+\begin{align}
+(\mathbf{A}^T)_{ij} = a_{ji}
+\end{align}
+
+\subsection{Inverse}
+
+\begin{align}
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
+\end{align}
+
+où $\mathbf{I}$ est la matrice identité.
+
+\subsection{Propriétés importantes}
+
+\begin{itemize}
+    \item $(\mathbf{AB})^T = \mathbf{B}^T\mathbf{A}^T$
+    \item $(\mathbf{A}^T)^T = \mathbf{A}$
+    \item $(\mathbf{A}^{-1})^T = (\mathbf{A}^T)^{-1}$
+    \item $(\mathbf{AB})^{-1} = \mathbf{B}^{-1}\mathbf{A}^{-1}$ (si les inverses existent)
+\end{itemize}
+
+\newpage
+
+\section{Exercice d'Application}
+
+\subsection{Énoncé}
+
+Un chercheur étudie la relation entre le nombre d'heures d'étude par semaine ($X$) et la note obtenue à un examen ($Y$ sur 20). Les données suivantes ont été collectées :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Étudiant} & \textbf{Heures d'étude ($X$)} & \textbf{Note ($Y$)} \\
+\hline
+1 & 5 & 10 \\
+\hline
+2 & 8 & 12 \\
+\hline
+3 & 10 & 15 \\
+\hline
+4 & 12 & 16 \\
+\hline
+5 & 15 & 18 \\
+\hline
+6 & 18 & 19 \\
+\hline
+7 & 20 & 20 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Questions} :
+
+\begin{enumerate}
+    \item \textbf{Calculer le coefficient de corrélation de Pearson} entre $X$ et $Y$. Interpréter le résultat.
+    \item \textbf{Estimer les paramètres} $\beta_0$ et $\beta_1$ du modèle de régression linéaire simple $Y = \beta_0 + \beta_1 X + \varepsilon$.
+    \item \textbf{Calculer le coefficient de détermination R²} et interpréter.
+    \item \textbf{Prédire la note} d'un étudiant qui étudie 14 heures par semaine.
+    \item \textbf{Calculer les résidus} pour chaque observation et vérifier s'il y a des valeurs aberrantes.
+\end{enumerate}
+
+\subsection{Solution guidée}
+
+\subsubsection{1. Calcul du coefficient de corrélation}
+
+\textbf{Étape 1} : Calculer les moyennes
+\begin{itemize}
+    \item $\bar{x} = \frac{5+8+10+12+15+18+20}{7} = 12.57$
+    \item $\bar{y} = \frac{10+12+15+16+18+19+20}{7} = 15.71$
+\end{itemize}
+
+\textbf{Étape 2} : Calculer les écarts et produits croisés
+
+\begin{longtable}{|c|c|c|c|c|c|}
+\hline
+$i$ & $x_i - \bar{x}$ & $y_i - \bar{y}$ & $(x_i - \bar{x})(y_i - \bar{y})$ & $(x_i - \bar{x})^2$ & $(y_i - \bar{y})^2$ \\
+\hline
+1 & $-7.57$ & $-5.71$ & $43.20$ & $57.30$ & $32.60$ \\
+\hline
+2 & $-4.57$ & $-3.71$ & $16.96$ & $20.90$ & $13.76$ \\
+\hline
+3 & $-2.57$ & $-0.71$ & $1.82$ & $6.60$ & $0.50$ \\
+\hline
+4 & $-0.57$ & $0.29$ & $-0.17$ & $0.33$ & $0.08$ \\
+\hline
+5 & $2.43$ & $2.29$ & $5.56$ & $5.90$ & $5.24$ \\
+\hline
+6 & $5.43$ & $3.29$ & $17.87$ & $29.48$ & $10.82$ \\
+\hline
+7 & $7.43$ & $4.29$ & $31.87$ & $55.20$ & $18.40$ \\
+\hline
+\textbf{Total} & & & \textbf{117.11} & \textbf{175.71} & \textbf{81.40} \\
+\hline
+\end{longtable}
+
+\textbf{Étape 3} : Calculer $r$
+
+\begin{align}
+r = \frac{117.11}{\sqrt{175.71 \times 81.40}} = \frac{117.11}{119.58} = 0.979
+\end{align}
+
+\textbf{Interprétation} : $r = 0.979$ indique une \textbf{très forte corrélation positive} entre le nombre d'heures d'étude et la note obtenue.
+
+\subsubsection{2. Estimation des paramètres}
+
+\begin{align}
+\hat{\beta}_1 = \frac{117.11}{175.71} = 0.666
+\end{align}
+
+\begin{align}
+\hat{\beta}_0 = 15.71 - 0.666 \times 12.57 = 7.34
+\end{align}
+
+\textbf{Équation estimée} : $\hat{Y} = 7.34 + 0.666X$
+
+\subsubsection{3. Calcul de R²}
+
+\textbf{Étape 1} : Calculer les valeurs prédites $\hat{y}_i$
+
+\begin{longtable}{|c|c|c|c|c|c|c|}
+\hline
+$i$ & $x_i$ & $y_i$ & $\hat{y}_i = 7.34 + 0.666x_i$ & $(y_i - \bar{y})^2$ & $(\hat{y}_i - \bar{y})^2$ & $(y_i - \hat{y}_i)^2$ \\
+\hline
+1 & 5 & 10 & 10.67 & 32.60 & 25.40 & 0.45 \\
+\hline
+2 & 8 & 12 & 12.67 & 13.76 & 9.24 & 0.45 \\
+\hline
+3 & 10 & 15 & 14.00 & 0.50 & 2.92 & 1.00 \\
+\hline
+4 & 12 & 16 & 15.33 & 0.08 & 0.14 & 0.45 \\
+\hline
+5 & 15 & 18 & 17.33 & 5.24 & 2.63 & 0.45 \\
+\hline
+6 & 18 & 19 & 19.33 & 10.82 & 13.11 & 0.11 \\
+\hline
+7 & 20 & 20 & 20.66 & 18.40 & 24.50 & 0.44 \\
+\hline
+\textbf{Total} & & & & \textbf{81.40} & \textbf{76.98} & \textbf{3.35} \\
+\hline
+\end{longtable}
+
+\textbf{Étape 2} : Calculer R²
+
+\begin{align}
+R^2 = \frac{76.98}{81.40} = 0.946
+\end{align}
+
+\textbf{Interprétation} : Le modèle explique \textbf{94.6\%} de la variance des notes. C'est un excellent ajustement.
+
+\subsubsection{4. Prédiction}
+
+Pour $X = 14$ heures :
+
+\begin{align}
+\hat{Y} = 7.34 + 0.666 \times 14 = 16.66
+\end{align}
+
+\textbf{Prédiction} : Un étudiant qui étudie 14 heures par semaine devrait obtenir environ \textbf{16.66/20}.
+
+\subsubsection{5. Résidus}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$i$ & $y_i$ & $\hat{y}_i$ & $e_i = y_i - \hat{y}_i$ \\
+\hline
+1 & 10 & 10.67 & $-0.67$ \\
+\hline
+2 & 12 & 12.67 & $-0.67$ \\
+\hline
+3 & 15 & 14.00 & $1.00$ \\
+\hline
+4 & 16 & 15.33 & $0.67$ \\
+\hline
+5 & 18 & 17.33 & $0.67$ \\
+\hline
+6 & 19 & 19.33 & $-0.33$ \\
+\hline
+7 & 20 & 20.66 & $-0.66$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Tous les résidus sont petits (inférieurs à 1 en valeur absolue), donc \textbf{pas de valeurs aberrantes} détectées.
+
+\newpage
+
+\section{Résumé des Formules Clés}
+
+\subsection{Corrélation}
+
+\begin{align}
+r = \frac{\sum(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum(x_i - \bar{x})^2 \sum(y_i - \bar{y})^2}}
+\end{align}
+
+\subsection{Régression simple}
+
+\begin{align}
+\hat{\beta}_1 &= \frac{\sum(x_i - \bar{x})(y_i - \bar{y})}{\sum(x_i - \bar{x})^2} \\
+\hat{\beta}_0 &= \bar{y} - \hat{\beta}_1\bar{x}
+\end{align}
+
+\subsection{Régression multiple (matricielle)}
+
+\begin{align}
+\hat{\boldsymbol{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+\end{align}
+
+\subsection{R²}
+
+\begin{align}
+R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{align}
+
+\subsection{Résidus}
+
+\begin{align}
+e_i = y_i - \hat{y}_i
+\end{align}
+
+\end{document}
+
