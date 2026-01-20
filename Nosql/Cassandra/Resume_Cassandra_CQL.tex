@@ -1,0 +1,843 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Cassandra CQL}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration pour le code
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2,
+    morekeywords={CREATE, TABLE, KEYSPACE, INSERT, SELECT, UPDATE, DELETE, ALTER, DROP, PRIMARY, KEY, WHERE, AND, OR, IN, SET, IF, EXISTS, NOT, NULL, WITH, USING, TTL, TIMESTAMP, BATCH, BEGIN, APPLY, TRUNCATE, INDEX, ON, ALLOW, FILTERING, LIMIT, ORDER, BY, ASC, DESC, COUNT, DISTINCT, GROUP, AS, TOKEN, ALLOW, FILTERING}
+}
+
+% Métadonnées
+\title{Résumé Complet Cassandra CQL\\
+\large CRUD, Requêtes, Filtrage}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Création de Structure}
+
+\subsection{Keyspace}
+
+\begin{lstlisting}
+CREATE KEYSPACE ma_base
+WITH REPLICATION = {
+    'class': 'SimpleStrategy',
+    'replication_factor': 3
+};
+
+USE ma_base;
+\end{lstlisting}
+
+\subsection{Table}
+
+\begin{lstlisting}
+CREATE TABLE utilisateurs (
+    id UUID PRIMARY KEY,
+    nom TEXT,
+    email TEXT,
+    age INT,
+    ville TEXT,
+    date_creation TIMESTAMP
+);
+\end{lstlisting}
+
+\subsection{Table avec Clustering Key}
+
+\begin{lstlisting}
+CREATE TABLE commandes (
+    client_id UUID,
+    date_commande TIMESTAMP,
+    produit TEXT,
+    quantite INT,
+    prix DECIMAL,
+    PRIMARY KEY (client_id, date_commande, produit)
+);
+\end{lstlisting}
+
+\subsection{Table avec Partition Key Composite}
+
+\begin{lstlisting}
+CREATE TABLE articles (
+    categorie TEXT,
+    sous_categorie TEXT,
+    id UUID,
+    titre TEXT,
+    prix DECIMAL,
+    PRIMARY KEY ((categorie, sous_categorie), id)
+);
+\end{lstlisting}
+
+\newpage
+
+\section{Opérations CRUD}
+
+\subsection{Create (INSERT)}
+
+\subsubsection{Insertion simple}
+
+\begin{lstlisting}
+INSERT INTO utilisateurs (id, nom, email, age, ville)
+VALUES (uuid(), 'Dupont', 'dupont@email.com', 30, 'Paris');
+\end{lstlisting}
+
+\subsubsection{Insertion avec UUID spécifique}
+
+\begin{lstlisting}
+INSERT INTO utilisateurs (id, nom, email, age, ville)
+VALUES (
+    a1b2c3d4-e5f6-7890-abcd-ef1234567890,
+    'Martin',
+    'martin@email.com',
+    25,
+    'Lyon'
+);
+\end{lstlisting}
+
+\subsubsection{Insertion avec TTL (Time To Live)}
+
+\begin{lstlisting}
+INSERT INTO utilisateurs (id, nom, email)
+VALUES (uuid(), 'Bernard', 'bernard@email.com')
+USING TTL 3600;  -- Expire après 1 heure
+\end{lstlisting}
+
+\subsubsection{Insertion avec TIMESTAMP}
+
+\begin{lstlisting}
+INSERT INTO utilisateurs (id, nom, date_creation)
+VALUES (uuid(), 'Durand', toTimestamp(now()));
+\end{lstlisting}
+
+\subsubsection{Insertion conditionnelle (IF NOT EXISTS)}
+
+\begin{lstlisting}
+INSERT INTO utilisateurs (id, nom, email)
+VALUES (a1b2c3d4-e5f6-7890-abcd-ef1234567890, 'Dupont', 'dupont@email.com')
+IF NOT EXISTS;
+\end{lstlisting}
+
+\subsection{Read (SELECT)}
+
+\subsubsection{Sélection de tous les champs}
+
+\begin{lstlisting}
+SELECT * FROM utilisateurs;
+\end{lstlisting}
+
+\subsubsection{Sélection de champs spécifiques}
+
+\begin{lstlisting}
+SELECT id, nom, email FROM utilisateurs;
+\end{lstlisting}
+
+\subsubsection{Sélection avec WHERE}
+
+\begin{lstlisting}
+SELECT * FROM utilisateurs WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Sélection avec LIMIT}
+
+\begin{lstlisting}
+SELECT * FROM utilisateurs LIMIT 10;
+\end{lstlisting}
+
+\subsubsection{Sélection avec COUNT}
+
+\begin{lstlisting}
+SELECT COUNT(*) FROM utilisateurs;
+\end{lstlisting}
+
+\subsubsection{Sélection avec DISTINCT}
+
+\begin{lstlisting}
+SELECT DISTINCT ville FROM utilisateurs;
+\end{lstlisting}
+
+\subsection{Update (UPDATE)}
+
+\subsubsection{Mise à jour simple}
+
+\begin{lstlisting}
+UPDATE utilisateurs
+SET age = 31, ville = 'Lyon'
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Mise à jour avec TTL}
+
+\begin{lstlisting}
+UPDATE utilisateurs
+USING TTL 7200
+SET email = 'nouveau@email.com'
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Mise à jour conditionnelle (IF)}
+
+\begin{lstlisting}
+UPDATE utilisateurs
+SET age = 32
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+IF age = 31;
+\end{lstlisting}
+
+\subsubsection{Mise à jour avec IF EXISTS}
+
+\begin{lstlisting}
+UPDATE utilisateurs
+SET age = 33
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+IF EXISTS;
+\end{lstlisting}
+
+\subsubsection{Opérations sur Collections}
+
+\begin{lstlisting}
+-- Ajouter à une liste
+UPDATE utilisateurs
+SET hobbies = hobbies + ['lecture']
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+
+-- Retirer d'une liste
+UPDATE utilisateurs
+SET hobbies = hobbies - ['sport']
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+
+-- Ajouter à un set
+UPDATE utilisateurs
+SET tags = tags + {'important'}
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+
+-- Mettre à jour une map
+UPDATE utilisateurs
+SET adresse = {'rue': '123 Main St', 'ville': 'Paris'}
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsection{Delete (DELETE)}
+
+\subsubsection{Suppression d'un document}
+
+\begin{lstlisting}
+DELETE FROM utilisateurs
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Suppression de champs spécifiques}
+
+\begin{lstlisting}
+DELETE email, age FROM utilisateurs
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Suppression d'éléments dans une collection}
+
+\begin{lstlisting}
+DELETE hobbies[0] FROM utilisateurs
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsubsection{Suppression conditionnelle}
+
+\begin{lstlisting}
+DELETE FROM utilisateurs
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+IF age = 30;
+\end{lstlisting}
+
+\subsubsection{TRUNCATE (vider une table)}
+
+\begin{lstlisting}
+TRUNCATE utilisateurs;
+\end{lstlisting}
+
+\newpage
+
+\section{Filtrage et Requêtes}
+
+\subsection{Opérateurs de Comparaison}
+
+\begin{lstlisting}
+-- Égalité
+SELECT * FROM utilisateurs WHERE age = 30;
+
+-- Plus grand que
+SELECT * FROM utilisateurs WHERE age > 25;
+
+-- Plus grand ou égal
+SELECT * FROM utilisateurs WHERE age >= 25;
+
+-- Plus petit que
+SELECT * FROM utilisateurs WHERE age < 40;
+
+-- Plus petit ou égal
+SELECT * FROM utilisateurs WHERE age <= 40;
+
+-- Différent de
+SELECT * FROM utilisateurs WHERE age != 30;
+\end{lstlisting}
+
+\subsection{Opérateur IN}
+
+\begin{lstlisting}
+SELECT * FROM utilisateurs
+WHERE ville IN ('Paris', 'Lyon', 'Marseille');
+\end{lstlisting}
+
+\subsection{Opérateurs Logiques}
+
+\begin{lstlisting}
+-- ET
+SELECT * FROM utilisateurs
+WHERE age > 25 AND ville = 'Paris';
+
+-- OU
+SELECT * FROM utilisateurs
+WHERE age < 30 OR ville = 'Lyon';
+\end{lstlisting}
+
+\subsection{Opérateur LIKE}
+
+\begin{lstlisting}
+-- Commence par
+SELECT * FROM utilisateurs
+WHERE nom LIKE 'Dup%';
+
+-- Contient
+SELECT * FROM utilisateurs
+WHERE email LIKE '%@gmail.com';
+\end{lstlisting}
+
+\subsection{ALLOW FILTERING}
+
+\begin{lstlisting}
+-- Permet de filtrer sur des colonnes non-indexées
+-- ATTENTION: Peut être très coûteux en performance
+SELECT * FROM utilisateurs
+WHERE ville = 'Paris' AND age > 25
+ALLOW FILTERING;
+\end{lstlisting}
+
+\subsection{Requêtes sur Clustering Columns}
+
+\begin{lstlisting}
+-- Requête sur partition key
+SELECT * FROM commandes
+WHERE client_id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+
+-- Requête avec clustering key
+SELECT * FROM commandes
+WHERE client_id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+AND date_commande > '2024-01-01';
+
+-- Requête avec range sur clustering key
+SELECT * FROM commandes
+WHERE client_id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+AND date_commande >= '2024-01-01'
+AND date_commande <= '2024-12-31';
+\end{lstlisting}
+
+\newpage
+
+\section{Collections}
+
+\subsection{List}
+
+\begin{lstlisting}
+CREATE TABLE utilisateurs (
+    id UUID PRIMARY KEY,
+    nom TEXT,
+    hobbies LIST<TEXT>
+);
+
+-- Insertion
+INSERT INTO utilisateurs (id, nom, hobbies)
+VALUES (uuid(), 'Dupont', ['lecture', 'sport', 'musique']);
+
+-- Mise à jour
+UPDATE utilisateurs
+SET hobbies = hobbies + ['cinema']
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+
+-- Retirer un élément
+UPDATE utilisateurs
+SET hobbies = hobbies - ['sport']
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsection{Set}
+
+\begin{lstlisting}
+CREATE TABLE articles (
+    id UUID PRIMARY KEY,
+    titre TEXT,
+    tags SET<TEXT>
+);
+
+-- Insertion
+INSERT INTO articles (id, titre, tags)
+VALUES (uuid(), 'Article 1', {'tech', 'programming', 'database'});
+
+-- Ajouter un élément
+UPDATE articles
+SET tags = tags + {'important'}
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\subsection{Map}
+
+\begin{lstlisting}
+CREATE TABLE utilisateurs (
+    id UUID PRIMARY KEY,
+    nom TEXT,
+    adresse MAP<TEXT, TEXT>
+);
+
+-- Insertion
+INSERT INTO utilisateurs (id, nom, adresse)
+VALUES (uuid(), 'Dupont', {
+    'rue': '123 Main St',
+    'ville': 'Paris',
+    'codePostal': '75001'
+});
+
+-- Mise à jour
+UPDATE utilisateurs
+SET adresse['ville'] = 'Lyon'
+WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+\end{lstlisting}
+
+\newpage
+
+\section{Index}
+
+\subsection{Index Secondaire}
+
+\begin{lstlisting}
+CREATE INDEX idx_ville ON utilisateurs (ville);
+
+-- Utilisation
+SELECT * FROM utilisateurs WHERE ville = 'Paris';
+\end{lstlisting}
+
+\subsection{Index sur Collection}
+
+\begin{lstlisting}
+CREATE INDEX idx_tags ON articles (tags);
+
+-- Recherche dans un set
+SELECT * FROM articles WHERE tags CONTAINS 'tech';
+\end{lstlisting}
+
+\subsection{Index sur Clé de Map}
+
+\begin{lstlisting}
+CREATE INDEX idx_ville_adresse ON utilisateurs (adresse);
+
+-- Recherche
+SELECT * FROM utilisateurs WHERE adresse['ville'] = 'Paris';
+\end{lstlisting}
+
+\subsection{Index sur Clé de Map (KEYS)}
+
+\begin{lstlisting}
+CREATE INDEX idx_adresse_keys ON utilisateurs (KEYS(adresse));
+\end{lstlisting}
+
+\subsection{Index sur Valeur de Map (VALUES)}
+
+\begin{lstlisting}
+CREATE INDEX idx_adresse_values ON utilisateurs (VALUES(adresse));
+\end{lstlisting}
+
+\subsection{Index sur Entrées de Map (ENTRIES)}
+
+\begin{lstlisting}
+CREATE INDEX idx_adresse_entries ON utilisateurs (ENTRIES(adresse));
+\end{lstlisting}
+
+\newpage
+
+\section{Types de Données}
+
+\subsection{Types Primitifs}
+
+\begin{lstlisting}
+-- Text
+nom TEXT
+
+-- Integer
+age INT
+
+-- Big Integer
+grand_nombre BIGINT
+
+-- Decimal
+prix DECIMAL
+
+-- Float
+valeur FLOAT
+
+-- Double
+valeur_double DOUBLE
+
+-- Boolean
+est_actif BOOLEAN
+
+-- UUID
+id UUID
+
+-- TimeUUID
+timestamp TIMEUUID
+\end{lstlisting}
+
+\subsection{Types Temporels}
+
+\begin{lstlisting}
+-- Date
+date_naissance DATE
+
+-- Time
+heure TIME
+
+-- Timestamp
+date_creation TIMESTAMP
+\end{lstlisting}
+
+\subsection{Types Collections}
+
+\begin{lstlisting}
+-- Liste
+hobbies LIST<TEXT>
+
+-- Set
+tags SET<INT>
+
+-- Map
+adresse MAP<TEXT, TEXT>
+\end{lstlisting}
+
+\subsection{Types Utilisateur (UDT)}
+
+\begin{lstlisting}
+-- Création d'un type
+CREATE TYPE adresse_type (
+    rue TEXT,
+    ville TEXT,
+    code_postal TEXT
+);
+
+-- Utilisation
+CREATE TABLE utilisateurs (
+    id UUID PRIMARY KEY,
+    nom TEXT,
+    adresse adresse_type
+);
+\end{lstlisting}
+
+\newpage
+
+\section{Fonctions}
+
+\subsection{Fonctions de Conversion}
+
+\begin{lstlisting}
+-- UUID vers String
+SELECT toText(id) FROM utilisateurs;
+
+-- String vers UUID
+SELECT toUUID('a1b2c3d4-e5f6-7890-abcd-ef1234567890') FROM utilisateurs;
+
+-- Timestamp
+SELECT toTimestamp(now()) FROM utilisateurs;
+\end{lstlisting}
+
+\subsection{Fonctions Temporelles}
+
+\begin{lstlisting}
+-- Date actuelle
+SELECT now() FROM utilisateurs;
+
+-- Timestamp Unix
+SELECT toUnixTimestamp(date_creation) FROM utilisateurs;
+
+-- Depuis Unix timestamp
+SELECT toTimestamp(1234567890) FROM utilisateurs;
+\end{lstlisting}
+
+\subsection{Fonctions sur Collections}
+
+\begin{lstlisting}
+-- Taille d'une liste
+SELECT size(hobbies) FROM utilisateurs;
+
+-- Taille d'un set
+SELECT size(tags) FROM articles;
+
+-- Taille d'une map
+SELECT size(adresse) FROM utilisateurs;
+\end{lstlisting}
+
+\newpage
+
+\section{BATCH}
+
+\subsection{Batch Simple}
+
+\begin{lstlisting}
+BEGIN BATCH
+    INSERT INTO utilisateurs (id, nom, email)
+    VALUES (uuid(), 'Dupont', 'dupont@email.com');
+    
+    INSERT INTO utilisateurs (id, nom, email)
+    VALUES (uuid(), 'Martin', 'martin@email.com');
+    
+    UPDATE utilisateurs
+    SET age = 30
+    WHERE id = a1b2c3d4-e5f6-7890-abcd-ef1234567890;
+APPLY BATCH;
+\end{lstlisting}
+
+\subsection{Batch avec Timestamp}
+
+\begin{lstlisting}
+BEGIN BATCH
+    USING TIMESTAMP 1234567890
+    INSERT INTO utilisateurs (id, nom)
+    VALUES (uuid(), 'Dupont');
+APPLY BATCH;
+\end{lstlisting}
+
+\subsection{Batch avec TTL}
+
+\begin{lstlisting}
+BEGIN BATCH
+    USING TTL 3600
+    INSERT INTO utilisateurs (id, nom)
+    VALUES (uuid(), 'Dupont');
+APPLY BATCH;
+\end{lstlisting}
+
+\newpage
+
+\section{Requêtes Avancées}
+
+\subsection{ORDER BY}
+
+\begin{lstlisting}
+-- Tri sur clustering column
+SELECT * FROM commandes
+WHERE client_id = a1b2c3d4-e5f6-7890-abcd-ef1234567890
+ORDER BY date_commande DESC;
+\end{lstlisting}
+
+\subsection{GROUP BY}
+
+\begin{lstlisting}
+-- Groupement (nécessite ALLOW FILTERING)
+SELECT ville, COUNT(*) FROM utilisateurs
+GROUP BY ville
+ALLOW FILTERING;
+\end{lstlisting}
+
+\subsection{Requêtes avec Token}
+
+\begin{lstlisting}
+-- Requête par range de tokens
+SELECT * FROM utilisateurs
+WHERE token(id) > token(minTimeuuid('2024-01-01'))
+AND token(id) <= token(maxTimeuuid('2024-12-31'));
+\end{lstlisting}
+
+\subsection{Requêtes sur Collections}
+
+\begin{lstlisting}
+-- Contient dans une liste
+SELECT * FROM utilisateurs
+WHERE hobbies CONTAINS 'lecture';
+
+-- Contient dans un set
+SELECT * FROM articles
+WHERE tags CONTAINS 'tech';
+
+-- Clé existe dans une map
+SELECT * FROM utilisateurs
+WHERE adresse CONTAINS KEY 'ville';
+
+-- Valeur existe dans une map
+SELECT * FROM utilisateurs
+WHERE adresse CONTAINS 'Paris';
+\end{lstlisting}
+
+\newpage
+
+\section{Modification de Structure}
+
+\subsection{ALTER TABLE}
+
+\begin{lstlisting}
+-- Ajouter une colonne
+ALTER TABLE utilisateurs ADD telephone TEXT;
+
+-- Supprimer une colonne
+ALTER TABLE utilisateurs DROP telephone;
+
+-- Modifier le type d'une colonne
+ALTER TABLE utilisateurs ALTER telephone TYPE TEXT;
+\end{lstlisting}
+
+\subsection{DROP}
+
+\begin{lstlisting}
+-- Supprimer une table
+DROP TABLE utilisateurs;
+
+-- Supprimer un keyspace
+DROP KEYSPACE ma_base;
+
+-- Supprimer un index
+DROP INDEX idx_ville;
+\end{lstlisting}
+
+\newpage
+
+\section{Résumé des Opérations Essentielles}
+
+\subsection{CRUD}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opération} & \textbf{Commande} \\
+\hline
+Insert & \texttt{INSERT INTO ... VALUES ...} \\
+\hline
+Read & \texttt{SELECT ... FROM ... WHERE ...} \\
+\hline
+Update & \texttt{UPDATE ... SET ... WHERE ...} \\
+\hline
+Delete & \texttt{DELETE FROM ... WHERE ...} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Opérateurs de Filtrage}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opérateur} & \textbf{Description} \\
+\hline
+\texttt{=} & Égalité \\
+\hline
+\texttt{>} & Plus grand que \\
+\hline
+\texttt{>=} & Plus grand ou égal \\
+\hline
+\texttt{<} & Plus petit que \\
+\hline
+\texttt{<=} & Plus petit ou égal \\
+\hline
+\texttt{!=} & Différent de \\
+\hline
+\texttt{IN} & Dans une liste \\
+\hline
+\texttt{LIKE} & Pattern matching \\
+\hline
+\texttt{CONTAINS} & Contient (collections) \\
+\hline
+\texttt{CONTAINS KEY} & Clé existe (map) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Collections}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Type} & \textbf{Description} \\
+\hline
+\texttt{LIST<T>} & Liste ordonnée \\
+\hline
+\texttt{SET<T>} & Ensemble non ordonné \\
+\hline
+\texttt{MAP<K, V>} & Dictionnaire clé-valeur \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Points Importants}
+
+\begin{itemize}
+    \item \textbf{Partition Key} : Détermine sur quel nœud les données sont stockées
+    \item \textbf{Clustering Key} : Détermine l'ordre des données dans une partition
+    \item \textbf{ALLOW FILTERING} : Permet de filtrer sur des colonnes non-indexées (coûteux)
+    \item \textbf{TTL} : Permet d'expirer automatiquement les données
+    \item \textbf{BATCH} : Permet d'exécuter plusieurs opérations atomiquement
+    \item \textbf{IF EXISTS / IF NOT EXISTS} : Conditions pour INSERT/UPDATE/DELETE
+\end{itemize}
+
+\end{document}
+

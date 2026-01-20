@@ -1,0 +1,764 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Cypher Neo4j}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{green!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{green!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration pour le code
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2,
+    morekeywords={MATCH, CREATE, MERGE, SET, DELETE, REMOVE, RETURN, WHERE, AND, OR, NOT, WITH, ORDER, BY, LIMIT, SKIP, DISTINCT, COUNT, SUM, AVG, MIN, MAX, COLLECT, UNWIND, OPTIONAL, AS, IN, CONTAINS, STARTS, ENDS, WITH, FOREACH, UNION, ALL, CASE, WHEN, THEN, ELSE, END, EXISTS, ALL, ANY, NONE, SINGLE, TYPE, ID, LABELS, KEYS, PROPERTIES, RELATIONSHIPS, NODES, PATH, SHORTESTPATH, ALLSHORTESTPATHS}
+}
+
+% Métadonnées
+\title{Résumé Complet Cypher Neo4j\\
+\large CRUD, Requêtes, Relations}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Opérations CRUD}
+
+\subsection{Create (Création)}
+
+\subsubsection{Créer un nœud}
+
+\begin{lstlisting}
+CREATE (p:Person {nom: 'Dupont', age: 30, ville: 'Paris'})
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{Créer plusieurs nœuds}
+
+\begin{lstlisting}
+CREATE 
+    (p1:Person {nom: 'Dupont', age: 30}),
+    (p2:Person {nom: 'Martin', age: 25}),
+    (p3:Person {nom: 'Bernard', age: 35})
+RETURN p1, p2, p3;
+\end{lstlisting}
+
+\subsubsection{Créer une relation}
+
+\begin{lstlisting}
+CREATE (p1:Person {nom: 'Dupont'})-[:CONNAIT]->(p2:Person {nom: 'Martin'})
+RETURN p1, p2;
+\end{lstlisting}
+
+\subsubsection{Créer une relation entre nœuds existants}
+
+\begin{lstlisting}
+MATCH (p1:Person {nom: 'Dupont'}), (p2:Person {nom: 'Martin'})
+CREATE (p1)-[:CONNAIT {depuis: 2020}]->(p2)
+RETURN p1, p2;
+\end{lstlisting}
+
+\subsubsection{Créer un chemin complet}
+
+\begin{lstlisting}
+CREATE path = (a:Person {nom: 'Alice'})-[:CONNAIT]->(b:Person {nom: 'Bob'})-[:CONNAIT]->(c:Person {nom: 'Charlie'})
+RETURN path;
+\end{lstlisting}
+
+\subsection{MERGE (Créer ou Mettre à jour)}
+
+\subsubsection{MERGE simple}
+
+\begin{lstlisting}
+MERGE (p:Person {nom: 'Dupont'})
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{MERGE avec SET}
+
+\begin{lstlisting}
+MERGE (p:Person {nom: 'Dupont'})
+ON CREATE SET p.age = 30, p.ville = 'Paris'
+ON MATCH SET p.age = 31
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{MERGE pour relation}
+
+\begin{lstlisting}
+MATCH (p1:Person {nom: 'Dupont'}), (p2:Person {nom: 'Martin'})
+MERGE (p1)-[r:CONNAIT]->(p2)
+ON CREATE SET r.depuis = 2020
+ON MATCH SET r.depuis = 2020
+RETURN r;
+\end{lstlisting}
+
+\subsection{Read (Lecture)}
+
+\subsubsection{MATCH simple}
+
+\begin{lstlisting}
+MATCH (p:Person)
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{MATCH avec filtre}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{MATCH avec WHERE}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WHERE p.age > 25
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{MATCH avec relations}
+
+\begin{lstlisting}
+MATCH (p1:Person)-[:CONNAIT]->(p2:Person)
+RETURN p1, p2;
+\end{lstlisting}
+
+\subsubsection{MATCH avec direction}
+
+\begin{lstlisting}
+// Relation sortante
+MATCH (p:Person)-[:CONNAIT]->(autre:Person)
+RETURN p, autre;
+
+// Relation entrante
+MATCH (p:Person)<-[:CONNAIT]-(autre:Person)
+RETURN p, autre;
+
+// Relation bidirectionnelle
+MATCH (p:Person)-[:CONNAIT]-(autre:Person)
+RETURN p, autre;
+\end{lstlisting}
+
+\subsubsection{MATCH avec profondeur}
+
+\begin{lstlisting}
+// 1 niveau
+MATCH (p:Person)-[:CONNAIT]->(ami:Person)
+RETURN p, ami;
+
+// 2 niveaux
+MATCH (p:Person)-[:CONNAIT]->(ami:Person)-[:CONNAIT]->(amiDeAmi:Person)
+RETURN p, ami, amiDeAmi;
+
+// Profondeur variable
+MATCH (p:Person)-[:CONNAIT*1..3]->(autre:Person)
+RETURN p, autre;
+\end{lstlisting}
+
+\subsubsection{OPTIONAL MATCH}
+
+\begin{lstlisting}
+MATCH (p:Person)
+OPTIONAL MATCH (p)-[:CONNAIT]->(ami:Person)
+RETURN p, ami;
+\end{lstlisting}
+
+\subsection{Update (Mise à jour)}
+
+\subsubsection{SET simple}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+SET p.age = 31
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{SET multiple}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+SET p.age = 31, p.ville = 'Lyon'
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{SET avec propriété calculée}
+
+\begin{lstlisting}
+MATCH (p:Person)
+SET p.agePlusUn = p.age + 1
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{Ajouter un label}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+SET p:Client
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{Ajouter plusieurs labels}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+SET p:Client:VIP
+RETURN p;
+\end{lstlisting}
+
+\subsubsection{Mettre à jour une relation}
+
+\begin{lstlisting}
+MATCH (p1:Person {nom: 'Dupont'})-[r:CONNAIT]->(p2:Person {nom: 'Martin'})
+SET r.depuis = 2021
+RETURN r;
+\end{lstlisting}
+
+\subsection{Delete (Suppression)}
+
+\subsubsection{DELETE nœud}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+DELETE p;
+\end{lstlisting}
+
+\subsubsection{DELETE relation}
+
+\begin{lstlisting}
+MATCH (p1:Person {nom: 'Dupont'})-[r:CONNAIT]->(p2:Person {nom: 'Martin'})
+DELETE r;
+\end{lstlisting}
+
+\subsubsection{DELETE multiple}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WHERE p.age < 18
+DELETE p;
+\end{lstlisting}
+
+\subsubsection{DETACH DELETE (supprime nœud et relations)}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})
+DETACH DELETE p;
+\end{lstlisting}
+
+\subsubsection{REMOVE (supprimer propriété ou label)}
+
+\begin{lstlisting}
+// Supprimer une propriété
+MATCH (p:Person {nom: 'Dupont'})
+REMOVE p.ville
+RETURN p;
+
+// Supprimer un label
+MATCH (p:Person {nom: 'Dupont'})
+REMOVE p:Client
+RETURN p;
+\end{lstlisting}
+
+\newpage
+
+\section{Filtrage et Conditions}
+
+\subsection{Opérateurs de Comparaison}
+
+\begin{lstlisting}
+// Égalité
+MATCH (p:Person)
+WHERE p.age = 30
+RETURN p;
+
+// Plus grand que
+WHERE p.age > 25
+
+// Plus grand ou égal
+WHERE p.age >= 25
+
+// Plus petit que
+WHERE p.age < 40
+
+// Plus petit ou égal
+WHERE p.age <= 40
+
+// Différent de
+WHERE p.age <> 30
+\end{lstlisting}
+
+\subsection{Opérateurs Logiques}
+
+\begin{lstlisting}
+// ET
+MATCH (p:Person)
+WHERE p.age > 25 AND p.ville = 'Paris'
+RETURN p;
+
+// OU
+WHERE p.age < 30 OR p.ville = 'Lyon'
+
+// NON
+WHERE NOT p.ville = 'Paris'
+\end{lstlisting}
+
+\subsection{Opérateurs pour Chaînes}
+
+\begin{lstlisting}
+// Contient
+WHERE p.nom CONTAINS 'Dup'
+
+// Commence par
+WHERE p.nom STARTS WITH 'Dup'
+
+// Se termine par
+WHERE p.nom ENDS WITH 'ont'
+
+// Expression régulière
+WHERE p.nom =~ 'Dup.*'
+\end{lstlisting}
+
+\subsection{Opérateur IN}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WHERE p.ville IN ['Paris', 'Lyon', 'Marseille']
+RETURN p;
+\end{lstlisting}
+
+\subsection{Opérateur EXISTS}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WHERE EXISTS(p.email)
+RETURN p;
+\end{lstlisting}
+
+\subsection{Opérateur IS NULL}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WHERE p.email IS NULL
+RETURN p;
+\end{lstlisting}
+
+\newpage
+
+\section{Fonctions et Agrégation}
+
+\subsection{Fonctions sur Nœuds}
+
+\begin{lstlisting}
+// ID du nœud
+MATCH (p:Person)
+RETURN id(p), p;
+
+// Labels du nœud
+RETURN labels(p);
+
+// Propriétés du nœud
+RETURN properties(p);
+
+// Clés des propriétés
+RETURN keys(p);
+\end{lstlisting}
+
+\subsection{Fonctions sur Relations}
+
+\begin{lstlisting}
+MATCH (p1:Person)-[r:CONNAIT]->(p2:Person)
+RETURN 
+    type(r) AS typeRelation,
+    id(r) AS idRelation,
+    properties(r) AS propsRelation;
+\end{lstlisting}
+
+\subsection{Fonctions d'Agrégation}
+
+\begin{lstlisting}
+// COUNT
+MATCH (p:Person)
+RETURN COUNT(p) AS nombrePersonnes;
+
+// COUNT DISTINCT
+RETURN COUNT(DISTINCT p.ville) AS nombreVilles;
+
+// SUM
+MATCH (p:Person)
+RETURN SUM(p.age) AS sommeAges;
+
+// AVG
+RETURN AVG(p.age) AS ageMoyen;
+
+// MIN
+RETURN MIN(p.age) AS ageMin;
+
+// MAX
+RETURN MAX(p.age) AS ageMax;
+
+// COLLECT
+RETURN COLLECT(p.nom) AS tousLesNoms;
+\end{lstlisting}
+
+\subsection{GROUP BY}
+
+\begin{lstlisting}
+MATCH (p:Person)
+RETURN p.ville, COUNT(p) AS nombre
+ORDER BY nombre DESC;
+\end{lstlisting}
+
+\newpage
+
+\section{Requêtes Avancées}
+
+\subsection{WITH (Pipeline)}
+
+\begin{lstlisting}
+MATCH (p:Person)
+WITH p
+WHERE p.age > 25
+RETURN p.nom, p.age
+ORDER BY p.age DESC
+LIMIT 10;
+\end{lstlisting}
+
+\subsection{UNWIND}
+
+\begin{lstlisting}
+UNWIND ['Paris', 'Lyon', 'Marseille'] AS ville
+MATCH (p:Person {ville: ville})
+RETURN ville, COLLECT(p.nom) AS personnes;
+\end{lstlisting}
+
+\subsection{UNION}
+
+\begin{lstlisting}
+MATCH (p:Person {ville: 'Paris'})
+RETURN p.nom AS nom
+UNION
+MATCH (p:Person {ville: 'Lyon'})
+RETURN p.nom AS nom;
+\end{lstlisting}
+
+\subsection{UNION ALL}
+
+\begin{lstlisting}
+MATCH (p:Person {ville: 'Paris'})
+RETURN p.nom AS nom
+UNION ALL
+MATCH (p:Person {ville: 'Lyon'})
+RETURN p.nom AS nom;
+\end{lstlisting}
+
+\subsection{CASE WHEN}
+
+\begin{lstlisting}
+MATCH (p:Person)
+RETURN 
+    p.nom,
+    CASE 
+        WHEN p.age < 30 THEN 'Jeune'
+        WHEN p.age < 50 THEN 'Adulte'
+        ELSE 'Senior'
+    END AS categorie;
+\end{lstlisting}
+
+\subsection{FOREACH}
+
+\begin{lstlisting}
+MATCH (p:Person)
+FOREACH (nom IN ['Dupont', 'Martin'] |
+    SET p.estImportant = true
+);
+\end{lstlisting}
+
+\newpage
+
+\section{Chemins et Traversée}
+
+\subsection{Chemins Variables}
+
+\begin{lstlisting}
+MATCH path = (p1:Person)-[:CONNAIT*]->(p2:Person)
+RETURN path;
+\end{lstlisting}
+
+\subsection{SHORTESTPATH}
+
+\begin{lstlisting}
+MATCH path = shortestPath(
+    (p1:Person {nom: 'Dupont'})-[*]-(p2:Person {nom: 'Martin'})
+)
+RETURN path;
+\end{lstlisting}
+
+\subsection{ALLSHORTESTPATHS}
+
+\begin{lstlisting}
+MATCH paths = allShortestPaths(
+    (p1:Person {nom: 'Dupont'})-[*]-(p2:Person {nom: 'Martin'})
+)
+RETURN paths;
+\end{lstlisting}
+
+\subsection{Profondeur Variable}
+
+\begin{lstlisting}
+// 1 à 3 niveaux
+MATCH (p:Person)-[:CONNAIT*1..3]->(autre:Person)
+RETURN p, autre;
+
+// Exactement 2 niveaux
+MATCH (p:Person)-[:CONNAIT*2]->(autre:Person)
+RETURN p, autre;
+
+// 2 niveaux ou plus
+MATCH (p:Person)-[:CONNAIT*2..]->(autre:Person)
+RETURN p, autre;
+\end{lstlisting}
+
+\subsection{Relations Multiples}
+
+\begin{lstlisting}
+MATCH (p:Person)-[:CONNAIT|AIME|TRAVAILLE_AVEC]->(autre:Person)
+RETURN p, autre;
+\end{lstlisting}
+
+\newpage
+
+\section{Index et Contraintes}
+
+\subsection{Créer un Index}
+
+\begin{lstlisting}
+CREATE INDEX ON :Person(nom);
+CREATE INDEX ON :Person(age);
+\end{lstlisting}
+
+\subsection{Index Composite}
+
+\begin{lstlisting}
+CREATE INDEX ON :Person(nom, age);
+\end{lstlisting}
+
+\subsection{Contrainte Unique}
+
+\begin{lstlisting}
+CREATE CONSTRAINT ON (p:Person) ASSERT p.email IS UNIQUE;
+\end{lstlisting}
+
+\subsection{Contrainte d'Existence}
+
+\begin{lstlisting}
+CREATE CONSTRAINT ON (p:Person) ASSERT EXISTS(p.nom);
+\end{lstlisting}
+
+\subsection{Supprimer Index}
+
+\begin{lstlisting}
+DROP INDEX ON :Person(nom);
+\end{lstlisting}
+
+\subsection{Supprimer Contrainte}
+
+\begin{lstlisting}
+DROP CONSTRAINT ON (p:Person) ASSERT p.email IS UNIQUE;
+\end{lstlisting}
+
+\newpage
+
+\section{Exemples Pratiques}
+
+\subsection{Exemple 1 : Recommandations d'Amis}
+
+\begin{lstlisting}
+MATCH (moi:Person {nom: 'Dupont'})-[:CONNAIT]->(ami:Person)-[:CONNAIT]->(amiDeAmi:Person)
+WHERE NOT (moi)-[:CONNAIT]->(amiDeAmi)
+AND moi <> amiDeAmi
+RETURN DISTINCT amiDeAmi.nom AS recommandation
+LIMIT 10;
+\end{lstlisting}
+
+\subsection{Exemple 2 : Plus Court Chemin}
+
+\begin{lstlisting}
+MATCH path = shortestPath(
+    (start:Person {nom: 'Dupont'})-[*]-(end:Person {nom: 'Martin'})
+)
+RETURN path, length(path) AS distance;
+\end{lstlisting}
+
+\subsection{Exemple 3 : Statistiques par Ville}
+
+\begin{lstlisting}
+MATCH (p:Person)
+RETURN 
+    p.ville AS ville,
+    COUNT(p) AS nombre,
+    AVG(p.age) AS ageMoyen,
+    MIN(p.age) AS ageMin,
+    MAX(p.age) AS ageMax
+ORDER BY nombre DESC;
+\end{lstlisting}
+
+\subsection{Exemple 4 : Communauté (Personnes Connectées)}
+
+\begin{lstlisting}
+MATCH (p:Person {nom: 'Dupont'})-[:CONNAIT*1..2]-(autre:Person)
+RETURN DISTINCT autre.nom AS dansLaCommunaute
+ORDER BY autre.nom;
+\end{lstlisting}
+
+\subsection{Exemple 5 : Relations les Plus Fréquentes}
+
+\begin{lstlisting}
+MATCH ()-[r:CONNAIT]->()
+RETURN type(r) AS typeRelation, COUNT(r) AS frequence
+ORDER BY frequence DESC;
+\end{lstlisting}
+
+\newpage
+
+\section{Résumé des Opérations Essentielles}
+
+\subsection{CRUD}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opération} & \textbf{Commande} \\
+\hline
+Create & \texttt{CREATE}, \texttt{MERGE} \\
+\hline
+Read & \texttt{MATCH ... RETURN} \\
+\hline
+Update & \texttt{MATCH ... SET} \\
+\hline
+Delete & \texttt{MATCH ... DELETE}, \texttt{DETACH DELETE} \\
+\hline
+Remove & \texttt{MATCH ... REMOVE} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Opérateurs de Filtrage}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Opérateur} & \textbf{Description} \\
+\hline
+\texttt{=} & Égalité \\
+\hline
+\texttt{>}, \texttt{>=} & Comparaison \\
+\hline
+\texttt{<}, \texttt{<=} & Comparaison \\
+\hline
+\texttt{<>} & Différent de \\
+\hline
+\texttt{AND}, \texttt{OR}, \texttt{NOT} & Logique \\
+\hline
+\texttt{CONTAINS} & Contient \\
+\hline
+\texttt{STARTS WITH} & Commence par \\
+\hline
+\texttt{ENDS WITH} & Se termine par \\
+\hline
+\texttt{IN} & Dans une liste \\
+\hline
+\texttt{EXISTS} & Existe \\
+\hline
+\texttt{IS NULL} & Est nul \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Fonctions d'Agrégation}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Fonction} & \textbf{Description} \\
+\hline
+\texttt{COUNT()} & Compter \\
+\hline
+\texttt{SUM()} & Somme \\
+\hline
+\texttt{AVG()} & Moyenne \\
+\hline
+\texttt{MIN()} & Minimum \\
+\hline
+\texttt{MAX()} & Maximum \\
+\hline
+\texttt{COLLECT()} & Collecter en tableau \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Points Importants}
+
+\begin{itemize}
+    \item \textbf{MATCH} : Trouve des patterns dans le graphe
+    \item \textbf{CREATE} : Crée toujours (peut créer des doublons)
+    \item \textbf{MERGE} : Crée si n'existe pas, trouve si existe
+    \item \textbf{Relations} : Utilisent \texttt{-[:TYPE]->} pour direction
+    \item \textbf{Profondeur variable} : Utilise \texttt{[*1..3]} pour 1 à 3 niveaux
+    \item \textbf{OPTIONAL MATCH} : Permet des résultats même si pas de match
+    \item \textbf{DETACH DELETE} : Supprime nœud et toutes ses relations
+\end{itemize}
+
+\end{document}
+

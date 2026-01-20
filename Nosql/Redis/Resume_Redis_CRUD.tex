@@ -1,0 +1,685 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Redis}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{red!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{red!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration pour le code
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Métadonnées
+\title{Résumé Complet Redis\\
+\large CRUD, Structures de Données, Commandes}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Opérations CRUD de Base}
+
+\subsection{String (Chaîne)}
+
+\subsubsection{Create (SET)}
+
+\begin{lstlisting}
+SET cle "valeur"
+SET nom "Dupont"
+SET age 30
+\end{lstlisting}
+
+\subsubsection{Read (GET)}
+
+\begin{lstlisting}
+GET cle
+GET nom
+GET age
+\end{lstlisting}
+
+\subsubsection{Update (SET)}
+
+\begin{lstlisting}
+SET nom "Martin"  -- Remplace la valeur
+\end{lstlisting}
+
+\subsubsection{Delete (DEL)}
+
+\begin{lstlisting}
+DEL cle
+DEL nom age  -- Supprime plusieurs clés
+\end{lstlisting}
+
+\subsubsection{Opérations Avancées sur String}
+
+\begin{lstlisting}
+-- SET avec expiration (secondes)
+SET cle "valeur" EX 3600
+
+-- SET avec expiration (millisecondes)
+SET cle "valeur" PX 3600000
+
+-- SET si n'existe pas (NX)
+SET cle "valeur" NX
+
+-- SET si existe (XX)
+SET cle "valeur" XX
+
+-- GETSET (récupère et remplace)
+GETSET cle "nouvelle_valeur"
+
+-- APPEND
+APPEND cle "_suffixe"
+
+-- INCR (incrémenter)
+INCR compteur
+
+-- INCRBY (incrémenter de n)
+INCRBY compteur 5
+
+-- DECR (décrémenter)
+DECR compteur
+
+-- DECRBY (décrémenter de n)
+DECRBY compteur 3
+
+-- MGET (multiple GET)
+MGET cle1 cle2 cle3
+
+-- MSET (multiple SET)
+MSET cle1 "valeur1" cle2 "valeur2" cle3 "valeur3"
+\end{lstlisting}
+
+\subsection{Hash (Tableau Associatif)}
+
+\subsubsection{Create (HSET)}
+
+\begin{lstlisting}
+HSET utilisateur:1 nom "Dupont"
+HSET utilisateur:1 age 30
+HSET utilisateur:1 ville "Paris"
+\end{lstlisting}
+
+\subsubsection{Read (HGET, HGETALL)}
+
+\begin{lstlisting}
+HGET utilisateur:1 nom
+HGETALL utilisateur:1
+\end{lstlisting}
+
+\subsubsection{Update (HSET)}
+
+\begin{lstlisting}
+HSET utilisateur:1 age 31
+\end{lstlisting}
+
+\subsubsection{Delete (HDEL)}
+
+\begin{lstlisting}
+HDEL utilisateur:1 ville
+HDEL utilisateur:1 nom age  -- Supprime plusieurs champs
+\end{lstlisting}
+
+\subsubsection{Opérations Avancées sur Hash}
+
+\begin{lstlisting}
+-- HMSET (multiple SET)
+HMSET utilisateur:1 nom "Dupont" age 30 ville "Paris"
+
+-- HMGET (multiple GET)
+HMGET utilisateur:1 nom age ville
+
+-- HKEYS (toutes les clés)
+HKEYS utilisateur:1
+
+-- HVALS (toutes les valeurs)
+HVALS utilisateur:1
+
+-- HEXISTS (vérifier existence)
+HEXISTS utilisateur:1 nom
+
+-- HLEN (nombre de champs)
+HLEN utilisateur:1
+
+-- HINCRBY (incrémenter champ numérique)
+HINCRBY utilisateur:1 age 1
+
+-- HINCRBYFLOAT
+HINCRBYFLOAT utilisateur:1 score 0.5
+\end{lstlisting}
+
+\subsection{List (Liste)}
+
+\subsubsection{Create (LPUSH, RPUSH)}
+
+\begin{lstlisting}
+LPUSH liste "element1"
+LPUSH liste "element2" "element3"
+RPUSH liste "element4"
+\end{lstlisting}
+
+\subsubsection{Read (LRANGE, LINDEX)}
+
+\begin{lstlisting}
+LRANGE liste 0 -1  -- Tous les éléments
+LRANGE liste 0 2   -- 3 premiers éléments
+LINDEX liste 0     -- Premier élément
+LINDEX liste -1    -- Dernier élément
+\end{lstlisting}
+
+\subsubsection{Update (LSET)}
+
+\begin{lstlisting}
+LSET liste 0 "nouvelle_valeur"
+\end{lstlisting}
+
+\subsubsection{Delete (LPOP, RPOP, LREM)}
+
+\begin{lstlisting}
+LPOP liste          -- Retire le premier
+RPOP liste          -- Retire le dernier
+LREM liste 2 "val"  -- Retire 2 occurrences de "val"
+\end{lstlisting}
+
+\subsubsection{Opérations Avancées sur List}
+
+\begin{lstlisting}
+-- LLEN (longueur)
+LLEN liste
+
+-- LTRIM (garder seulement un range)
+LTRIM liste 0 2
+
+-- RPOPLPUSH (déplacer de fin à début d'une autre liste)
+RPOPLPUSH liste1 liste2
+
+-- BLPOP (blocking left pop)
+BLPOP liste 10  -- Attend jusqu'à 10 secondes
+
+-- BRPOP (blocking right pop)
+BRPOP liste 10
+\end{lstlisting}
+
+\subsection{Set (Ensemble)}
+
+\subsubsection{Create (SADD)}
+
+\begin{lstlisting}
+SADD tags "important"
+SADD tags "urgent" "prioritaire"
+\end{lstlisting}
+
+\subsubsection{Read (SMEMBERS, SISMEMBER)}
+
+\begin{lstlisting}
+SMEMBERS tags
+SISMEMBER tags "important"  -- Retourne 1 si existe, 0 sinon
+\end{lstlisting}
+
+\subsubsection{Update (SADD pour ajouter)}
+
+\begin{lstlisting}
+SADD tags "nouveau_tag"
+\end{lstlisting}
+
+\subsubsection{Delete (SREM)}
+
+\begin{lstlisting}
+SREM tags "important"
+SREM tags "urgent" "prioritaire"
+\end{lstlisting}
+
+\subsubsection{Opérations Avancées sur Set}
+
+\begin{lstlisting}
+-- SCARD (cardinalité)
+SCARD tags
+
+-- SRANDMEMBER (élément aléatoire)
+SRANDMEMBER tags
+SRANDMEMBER tags 3  -- 3 éléments aléatoires
+
+-- SPOP (retirer un élément aléatoire)
+SPOP tags
+
+-- SDIFF (différence)
+SDIFF set1 set2
+
+-- SINTER (intersection)
+SINTER set1 set2
+
+-- SUNION (union)
+SUNION set1 set2
+
+-- SDIFFSTORE (différence et stocker)
+SDIFFSTORE resultat set1 set2
+
+-- SINTERSTORE (intersection et stocker)
+SINTERSTORE resultat set1 set2
+
+-- SUNIONSTORE (union et stocker)
+SUNIONSTORE resultat set1 set2
+
+-- SMOVE (déplacer élément)
+SMOVE set1 set2 "element"
+\end{lstlisting}
+
+\subsection{Sorted Set (Ensemble Ordonné)}
+
+\subsubsection{Create (ZADD)}
+
+\begin{lstlisting}
+ZADD scores 100 "joueur1"
+ZADD scores 200 "joueur2" 150 "joueur3"
+\end{lstlisting}
+
+\subsubsection{Read (ZRANGE, ZREVRANGE)}
+
+\begin{lstlisting}
+ZRANGE scores 0 -1                    -- Tous, par score croissant
+ZRANGE scores 0 -1 WITHSCORES        -- Avec scores
+ZREVRANGE scores 0 -1                -- Par score décroissant
+ZREVRANGE scores 0 2                 -- Top 3
+ZSCORE scores "joueur1"               -- Score d'un membre
+\end{lstlisting}
+
+\subsubsection{Update (ZADD pour modifier score)}
+
+\begin{lstlisting}
+ZADD scores 250 "joueur1"  -- Met à jour le score
+ZINCRBY scores 10 "joueur1"  -- Incrémente le score
+\end{lstlisting}
+
+\subsubsection{Delete (ZREM)}
+
+\begin{lstlisting}
+ZREM scores "joueur1"
+ZREM scores "joueur2" "joueur3"
+\end{lstlisting}
+
+\subsubsection{Opérations Avancées sur Sorted Set}
+
+\begin{lstlisting}
+-- ZCARD (nombre d'éléments)
+ZCARD scores
+
+-- ZCOUNT (compter dans un range de scores)
+ZCOUNT scores 100 200
+
+-- ZRANK (rang d'un membre, croissant)
+ZRANK scores "joueur1"
+
+-- ZREVRANK (rang d'un membre, décroissant)
+ZREVRANK scores "joueur1"
+
+-- ZRANGEBYSCORE (par range de scores)
+ZRANGEBYSCORE scores 100 200
+ZRANGEBYSCORE scores 100 200 WITHSCORES LIMIT 0 10
+
+-- ZREVRANGEBYSCORE
+ZREVRANGEBYSCORE scores 200 100
+
+-- ZREMRANGEBYRANK (supprimer par rang)
+ZREMRANGEBYRANK scores 0 2  -- Supprime les 3 premiers
+
+-- ZREMRANGEBYSCORE (supprimer par score)
+ZREMRANGEBYSCORE scores 0 100
+
+-- ZUNIONSTORE (union de sorted sets)
+ZUNIONSTORE resultat 2 set1 set2 WEIGHTS 1 2
+
+-- ZINTERSTORE (intersection de sorted sets)
+ZINTERSTORE resultat 2 set1 set2
+\end{lstlisting}
+
+\newpage
+
+\section{Gestion des Clés}
+
+\subsection{Opérations sur Clés}
+
+\begin{lstlisting}
+-- EXISTS (vérifier existence)
+EXISTS cle
+
+-- TYPE (type de la clé)
+TYPE cle
+
+-- TTL (time to live en secondes)
+TTL cle
+
+-- PTTL (time to live en millisecondes)
+PTTL cle
+
+-- EXPIRE (définir expiration en secondes)
+EXPIRE cle 3600
+
+-- PEXPIRE (définir expiration en millisecondes)
+PEXPIRE cle 3600000
+
+-- EXPIREAT (expiration à un timestamp)
+EXPIREAT cle 1234567890
+
+-- PERSIST (supprimer expiration)
+PERSIST cle
+
+-- RENAME (renommer)
+RENAME ancienne nouvelle
+
+-- RENAMENX (renommer si nouvelle n'existe pas)
+RENAMENX ancienne nouvelle
+
+-- KEYS (trouver toutes les clés correspondant au pattern)
+KEYS utilisateur:*
+
+-- SCAN (scanner les clés, recommandé)
+SCAN 0 MATCH utilisateur:* COUNT 100
+
+-- DEL (supprimer)
+DEL cle1 cle2 cle3
+
+-- UNLINK (supprimer de manière asynchrone)
+UNLINK cle1 cle2
+\end{lstlisting}
+
+\subsection{Patterns de Clés}
+
+\begin{lstlisting}
+-- * : correspond à n'importe quel caractère
+KEYS utilisateur:*
+
+-- ? : correspond à un seul caractère
+KEYS utilisateur:?
+
+-- [abc] : correspond à a, b ou c
+KEYS utilisateur:[123]
+
+-- [a-z] : correspond à un caractère dans la plage
+KEYS utilisateur:[1-9]
+\end{lstlisting}
+
+\newpage
+
+\section{Transactions}
+
+\subsection{MULTI/EXEC}
+
+\begin{lstlisting}
+MULTI
+SET cle1 "valeur1"
+SET cle2 "valeur2"
+INCR compteur
+EXEC
+\end{lstlisting}
+
+\subsection{DISCARD}
+
+\begin{lstlisting}
+MULTI
+SET cle1 "valeur1"
+DISCARD  -- Annule la transaction
+\end{lstlisting}
+
+\subsection{WATCH}
+
+\begin{lstlisting}
+WATCH cle
+MULTI
+SET cle "valeur"
+EXEC  -- Échoue si cle a été modifiée entre WATCH et EXEC
+\end{lstlisting}
+
+\newpage
+
+\section{Pub/Sub (Publication/Souscription)}
+
+\subsection{PUBLISH}
+
+\begin{lstlisting}
+PUBLISH canal "message"
+\end{lstlisting}
+
+\subsection{SUBSCRIBE}
+
+\begin{lstlisting}
+SUBSCRIBE canal1 canal2
+\end{lstlisting}
+
+\subsection{PSUBSCRIBE (Pattern Subscribe)}
+
+\begin{lstlisting}
+PSUBSCRIBE news.*
+\end{lstlisting}
+
+\subsection{UNSUBSCRIBE}
+
+\begin{lstlisting}
+UNSUBSCRIBE canal1
+\end{lstlisting}
+
+\subsection{PUNSUBSCRIBE}
+
+\begin{lstlisting}
+PUNSUBSCRIBE news.*
+\end{lstlisting}
+
+\newpage
+
+\section{Exemples Pratiques}
+
+\subsection{Exemple 1 : Système de Votes}
+
+\begin{lstlisting}
+-- Voter pour un article
+ZINCRBY article:votes 1 "article:123"
+
+-- Obtenir les top articles
+ZREVRANGE article:votes 0 9 WITHSCORES
+
+-- Vérifier le score d'un article
+ZSCORE article:votes "article:123"
+\end{lstlisting}
+
+\subsection{Exemple 2 : Cache Utilisateur}
+
+\begin{lstlisting}
+-- Stocker un utilisateur
+HMSET utilisateur:123 nom "Dupont" age 30 ville "Paris"
+EXPIRE utilisateur:123 3600
+
+-- Récupérer un utilisateur
+HGETALL utilisateur:123
+
+-- Mettre à jour
+HSET utilisateur:123 age 31
+\end{lstlisting}
+
+\subsection{Exemple 3 : File d'Attente}
+
+\begin{lstlisting}
+-- Ajouter à la file
+LPUSH file:travaux "travail1"
+LPUSH file:travaux "travail2"
+
+-- Traiter un travail
+RPOP file:travaux
+
+-- Voir la file
+LRANGE file:travaux 0 -1
+\end{lstlisting}
+
+\subsection{Exemple 4 : Tags d'Articles}
+
+\begin{lstlisting}
+-- Ajouter des tags à un article
+SADD article:123:tags "tech" "programming" "redis"
+
+-- Trouver tous les articles avec un tag
+SMEMBERS article:123:tags
+
+-- Trouver les articles communs (intersection)
+SINTER article:123:tags article:456:tags
+\end{lstlisting}
+
+\subsection{Exemple 5 : Leaderboard}
+
+\begin{lstlisting}
+-- Ajouter un score
+ZADD leaderboard 1000 "joueur1"
+ZADD leaderboard 2000 "joueur2"
+ZADD leaderboard 1500 "joueur3"
+
+-- Top 10
+ZREVRANGE leaderboard 0 9 WITHSCORES
+
+-- Rang d'un joueur
+ZREVRANK leaderboard "joueur1"
+
+-- Incrémenter le score
+ZINCRBY leaderboard 100 "joueur1"
+\end{lstlisting}
+
+\newpage
+
+\section{Résumé des Opérations Essentielles}
+
+\subsection{Structures de Données}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Type} & \textbf{Create} & \textbf{Read} \\
+\hline
+String & \texttt{SET} & \texttt{GET} \\
+\hline
+Hash & \texttt{HSET} & \texttt{HGET}, \texttt{HGETALL} \\
+\hline
+List & \texttt{LPUSH}, \texttt{RPUSH} & \texttt{LRANGE}, \texttt{LINDEX} \\
+\hline
+Set & \texttt{SADD} & \texttt{SMEMBERS} \\
+\hline
+Sorted Set & \texttt{ZADD} & \texttt{ZRANGE}, \texttt{ZREVRANGE} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Opérations CRUD par Type}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Type} & \textbf{Create} & \textbf{Read} & \textbf{Update} & \textbf{Delete} \\
+\hline
+String & \texttt{SET} & \texttt{GET} & \texttt{SET} & \texttt{DEL} \\
+\hline
+Hash & \texttt{HSET} & \texttt{HGET} & \texttt{HSET} & \texttt{HDEL} \\
+\hline
+List & \texttt{LPUSH/RPUSH} & \texttt{LRANGE} & \texttt{LSET} & \texttt{LPOP/RPOP} \\
+\hline
+Set & \texttt{SADD} & \texttt{SMEMBERS} & \texttt{SADD} & \texttt{SREM} \\
+\hline
+Sorted Set & \texttt{ZADD} & \texttt{ZRANGE} & \texttt{ZADD} & \texttt{ZREM} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Commandes Utiles}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Commande} & \textbf{Description} \\
+\hline
+\texttt{EXISTS} & Vérifier existence d'une clé \\
+\hline
+\texttt{TYPE} & Type d'une clé \\
+\hline
+\texttt{TTL} & Time to live \\
+\hline
+\texttt{EXPIRE} & Définir expiration \\
+\hline
+\texttt{KEYS} & Trouver des clés (pattern) \\
+\hline
+\texttt{SCAN} & Scanner les clés (recommandé) \\
+\hline
+\texttt{DEL} & Supprimer une clé \\
+\hline
+\texttt{MULTI/EXEC} & Transaction \\
+\hline
+\texttt{WATCH} & Surveiller une clé \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Points Importants}
+
+\begin{itemize}
+    \item \textbf{String} : Valeur simple, peut être n'importe quel type
+    \item \textbf{Hash} : Structure clé-valeur imbriquée, idéal pour objets
+    \item \textbf{List} : Liste ordonnée, peut être utilisée comme file
+    \item \textbf{Set} : Ensemble non ordonné, opérations d'ensemble
+    \item \textbf{Sorted Set} : Ensemble ordonné par score, idéal pour leaderboards
+    \item \textbf{TTL} : Toutes les structures peuvent avoir une expiration
+    \item \textbf{Transactions} : MULTI/EXEC pour exécuter plusieurs commandes atomiquement
+    \item \textbf{Pub/Sub} : Système de messagerie asynchrone
+    \item \textbf{KEYS vs SCAN} : SCAN est recommandé pour la production (non-bloquant)
+\end{itemize}
+
+\end{document}
+
