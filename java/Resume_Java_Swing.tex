@@ -1,0 +1,1361 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Java Swing}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration pour le code Java
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={JFrame, JPanel, JButton, JTextField, JLabel, JTextArea, JCheckBox, JRadioButton, JComboBox, JList, BorderLayout, FlowLayout, GridLayout, BoxLayout, GridBagLayout, ActionListener, ActionEvent, setLayout, add, setSize, setVisible, setDefaultCloseOperation, pack, setLocationRelativeTo, setTitle, getText, setText, setEnabled, setPreferredSize, setMaximumSize, setMinimumSize}
+}
+
+% Métadonnées
+\title{Résumé Complet Java Swing\\
+\large JFrame, JPanel, Composants et Positionnement}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction à Swing}
+
+Swing est un toolkit graphique pour Java qui permet de créer des interfaces utilisateur (GUI). Il fait partie de Java Foundation Classes (JFC) et fournit un ensemble de composants pour construire des applications avec fenêtres, boutons, champs de texte, etc.
+
+\subsection{Hiérarchie des Composants}
+
+\begin{itemize}
+    \item \textbf{Component} : Classe de base pour tous les composants Swing
+    \item \textbf{Container} : Composant qui peut contenir d'autres composants
+    \item \textbf{JComponent} : Classe de base pour tous les composants Swing (sauf les fenêtres de haut niveau)
+    \item \textbf{JFrame} : Fenêtre principale de l'application
+    \item \textbf{JPanel} : Conteneur pour organiser d'autres composants
+\end{itemize}
+
+\newpage
+
+\section{JFrame - Fenêtre Principale}
+
+\subsection{Définition}
+
+\textbf{JFrame} est la fenêtre principale d'une application Swing. C'est un conteneur de haut niveau qui représente une fenêtre avec une barre de titre, des boutons de contrôle (réduire, agrandir, fermer), et une zone de contenu.
+
+\subsection{Caractéristiques}
+
+\begin{itemize}
+    \item Fenêtre de haut niveau (top-level window)
+    \item Possède une barre de titre et des bordures
+    \item Peut être redimensionnée, minimisée, maximisée
+    \item Contient un \texttt{ContentPane} (JPanel) où on ajoute les composants
+    \item Gère les événements de fermeture
+\end{itemize}
+
+\subsection{Exemple Basique}
+
+\begin{lstlisting}
+import javax.swing.*;
+
+public class MaFenetre extends JFrame {
+    
+    public MaFenetre() {
+        // Définir le titre de la fenêtre
+        setTitle("Ma Première Fenêtre");
+        
+        // Définir la taille de la fenêtre (largeur, hauteur)
+        setSize(400, 300);
+        
+        // Centrer la fenêtre sur l'écran
+        setLocationRelativeTo(null);
+        
+        // Définir l'action à effectuer lors de la fermeture
+        // EXIT_ON_CLOSE : ferme l'application
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Rendre la fenêtre visible
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        // Créer et afficher la fenêtre
+        SwingUtilities.invokeLater(() -> {
+            new MaFenetre();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{setTitle()} : Définit le titre affiché dans la barre de titre
+    \item \texttt{setSize(width, height)} : Définit la taille en pixels
+    \item \texttt{setLocationRelativeTo(null)} : Centre la fenêtre sur l'écran
+    \item \texttt{setDefaultCloseOperation()} : Définit ce qui se passe quand on clique sur la croix
+    \item \texttt{setVisible(true)} : Rend la fenêtre visible (par défaut, elle est invisible)
+    \item \texttt{SwingUtilities.invokeLater()} : Assure que l'interface graphique est créée dans le thread EDT (Event Dispatch Thread)
+\end{itemize}
+
+\subsection{Constantes pour setDefaultCloseOperation}
+
+\begin{itemize}
+    \item \texttt{JFrame.EXIT\_ON\_CLOSE} : Ferme l'application complètement
+    \item \texttt{JFrame.DISPOSE\_ON\_CLOSE} : Ferme seulement la fenêtre
+    \item \texttt{JFrame.HIDE\_ON\_CLOSE} : Cache la fenêtre (par défaut)
+    \item \texttt{JFrame.DO\_NOTHING\_ON\_CLOSE} : Ne fait rien (gérer manuellement)
+\end{itemize}
+
+\subsection{Exemple avec Contenu}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class FenetreAvecContenu extends JFrame {
+    
+    public FenetreAvecContenu() {
+        setTitle("Fenêtre avec Contenu");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Obtenir le ContentPane (JPanel par défaut)
+        Container contentPane = getContentPane();
+        
+        // Ajouter un label
+        JLabel label = new JLabel("Bienvenue dans Swing !");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(label);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new FenetreAvecContenu();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{getContentPane()} : Retourne le conteneur où on ajoute les composants
+    \item Par défaut, le ContentPane utilise \texttt{BorderLayout}
+    \item On peut ajouter directement des composants au ContentPane
+\end{itemize}
+
+\newpage
+
+\section{JPanel - Panneau Conteneur}
+
+\subsection{Définition}
+
+\textbf{JPanel} est un conteneur léger utilisé pour organiser et regrouper des composants. Contrairement à JFrame, JPanel n'est pas une fenêtre indépendante mais un panneau qui s'intègre dans d'autres conteneurs.
+
+\subsection{Caractéristiques}
+
+\begin{itemize}
+    \item Conteneur de niveau intermédiaire
+    \item Pas de barre de titre ni de bordures par défaut
+    \item Utilisé pour organiser des groupes de composants
+    \item Peut avoir sa propre couleur de fond
+    \item Peut avoir des bordures personnalisées
+    \item Utilise \texttt{FlowLayout} par défaut
+\end{itemize}
+
+\subsection{Exemple Basique}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleJPanel extends JFrame {
+    
+    public ExempleJPanel() {
+        setTitle("Exemple JPanel");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Créer un JPanel
+        JPanel panel = new JPanel();
+        
+        // Ajouter des composants au panel
+        panel.add(new JLabel("Nom :"));
+        panel.add(new JTextField(20));
+        panel.add(new JButton("Valider"));
+        
+        // Ajouter le panel au ContentPane
+        getContentPane().add(panel);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleJPanel();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item JPanel utilise \texttt{FlowLayout} par défaut (composants alignés horizontalement)
+    \item Les composants sont ajoutés avec \texttt{add()}
+    \item Le panel est ensuite ajouté au ContentPane de la JFrame
+\end{itemize}
+
+\subsection{JPanel avec Couleur et Bordure}
+
+\begin{lstlisting}
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+
+public class PanelStylise extends JFrame {
+    
+    public PanelStylise() {
+        setTitle("Panel Stylisé");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Créer un JPanel
+        JPanel panel = new JPanel();
+        
+        // Définir la couleur de fond
+        panel.setBackground(Color.LIGHT_GRAY);
+        
+        // Créer une bordure avec titre
+        Border border = BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLUE, 2),
+            "Informations"
+        );
+        panel.setBorder(border);
+        
+        // Ajouter des composants
+        panel.add(new JLabel("Ceci est un panel stylisé"));
+        panel.add(new JButton("Bouton"));
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new PanelStylise();
+        });
+    }
+}
+\end{lstlisting}
+
+\newpage
+
+\section{Différence entre JFrame et JPanel}
+
+\subsection{Comparaison}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{6cm}|p{6cm}|}
+\hline
+\textbf{JFrame} & \textbf{JPanel} \\
+\hline
+Fenêtre de haut niveau & Conteneur intermédiaire \\
+\hline
+A une barre de titre & Pas de barre de titre \\
+\hline
+Peut être redimensionnée indépendamment & S'adapte à son conteneur parent \\
+\hline
+Utilise BorderLayout par défaut & Utilise FlowLayout par défaut \\
+\hline
+Contient un ContentPane (JPanel) & Est ajouté dans d'autres conteneurs \\
+\hline
+Gère les événements de fermeture & Ne gère pas les événements de fermeture \\
+\hline
+Une application a généralement une JFrame principale & Une application peut avoir plusieurs JPanel \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Quand Utiliser JFrame ?}
+
+\begin{itemize}
+    \item Pour créer la fenêtre principale de l'application
+    \item Quand on a besoin d'une fenêtre indépendante
+    \item Pour les dialogues modaux (JDialog est préférable)
+\end{itemize}
+
+\subsection{Quand Utiliser JPanel ?}
+
+\begin{itemize}
+    \item Pour organiser des groupes de composants
+    \item Pour créer des sections dans une fenêtre
+    \item Pour regrouper des composants avec un layout spécifique
+    \item Pour créer des panneaux réutilisables
+\end{itemize}
+
+\subsection{Exemple : JFrame avec Plusieurs JPanel}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class FenetreAvecPanels extends JFrame {
+    
+    public FenetreAvecPanels() {
+        setTitle("Fenêtre avec Plusieurs Panels");
+        setSize(600, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Panel du haut
+        JPanel panelHaut = new JPanel();
+        panelHaut.setBackground(Color.CYAN);
+        panelHaut.add(new JLabel("Panel du Haut"));
+        panelHaut.add(new JButton("Bouton 1"));
+        
+        // Panel du centre
+        JPanel panelCentre = new JPanel();
+        panelCentre.setBackground(Color.YELLOW);
+        panelCentre.add(new JLabel("Panel du Centre"));
+        panelCentre.add(new JTextField(20));
+        
+        // Panel du bas
+        JPanel panelBas = new JPanel();
+        panelBas.setBackground(Color.GREEN);
+        panelBas.add(new JButton("Valider"));
+        panelBas.add(new JButton("Annuler"));
+        
+        // Ajouter les panels au ContentPane (BorderLayout par défaut)
+        getContentPane().add(panelHaut, BorderLayout.NORTH);
+        getContentPane().add(panelCentre, BorderLayout.CENTER);
+        getContentPane().add(panelBas, BorderLayout.SOUTH);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new FenetreAvecPanels();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item On crée plusieurs JPanel pour organiser différentes sections
+    \item Chaque panel a sa propre couleur et ses propres composants
+    \item Les panels sont ajoutés au ContentPane avec \texttt{BorderLayout}
+    \item \texttt{BorderLayout.NORTH}, \texttt{CENTER}, \texttt{SOUTH} définissent la position
+\end{itemize}
+
+\newpage
+
+\section{JTextField - Champ de Texte}
+
+\subsection{Définition}
+
+\textbf{JTextField} est un composant qui permet à l'utilisateur de saisir une ligne de texte. C'est l'un des composants les plus utilisés dans les formulaires.
+
+\subsection{Caractéristiques}
+
+\begin{itemize}
+    \item Permet la saisie d'une seule ligne de texte
+    \item Peut être éditable ou en lecture seule
+    \item Peut avoir un texte par défaut (placeholder)
+    \item Peut limiter le nombre de caractères
+    \item Génère des événements lors de la saisie
+\end{itemize}
+
+\subsection{Exemple Basique}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleTextField extends JFrame {
+    
+    public ExempleTextField() {
+        setTitle("Exemple JTextField");
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        
+        // Créer un label
+        JLabel label = new JLabel("Nom :");
+        
+        // Créer un champ de texte avec 20 colonnes
+        JTextField textField = new JTextField(20);
+        
+        // Définir un texte par défaut
+        textField.setText("Entrez votre nom");
+        
+        panel.add(label);
+        panel.add(textField);
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleTextField();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{new JTextField(20)} : Crée un champ de 20 colonnes de largeur
+    \item \texttt{setText()} : Définit le texte initial
+    \item \texttt{getText()} : Récupère le texte saisi (voir exemple suivant)
+\end{itemize}
+
+\subsection{Exemple avec Récupération du Texte}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class TextFieldAvecBouton extends JFrame {
+    
+    private JTextField textField;
+    private JLabel resultatLabel;
+    
+    public TextFieldAvecBouton() {
+        setTitle("TextField avec Bouton");
+        setSize(400, 200);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        
+        // Champ de texte
+        textField = new JTextField(20);
+        textField.setToolTipText("Entrez votre nom ici");
+        
+        // Bouton
+        JButton bouton = new JButton("Afficher");
+        bouton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Récupérer le texte saisi
+                String texte = textField.getText();
+                resultatLabel.setText("Vous avez saisi : " + texte);
+            }
+        });
+        
+        // Label pour afficher le résultat
+        resultatLabel = new JLabel("Résultat apparaîtra ici");
+        
+        panel.add(new JLabel("Nom :"));
+        panel.add(textField);
+        panel.add(bouton);
+        panel.add(resultatLabel);
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new TextFieldAvecBouton();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{getText()} : Récupère le texte saisi dans le champ
+    \item \texttt{setToolTipText()} : Affiche une info-bulle au survol
+    \item \texttt{addActionListener()} : Ajoute un écouteur pour le bouton
+    \item Quand on clique sur le bouton, le texte saisi est récupéré et affiché
+\end{itemize}
+
+\subsection{Méthodes Utiles de JTextField}
+
+\begin{lstlisting}
+JTextField textField = new JTextField(20);
+
+// Définir le texte
+textField.setText("Texte initial");
+
+// Récupérer le texte
+String texte = textField.getText();
+
+// Définir en lecture seule
+textField.setEditable(false);
+
+// Définir la couleur du texte
+textField.setForeground(Color.BLUE);
+
+// Définir la couleur de fond
+textField.setBackground(Color.YELLOW);
+
+// Définir la police
+textField.setFont(new Font("Arial", Font.BOLD, 14));
+
+// Sélectionner tout le texte
+textField.selectAll();
+
+// Définir le texte sélectionné
+textField.setSelectionStart(0);
+textField.setSelectionEnd(5);
+
+// Obtenir la longueur du texte
+int longueur = textField.getText().length();
+
+// Vider le champ
+textField.setText("");
+\end{lstlisting}
+
+\newpage
+
+\section{JButton - Bouton}
+
+\subsection{Définition}
+
+\textbf{JButton} est un composant qui affiche un bouton sur lequel l'utilisateur peut cliquer pour déclencher une action.
+
+\subsection{Caractéristiques}
+
+\begin{itemize}
+    \item Peut afficher du texte, une icône, ou les deux
+    \item Génère un événement \texttt{ActionEvent} lors du clic
+    \item Peut être activé ou désactivé
+    \item Peut avoir des raccourcis clavier (mnemonics)
+\end{itemize}
+
+\subsection{Exemple Basique}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleBouton extends JFrame {
+    
+    public ExempleBouton() {
+        setTitle("Exemple JButton");
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        
+        // Créer un bouton avec texte
+        JButton bouton1 = new JButton("Cliquez-moi");
+        
+        // Créer un bouton avec texte et action
+        JButton bouton2 = new JButton("Valider");
+        bouton2.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this, "Bouton cliqué !");
+        });
+        
+        panel.add(bouton1);
+        panel.add(bouton2);
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleBouton();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{new JButton("texte")} : Crée un bouton avec du texte
+    \item \texttt{addActionListener()} : Ajoute un écouteur d'événement
+    \item Utilisation d'une lambda expression pour simplifier le code
+\end{itemize}
+
+\subsection{Exemple avec Plusieurs Boutons}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class PlusieursBoutons extends JFrame {
+    
+    private JLabel compteurLabel;
+    private int compteur = 0;
+    
+    public PlusieursBoutons() {
+        setTitle("Plusieurs Boutons");
+        setSize(400, 200);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        
+        // Bouton Incrémenter
+        JButton btnIncrementer = new JButton("+");
+        btnIncrementer.addActionListener(e -> {
+            compteur++;
+            mettreAJourLabel();
+        });
+        
+        // Bouton Décrémenter
+        JButton btnDecrementer = new JButton("-");
+        btnDecrementer.addActionListener(e -> {
+            compteur--;
+            mettreAJourLabel();
+        });
+        
+        // Bouton Réinitialiser
+        JButton btnReset = new JButton("Reset");
+        btnReset.addActionListener(e -> {
+            compteur = 0;
+            mettreAJourLabel();
+        });
+        
+        // Label pour afficher le compteur
+        compteurLabel = new JLabel("Compteur : 0");
+        
+        panel.add(btnDecrementer);
+        panel.add(compteurLabel);
+        panel.add(btnIncrementer);
+        panel.add(btnReset);
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    private void mettreAJourLabel() {
+        compteurLabel.setText("Compteur : " + compteur);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new PlusieursBoutons();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item Chaque bouton a sa propre action
+    \item Les actions modifient une variable partagée (compteur)
+    \item La méthode \texttt{mettreAJourLabel()} met à jour l'affichage
+\end{itemize}
+
+\subsection{Méthodes Utiles de JButton}
+
+\begin{lstlisting}
+JButton bouton = new JButton("Texte");
+
+// Définir le texte
+bouton.setText("Nouveau Texte");
+
+// Récupérer le texte
+String texte = bouton.getText();
+
+// Activer/Désactiver le bouton
+bouton.setEnabled(true);
+bouton.setEnabled(false);
+
+// Définir une icône
+bouton.setIcon(new ImageIcon("icon.png"));
+
+// Définir un raccourci clavier (Alt + T)
+bouton.setMnemonic('T');
+
+// Définir un tooltip
+bouton.setToolTipText("Cliquez pour valider");
+
+// Définir la taille préférée
+bouton.setPreferredSize(new Dimension(100, 30));
+\end{lstlisting}
+
+\newpage
+
+\section{Positionnement des Éléments - Layout Managers}
+
+\subsection{Introduction}
+
+Les \textbf{Layout Managers} contrôlent la position et la taille des composants dans un conteneur. Swing propose plusieurs layout managers pour différents besoins.
+
+\subsection{FlowLayout}
+
+\subsubsection{Description}
+
+\textbf{FlowLayout} place les composants de gauche à droite, ligne par ligne, comme du texte. C'est le layout par défaut de JPanel.
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleFlowLayout extends JFrame {
+    
+    public ExempleFlowLayout() {
+        setTitle("FlowLayout");
+        setSize(500, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        
+        // Définir FlowLayout explicitement
+        panel.setLayout(new FlowLayout());
+        
+        // Ajouter des boutons
+        for (int i = 1; i <= 10; i++) {
+            panel.add(new JButton("Bouton " + i));
+        }
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleFlowLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item Les composants sont alignés horizontalement
+    \item Quand il n'y a plus de place, ils passent à la ligne suivante
+    \item Par défaut, centré avec espacement de 5 pixels
+\end{itemize}
+
+\subsubsection{Alignements}
+
+\begin{lstlisting}
+// Alignement à gauche
+panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+// Alignement à droite
+panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+// Alignement centré (par défaut)
+panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+// Avec espacement personnalisé
+panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 20));
+// 10 = espacement horizontal, 20 = espacement vertical
+\end{lstlisting}
+
+\subsection{BorderLayout}
+
+\subsubsection{Description}
+
+\textbf{BorderLayout} divise le conteneur en 5 zones : NORTH, SOUTH, EAST, WEST, et CENTER. C'est le layout par défaut de JFrame.
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleBorderLayout extends JFrame {
+    
+    public ExempleBorderLayout() {
+        setTitle("BorderLayout");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // BorderLayout est le layout par défaut de JFrame
+        // Mais on peut le définir explicitement
+        setLayout(new BorderLayout());
+        
+        // Ajouter des composants dans chaque zone
+        add(new JButton("Nord"), BorderLayout.NORTH);
+        add(new JButton("Sud"), BorderLayout.SOUTH);
+        add(new JButton("Est"), BorderLayout.EAST);
+        add(new JButton("Ouest"), BorderLayout.WEST);
+        add(new JButton("Centre"), BorderLayout.CENTER);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleBorderLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{BorderLayout.NORTH} : En haut, prend toute la largeur
+    \item \texttt{BorderLayout.SOUTH} : En bas, prend toute la largeur
+    \item \texttt{BorderLayout.EAST} : À droite, prend toute la hauteur
+    \item \texttt{BorderLayout.WEST} : À gauche, prend toute la hauteur
+    \item \texttt{BorderLayout.CENTER} : Au centre, prend l'espace restant
+\end{itemize}
+
+\subsubsection{Exemple avec JPanel dans BorderLayout}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class BorderLayoutAvecPanels extends JFrame {
+    
+    public BorderLayoutAvecPanels() {
+        setTitle("BorderLayout avec Panels");
+        setSize(600, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Panel du haut
+        JPanel panelHaut = new JPanel();
+        panelHaut.add(new JLabel("En-tête"));
+        panelHaut.setBackground(Color.CYAN);
+        
+        // Panel du centre
+        JPanel panelCentre = new JPanel();
+        panelCentre.add(new JTextField(30));
+        panelCentre.setBackground(Color.YELLOW);
+        
+        // Panel du bas
+        JPanel panelBas = new JPanel();
+        panelBas.add(new JButton("Valider"));
+        panelBas.add(new JButton("Annuler"));
+        panelBas.setBackground(Color.GREEN);
+        
+        // Ajouter les panels
+        add(panelHaut, BorderLayout.NORTH);
+        add(panelCentre, BorderLayout.CENTER);
+        add(panelBas, BorderLayout.SOUTH);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new BorderLayoutAvecPanels();
+        });
+    }
+}
+\end{lstlisting}
+
+\subsection{GridLayout}
+
+\subsubsection{Description}
+
+\textbf{GridLayout} organise les composants dans une grille rectangulaire. Toutes les cellules ont la même taille.
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleGridLayout extends JFrame {
+    
+    public ExempleGridLayout() {
+        setTitle("GridLayout");
+        setSize(400, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        
+        // Créer une grille de 3 lignes et 3 colonnes
+        // Avec espacement de 5 pixels horizontal et vertical
+        panel.setLayout(new GridLayout(3, 3, 5, 5));
+        
+        // Ajouter 9 boutons
+        for (int i = 1; i <= 9; i++) {
+            panel.add(new JButton("" + i));
+        }
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleGridLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{new GridLayout(rows, cols, hgap, vgap)}
+    \item \texttt{rows} : Nombre de lignes
+    \item \texttt{cols} : Nombre de colonnes
+    \item \texttt{hgap} : Espacement horizontal entre les cellules
+    \item \texttt{vgap} : Espacement vertical entre les cellules
+    \item Tous les composants ont la même taille
+\end{itemize}
+
+\subsubsection{Exemple : Calculatrice}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class CalculatriceLayout extends JFrame {
+    
+    public CalculatriceLayout() {
+        setTitle("Calculatrice");
+        setSize(300, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        setLayout(new BorderLayout());
+        
+        // Zone d'affichage en haut
+        JTextField ecran = new JTextField();
+        ecran.setEditable(false);
+        ecran.setFont(new Font("Arial", Font.BOLD, 20));
+        add(ecran, BorderLayout.NORTH);
+        
+        // Panel pour les boutons
+        JPanel panelBoutons = new JPanel();
+        panelBoutons.setLayout(new GridLayout(4, 4, 5, 5));
+        
+        // Ajouter les boutons
+        String[] boutons = {
+            "7", "8", "9", "/",
+            "4", "5", "6", "*",
+            "1", "2", "3", "-",
+            "0", ".", "=", "+"
+        };
+        
+        for (String texte : boutons) {
+            panelBoutons.add(new JButton(texte));
+        }
+        
+        add(panelBoutons, BorderLayout.CENTER);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new CalculatriceLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\subsection{BoxLayout}
+
+\subsubsection{Description}
+
+\textbf{BoxLayout} organise les composants soit horizontalement, soit verticalement, dans une seule ligne ou colonne.
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleBoxLayout extends JFrame {
+    
+    public ExempleBoxLayout() {
+        setTitle("BoxLayout");
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Créer un panel avec BoxLayout vertical
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        
+        // Ajouter des composants
+        panel.add(new JButton("Bouton 1"));
+        panel.add(Box.createVerticalStrut(10)); // Espacement
+        panel.add(new JButton("Bouton 2"));
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(new JButton("Bouton 3"));
+        panel.add(Box.createVerticalGlue()); // Glue pour pousser vers le bas
+        
+        getContentPane().add(panel);
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleBoxLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{BoxLayout.Y\_AXIS} : Vertical
+    \item \texttt{BoxLayout.X\_AXIS} : Horizontal
+    \item \texttt{Box.createVerticalStrut(n)} : Espacement fixe de n pixels
+    \item \texttt{Box.createVerticalGlue()} : Espacement flexible
+\end{itemize}
+
+\subsection{GridBagLayout}
+
+\subsubsection{Description}
+
+\textbf{GridBagLayout} est le layout le plus flexible. Il permet un contrôle précis de la position et de la taille de chaque composant.
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+
+public class ExempleGridBagLayout extends JFrame {
+    
+    public ExempleGridBagLayout() {
+        setTitle("GridBagLayout");
+        setSize(500, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Label "Nom :" en (0, 0)
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        add(new JLabel("Nom :"), gbc);
+        
+        // TextField en (1, 0) - prend 2 colonnes
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        add(new JTextField(20), gbc);
+        
+        // Label "Email :" en (0, 1)
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        add(new JLabel("Email :"), gbc);
+        
+        // TextField en (1, 1) - prend 2 colonnes
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        add(new JTextField(20), gbc);
+        
+        // Bouton "Valider" en (1, 2)
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        add(new JButton("Valider"), gbc);
+        
+        // Bouton "Annuler" en (2, 2)
+        gbc.gridx = 2;
+        add(new JButton("Annuler"), gbc);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ExempleGridBagLayout();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item \texttt{gridx, gridy} : Position dans la grille
+    \item \texttt{gridwidth, gridheight} : Nombre de cellules occupées
+    \item \texttt{fill} : Comment remplir l'espace (HORIZONTAL, VERTICAL, BOTH, NONE)
+    \item \texttt{weightx, weighty} : Poids pour l'expansion (0.0 à 1.0)
+    \item \texttt{insets} : Marges autour du composant
+\end{itemize}
+
+\newpage
+
+\section{Exemple Complet : Formulaire}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class FormulaireComplet extends JFrame {
+    
+    private JTextField champNom;
+    private JTextField champEmail;
+    private JTextArea champMessage;
+    private JLabel labelResultat;
+    
+    public FormulaireComplet() {
+        setTitle("Formulaire de Contact");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Panel principal avec BorderLayout
+        setLayout(new BorderLayout());
+        
+        // Panel du formulaire au centre
+        JPanel panelFormulaire = new JPanel();
+        panelFormulaire.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Nom
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panelFormulaire.add(new JLabel("Nom :"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        champNom = new JTextField(20);
+        panelFormulaire.add(champNom, gbc);
+        
+        // Email
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        panelFormulaire.add(new JLabel("Email :"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        champEmail = new JTextField(20);
+        panelFormulaire.add(champEmail, gbc);
+        
+        // Message
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        panelFormulaire.add(new JLabel("Message :"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        champMessage = new JTextArea(5, 20);
+        champMessage.setLineWrap(true);
+        JScrollPane scrollPane = new JScrollPane(champMessage);
+        panelFormulaire.add(scrollPane, gbc);
+        
+        // Panel des boutons en bas
+        JPanel panelBoutons = new JPanel();
+        panelBoutons.setLayout(new FlowLayout());
+        
+        JButton btnValider = new JButton("Valider");
+        btnValider.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nom = champNom.getText();
+                String email = champEmail.getText();
+                String message = champMessage.getText();
+                
+                if (nom.isEmpty() || email.isEmpty() || message.isEmpty()) {
+                    labelResultat.setText("Veuillez remplir tous les champs !");
+                    labelResultat.setForeground(Color.RED);
+                } else {
+                    labelResultat.setText("Formulaire envoyé avec succès !");
+                    labelResultat.setForeground(Color.GREEN);
+                }
+            }
+        });
+        
+        JButton btnEffacer = new JButton("Effacer");
+        btnEffacer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                champNom.setText("");
+                champEmail.setText("");
+                champMessage.setText("");
+                labelResultat.setText("");
+            }
+        });
+        
+        panelBoutons.add(btnValider);
+        panelBoutons.add(btnEffacer);
+        
+        // Label de résultat
+        labelResultat = new JLabel("");
+        labelResultat.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Ajouter les panels
+        add(panelFormulaire, BorderLayout.CENTER);
+        add(panelBoutons, BorderLayout.SOUTH);
+        add(labelResultat, BorderLayout.NORTH);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new FormulaireComplet();
+        });
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication} :
+\begin{itemize}
+    \item Utilise \texttt{GridBagLayout} pour le formulaire (positionnement précis)
+    \item Utilise \texttt{BorderLayout} pour la fenêtre principale
+    \item Les boutons ont des écouteurs d'événements pour valider et effacer
+    \item Validation des champs avant l'envoi
+    \item Utilisation de \texttt{JTextArea} avec \texttt{JScrollPane} pour le message
+\end{itemize}
+
+\newpage
+
+\section{Résumé des Concepts Essentiels}
+
+\subsection{JFrame vs JPanel}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{7cm}|p{7cm}|}
+\hline
+\textbf{JFrame} & \textbf{JPanel} \\
+\hline
+Fenêtre principale & Panneau conteneur \\
+\hline
+Barre de titre & Pas de barre de titre \\
+\hline
+BorderLayout par défaut & FlowLayout par défaut \\
+\hline
+Une par application & Plusieurs possibles \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Layout Managers}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Layout} & \textbf{Usage} \\
+\hline
+FlowLayout & Composants alignés horizontalement \\
+\hline
+BorderLayout & 5 zones (N, S, E, W, C) \\
+\hline
+GridLayout & Grille rectangulaire uniforme \\
+\hline
+BoxLayout & Ligne ou colonne unique \\
+\hline
+GridBagLayout & Positionnement flexible et précis \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Méthodes Importantes}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Composant} & \textbf{Méthodes Clés} \\
+\hline
+JFrame & \texttt{setTitle()}, \texttt{setSize()}, \texttt{setVisible()}, \texttt{setDefaultCloseOperation()} \\
+\hline
+JPanel & \texttt{setLayout()}, \texttt{add()}, \texttt{setBackground()}, \texttt{setBorder()} \\
+\hline
+JTextField & \texttt{getText()}, \texttt{setText()}, \texttt{setEditable()} \\
+\hline
+JButton & \texttt{addActionListener()}, \texttt{setEnabled()}, \texttt{setText()} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Points Importants}
+
+\begin{itemize}
+    \item Toujours utiliser \texttt{SwingUtilities.invokeLater()} pour créer l'interface dans le thread EDT
+    \item \texttt{setVisible(true)} doit être appelé en dernier après avoir ajouté tous les composants
+    \item Utiliser \texttt{pack()} pour ajuster automatiquement la taille de la fenêtre
+    \item Les layouts peuvent être combinés (un panel avec un layout dans un autre panel avec un autre layout)
+    \item \texttt{getContentPane()} retourne le conteneur principal de JFrame
+    \item Les événements sont gérés via des \texttt{ActionListener} pour les boutons
+\end{itemize}
+
+\end{document}
+
