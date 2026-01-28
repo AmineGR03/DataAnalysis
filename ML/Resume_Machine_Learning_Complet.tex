@@ -1,0 +1,2744 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Machine Learning}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={np, pd, sklearn, plt, sns},
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{importantbox}{
+    colback=yellow!5,
+    colframe=yellow!50,
+    breakable,
+    title=Important
+}
+
+\newtcolorbox{formulebox}{
+    colback=green!5,
+    colframe=green!50,
+    breakable,
+    title=Formule
+}
+
+\newtcolorbox{exemplebox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Exemple
+}
+
+% Métadonnées
+\title{Résumé Complet - Machine Learning\\
+\large Formules, Algorithmes et Scripts Python}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Paramètres vs Hyperparamètres}
+
+\begin{importantbox}
+\textbf{Définitions :}
+\begin{itemize}
+    \item \textbf{Paramètres} : Variables apprises par le modèle pendant l'entraînement (ex: poids $w$, biais $b$)
+    \item \textbf{Hyperparamètres} : Paramètres fixés avant l'entraînement, non appris (ex: taux d'apprentissage $\alpha$, nombre de voisins $k$)
+\end{itemize}
+\end{importantbox}
+
+\subsection{Types d'Apprentissage}
+
+\begin{itemize}
+    \item \textbf{Apprentissage supervisé} : Données étiquetées (régression, classification)
+    \item \textbf{Apprentissage non supervisé} : Données non étiquetées (clustering)
+\end{itemize}
+
+\newpage
+
+\section{Régression Linéaire Simple}
+
+\subsection{Modèle Mathématique}
+
+\begin{formulebox}
+\textbf{Équation de la régression linéaire simple :}
+\begin{align}
+\hat{Y} = a X + b
+\end{align}
+
+où :
+\begin{itemize}
+    \item $X$ : variable indépendante (ex: YearsExperience - années d'expérience)
+    \item $Y$ : variable dépendante (ex: Salary - salaire annuel)
+    \item $\hat{Y}$ : valeur prédite par le modèle
+    \item $a$ : pente (coefficient) - mesure de combien $Y$ change quand $X$ augmente d'une unité
+    \item $b$ : ordonnée à l'origine (biais) - valeur de $Y$ lorsque $X = 0$
+\end{itemize}
+
+\textbf{Interprétation des paramètres :}
+\begin{itemize}
+    \item \textbf{$b$} : Salaire de base (ou d'embauche) d'une personne sans expérience
+    \item \textbf{$a$} : Augmentation de salaire pour chaque année d'expérience supplémentaire
+    \begin{itemize}
+        \item Si $a > 0$ : La droite "monte", $Y$ augmente avec $X$
+        \item Si $a < 0$ : La droite "descend", $Y$ diminue avec $X$
+        \item Si $a = 0$ : La droite est horizontale, $X$ n'a aucune influence sur $Y$
+    \end{itemize}
+\end{itemize}
+\end{formulebox}
+
+\subsection{Fonction de Coût (MSE)}
+
+\begin{formulebox}
+\textbf{Mean Squared Error (MSE) - Erreur Quadratique Moyenne :}
+\begin{align}
+J(a,b) = \frac{1}{2n} \sum_{i=1}^{n} (y_i - (a x_i + b))^2
+\end{align}
+
+où :
+\begin{itemize}
+    \item $n$ : nombre d'observations
+    \item $y_i$ : valeur réelle observée pour l'exemple $i$
+    \item $a x_i + b$ : valeur prédite par le modèle pour l'exemple $i$
+    \item $(y_i - (a x_i + b))$ : résidu (erreur) pour l'exemple $i$
+\end{itemize}
+
+\textbf{Objectif :} Minimiser $J(a,b)$ pour trouver les meilleurs paramètres $a$ et $b$.
+
+\textbf{Note :} On met les erreurs au carré pour éviter que les erreurs positives et négatives s'annulent.
+\end{formulebox}
+
+\subsection{Gradient Descent (Descente de Gradient)}
+
+\begin{formulebox}
+\textbf{Mise à jour des paramètres :}
+\begin{align}
+A_i &= A_{i-1} - \alpha \frac{\partial J}{\partial A_{i-1}} \\
+B_i &= B_{i-1} - \alpha \frac{\partial J}{\partial B_{i-1}}
+\end{align}
+
+\textbf{Dérivées partielles :}
+\begin{align}
+\frac{\partial J}{\partial A} &= \frac{1}{n} \sum_{i=1}^{n} (y_i - (a x_i + b)) \cdot (-x_i) = -\frac{1}{n} \sum_{i=1}^{n} (y_i - (a x_i + b)) \cdot x_i \\
+\frac{\partial J}{\partial B} &= \frac{1}{n} \sum_{i=1}^{n} (y_i - (a x_i + b)) \cdot (-1) = -\frac{1}{n} \sum_{i=1}^{n} (y_i - (a x_i + b))
+\end{align}
+
+où :
+\begin{itemize}
+    \item $\alpha$ : taux d'apprentissage (learning rate) - hyperparamètre qui contrôle la taille du pas
+    \item $A_i, B_i$ : valeurs des paramètres à l'itération $i$
+    \item Si $\alpha$ trop grand : risque de dépasser le minimum
+    \item Si $\alpha$ trop petit : convergence trop lente
+\end{itemize}
+
+\textbf{Processus itératif :} À chaque étape, la fonction coût diminue jusqu'à atteindre (ou approcher) le minimum.
+\end{formulebox}
+
+\subsection{Solution Analytique (Équations Normales)}
+
+\begin{formulebox}
+\textbf{Formule directe (sans itération) :}
+\begin{align}
+\mathbf{w} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{y}
+\end{align}
+
+où $\mathbf{X}$ est la matrice des features avec une colonne de 1 pour le biais.
+\end{formulebox}
+
+\subsection{Script Python : Entraînement et Prédiction (TP)}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# ===== PARTIE 1 : Chargement des données =====
+# Chargement du dataset Salary_Data.csv
+fichier_local = "Salary_Data.csv"
+data = pd.read_csv(fichier_local)
+
+# Aperçu des données
+print("Aperçu :")
+print(data.head())
+
+# Informations
+print("\nInfos :")
+print(data.info())
+
+# Statistiques descriptives
+print("\nDescribe :")
+print(data.describe())
+
+# Variables
+# X : YearsExperience (années d'expérience)
+# Y : Salary (salaire annuel)
+
+# ===== PARTIE 2 : Visualisation initiale =====
+plt.figure(figsize=(7, 5))
+plt.scatter(data['YearsExperience'], data['Salary'])
+plt.title("Salaire en fonction des années d'expérience")
+plt.xlabel("Années d'expérience")
+plt.ylabel("Salaire")
+plt.grid(True)
+plt.show()
+
+# ===== PARTIE 3 : Préparation des données (train/test) =====
+X = data[['YearsExperience']]  # variable explicative
+y = data['Salary']              # variable cible
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print("Taille train :", X_train.shape, " | Taille test :", X_test.shape)
+
+# ===== PARTIE 4 : Entraînement du modèle =====
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Paramètres appris
+a = model.coef_[0]      # Pente
+b = model.intercept_    # Ordonnée à l'origine
+
+print("Pente (a) :", a)
+print("Ordonnée à l'origine (b) :", b)
+
+# Interprétation :
+# - b : Salaire de base pour 0 années d'expérience
+# - a : Augmentation de salaire par année d'expérience
+
+# ===== PARTIE 5 : Visualisation de la droite de régression =====
+y_pred_train = model.predict(X_train)
+
+plt.figure(figsize=(7, 5))
+plt.scatter(X_train, y_train, label='Données (train)')
+plt.plot(X_train, y_pred_train, color='red', linewidth=2, 
+         label='Droite de régression')
+plt.title("Ajustement du modèle sur les données d'entraînement")
+plt.xlabel("Années d'expérience")
+plt.ylabel("Salaire")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# ===== PARTIE 6 : Évaluation sur l'ensemble de test =====
+y_pred_test = model.predict(X_test)
+
+mse = mean_squared_error(y_test, y_pred_test)
+r2 = r2_score(y_test, y_pred_test)
+
+print("MSE :", mse)
+print("R² :", r2)
+
+# Interprétation R² :
+# - R² proche de 1 : Le modèle explique bien la variance
+# - R² faible : Le modèle explique mal la variance
+
+# ===== PARTIE 7 : Prédiction sur une nouvelle valeur =====
+# Exemple : prédire le salaire pour 8.5 années d'expérience
+experience_nouvelle = [[8.5]]
+salaire_prevu = model.predict(experience_nouvelle)
+print(f"Salaire prédit pour 8.5 années d'expérience : {salaire_prevu[0]:.2f}")
+
+# ===== IMPLÉMENTATION MANUELLE AVEC GRADIENT DESCENT =====
+class LinearRegressionGD:
+    def __init__(self, learning_rate=0.01, n_iterations=1000):
+        self.learning_rate = learning_rate  # α (alpha)
+        self.n_iterations = n_iterations
+        self.a = 0  # Pente
+        self.b = 0  # Ordonnée à l'origine
+        self.cost_history = []
+    
+    def fit(self, X, y):
+        """
+        Entraînement avec gradient descent
+        """
+        n = len(X)
+        X = X.flatten()  # Convertir en vecteur 1D
+        
+        for iteration in range(self.n_iterations):
+            # Prédictions : Y = a*X + b
+            y_pred = self.a * X + self.b
+            
+            # Calcul du coût : J(a,b) = (1/2n) * Σ(y - (a*x + b))²
+            cost = (1/(2*n)) * np.sum((y_pred - y)**2)
+            self.cost_history.append(cost)
+            
+            # Calcul des gradients
+            dJ_da = -(1/n) * np.sum((y - y_pred) * X)
+            dJ_db = -(1/n) * np.sum(y - y_pred)
+            
+            # Mise à jour : A = A - α * ∂J/∂A
+            self.a -= self.learning_rate * dJ_da
+            self.b -= self.learning_rate * dJ_db
+        
+        return self
+    
+    def predict(self, X):
+        """Prédiction : Y = a*X + b"""
+        X = X.flatten()
+        return self.a * X + self.b
+
+# Utilisation de l'implémentation manuelle
+model_gd = LinearRegressionGD(learning_rate=0.01, n_iterations=1000)
+model_gd.fit(X_train.values, y_train.values)
+
+print(f"\nModèle Gradient Descent :")
+print(f"Pente (a) : {model_gd.a:.2f}")
+print(f"Ordonnée à l'origine (b) : {model_gd.b:.2f}")
+
+# Visualisation de l'évolution du coût
+plt.figure(figsize=(10, 5))
+plt.plot(model_gd.cost_history)
+plt.xlabel('Itérations')
+plt.ylabel('Coût (MSE)')
+plt.title('Évolution du Coût avec Gradient Descent')
+plt.grid(True)
+plt.show()
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Régression Linéaire Multiple}
+
+\subsection{Modèle Mathématique}
+
+\begin{formulebox}
+\textbf{Équation de la régression linéaire multiple :}
+\begin{align}
+\hat{Y} = b + a_1 \times X_1 + a_2 \times X_2 + \cdots + a_n \times X_n
+\end{align}
+
+\textbf{Exemple concret :}
+\begin{align}
+\text{Salaire} = b + a_1 \times \text{Expérience} + a_2 \times \text{Âge} + a_3 \times \text{Niveau d'études}
+\end{align}
+
+\textbf{Forme vectorielle :}
+\begin{align}
+\hat{Y} = \mathbf{X}^T \cdot \mathbf{A} + B
+\end{align}
+
+où :
+\begin{itemize}
+    \item $\mathbf{X} = [X_1, X_2, \ldots, X_n]$ : Feature vector (vecteur de features)
+    \item $\mathbf{A} = [a_1, a_2, \ldots, a_n]$ : Vecteur de poids (coefficients)
+    \item $B$ : Biais (salaire de base)
+    \item $\hat{Y}$ : Prédiction
+\end{itemize}
+
+\textbf{Notation matricielle :}
+\begin{align}
+\mathbf{Y} = \mathbf{X} \mathbf{A} + B
+\end{align}
+
+où $\mathbf{X}$ est la matrice des features (m lignes = m exemples, n colonnes = n features).
+\end{formulebox}
+
+\subsection{Fonction de Coût}
+
+\begin{formulebox}
+\textbf{MSE pour régression multiple :}
+\begin{align}
+J(\mathbf{w}) = \frac{1}{2m} \sum_{i=1}^{m} (h(\mathbf{x}^{(i)}) - y^{(i)})^2 = \frac{1}{2m} (\mathbf{X}\mathbf{w} - \mathbf{y})^T (\mathbf{X}\mathbf{w} - \mathbf{y})
+\end{align}
+\end{formulebox}
+
+\subsection{Gradient Descent}
+
+\begin{formulebox}
+\textbf{Mise à jour vectorielle :}
+\begin{align}
+\mathbf{w} := \mathbf{w} - \alpha \nabla J(\mathbf{w})
+\end{align}
+
+\textbf{Gradient :}
+\begin{align}
+\nabla J(\mathbf{w}) = \frac{1}{m} \mathbf{X}^T (\mathbf{X}\mathbf{w} - \mathbf{y})
+\end{align}
+
+\textbf{Forme développée :}
+\begin{align}
+\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (h(\mathbf{x}^{(i)}) - y^{(i)}) \cdot x_j^{(i)}
+\end{align}
+\end{formulebox}
+
+\subsection{Solution Analytique}
+
+\begin{formulebox}
+\textbf{Équations normales :}
+\begin{align}
+\mathbf{w} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{y}
+\end{align}
+\end{formulebox}
+
+\subsection{Script Python : Entraînement et Prédiction}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, r2_score
+
+class MultipleLinearRegression:
+    def __init__(self, learning_rate=0.01, n_iterations=1000):
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iterations
+        self.weights = None
+        self.cost_history = []
+    
+    def fit(self, X, y):
+        """
+        Entraînement avec gradient descent
+        X: matrice (m, n) - m exemples, n features
+        y: vecteur (m,)
+        """
+        m, n = X.shape
+        
+        # Ajouter colonne de 1 pour le biais
+        X_bias = np.c_[np.ones(m), X]
+        
+        # Initialisation des poids
+        self.weights = np.zeros(n + 1)
+        
+        for iteration in range(self.n_iterations):
+            # Prédictions
+            y_pred = X_bias.dot(self.weights)
+            
+            # Calcul du coût
+            cost = (1/(2*m)) * np.sum((y_pred - y)**2)
+            self.cost_history.append(cost)
+            
+            # Calcul du gradient
+            gradient = (1/m) * X_bias.T.dot(y_pred - y)
+            
+            # Mise à jour des poids
+            self.weights -= self.learning_rate * gradient
+        
+        return self
+    
+    def predict(self, X):
+        """
+        Prédiction
+        """
+        m = X.shape[0]
+        X_bias = np.c_[np.ones(m), X]
+        return X_bias.dot(self.weights)
+    
+    def score(self, X, y):
+        """
+        Score R²
+        """
+        y_pred = self.predict(X)
+        ss_res = np.sum((y - y_pred)**2)
+        ss_tot = np.sum((y - np.mean(y))**2)
+        return 1 - (ss_res / ss_tot)
+
+# Utilisation avec Boston Housing Dataset
+# Chargement des données
+data = pd.read_excel('Boston_Housing_Dataset.xlsx')
+X = data.drop('MEDV', axis=1).values  # Features
+y = data['MEDV'].values  # Prix des maisons
+
+# Normalisation
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Division train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+# Création et entraînement
+model = MultipleLinearRegression(learning_rate=0.01, n_iterations=1000)
+model.fit(X_train, y_train)
+
+# Prédictions
+y_train_pred = model.predict(X_train)
+y_test_pred = model.predict(X_test)
+
+# Métriques
+print("=== Métriques d'Évaluation ===")
+print(f"MSE Train: {mean_squared_error(y_train, y_train_pred):.2f}")
+print(f"MSE Test: {mean_squared_error(y_test, y_test_pred):.2f}")
+print(f"RMSE Train: {np.sqrt(mean_squared_error(y_train, y_train_pred)):.2f}")
+print(f"RMSE Test: {np.sqrt(mean_squared_error(y_test, y_test_pred)):.2f}")
+print(f"R² Train: {model.score(X_train, y_train):.4f}")
+print(f"R² Test: {model.score(X_test, y_test):.4f}")
+
+# Coefficients
+print("\n=== Coefficients ===")
+feature_names = data.drop('MEDV', axis=1).columns
+for i, (name, coef) in enumerate(zip(['Biais'] + list(feature_names), model.weights)):
+    print(f"{name}: {coef:.4f}")
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Régression Polynomiale}
+
+\subsection{Concept}
+
+La régression polynomiale transforme les features en polynômes de degré $d$ pour capturer des relations non-linéaires.
+
+\begin{formulebox}
+\textbf{Modèle polynomial de degré $d$ :}
+\begin{align}
+\hat{Y} = B + a_1 X + a_2 X^2 + \cdots + a_d X^d
+\end{align}
+
+\textbf{Exemples :}
+\begin{itemize}
+    \item \textbf{Degré 1} : $\hat{Y} = B + a_1 X$ (régression linéaire simple)
+    \item \textbf{Degré 2} : $\hat{Y} = B + a_1 X + a_2 X^2$ (parabole)
+    \item \textbf{Degré $n$} : $\hat{Y} = B + a_1 X + a_2 X^2 + \cdots + a_n X^n$
+\end{itemize}
+
+\textbf{Transformation des features :}
+\begin{align}
+\mathbf{X}_{poly} = \begin{bmatrix}
+1 & x_1 & x_1^2 & \cdots & x_1^d \\
+1 & x_2 & x_2^2 & \cdots & x_2^d \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & x_m & x_m^2 & \cdots & x_m^d
+\end{bmatrix}
+\end{align}
+\end{formulebox}
+
+\subsection{BIC (Bayesian Information Criterion)}
+
+\begin{formulebox}
+\textbf{Formule du BIC :}
+\begin{align}
+BIC = n \ln(MSE) + K \ln(n)
+\end{align}
+
+où :
+\begin{itemize}
+    \item $n$ : nombre d'observations
+    \item $MSE$ : erreur quadratique moyenne du modèle
+    \item $K$ : degré du polynôme (nombre de paramètres)
+    \item $\ln$ : logarithme naturel
+\end{itemize}
+
+\textbf{Interprétation :}
+\begin{itemize}
+    \item \textbf{$n \ln(MSE)$} : Mesure la qualité d'ajustement (récompense les modèles qui s'ajustent bien)
+    \begin{itemize}
+        \item Plus le MSE est faible, plus ce terme est petit
+        \item Le $\ln$ rend la comparaison plus stable
+        \item Multiplier par $n$ tient compte de la taille du dataset
+    \end{itemize}
+    \item \textbf{$K \ln(n)$} : Pénalité pour la complexité (pénalise les modèles trop complexes)
+    \begin{itemize}
+        \item Plus $K$ (degré) est grand, plus la pénalité est forte
+        \item Évite le sur-apprentissage (overfitting)
+    \end{itemize}
+\end{itemize}
+
+\textbf{Objectif :} Minimiser le BIC pour trouver le meilleur compromis entre qualité d'ajustement et simplicité.
+
+\textbf{Évolution du BIC :}
+\begin{itemize}
+    \item Le BIC diminue d'abord car le modèle s'ajuste mieux (MSE baisse)
+    \item Puis il remonte quand le modèle devient trop complexe (pénalité $K \ln(n)$ augmente)
+    \item Le minimum du BIC indique le degré optimal
+\end{itemize}
+\end{formulebox}
+
+\subsection{Script Python : Entraînement et Prédiction avec BIC (TP)}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_openml
+
+# ===== PARTIE 1 : Chargement du dataset Boston Housing =====
+boston = fetch_openml(name='boston', version=1, as_frame=True)
+data = boston.frame
+data = data.drop('B', axis=1)  # Supprimer colonne problématique
+
+# Variable cible : MEDV (prix médian des maisons)
+# Variable explicative : LSTAT (pourcentage de statut inférieur)
+
+# ===== PARTIE 2 : Visualisation initiale =====
+X = data[['LSTAT']].values
+y = data['MEDV'].values
+
+plt.figure(figsize=(8, 6))
+plt.scatter(X, y, alpha=0.6)
+plt.xlabel('LSTAT')
+plt.ylabel('MEDV')
+plt.title('Relation LSTAT - MEDV')
+plt.grid(True)
+plt.show()
+
+# ===== PARTIE 3 : Régression linéaire simple (degré 1) =====
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model_linear = LinearRegression()
+model_linear.fit(X_train, y_train)
+
+y_pred_linear = model_linear.predict(X_test)
+mse_linear = mean_squared_error(y_test, y_pred_linear)
+r2_linear = r2_score(y_test, y_pred_linear)
+
+print(f"Régression Linéaire (degré 1):")
+print(f"MSE: {mse_linear:.2f}, R²: {r2_linear:.4f}")
+
+# ===== PARTIE 4 : Régression polynomiale degré 2 =====
+poly2 = PolynomialFeatures(degree=2)
+X_poly2_train = poly2.fit_transform(X_train)
+X_poly2_test = poly2.transform(X_test)
+
+model_poly2 = LinearRegression()
+model_poly2.fit(X_poly2_train, y_train)
+
+y_pred_poly2 = model_poly2.predict(X_poly2_test)
+mse_poly2 = mean_squared_error(y_test, y_pred_poly2)
+r2_poly2 = r2_score(y_test, y_pred_poly2)
+
+print(f"\nRégression Polynomiale (degré 2):")
+print(f"MSE: {mse_poly2:.2f}, R²: {r2_poly2:.4f}")
+
+# ===== PARTIE 5 : Étude du degré du polynôme avec BIC =====
+degrees = [1, 2, 3, 4, 5, 6]
+results = []
+
+for degree in degrees:
+    # Création des variables polynomiales
+    poly = PolynomialFeatures(degree=degree)
+    X_poly_train = poly.fit_transform(X_train)
+    X_poly_test = poly.transform(X_test)
+    
+    # Entraînement
+    model = LinearRegression()
+    model.fit(X_poly_train, y_train)
+    
+    # Prédictions
+    y_pred_train = model.predict(X_poly_train)
+    y_pred_test = model.predict(X_poly_test)
+    
+    # Métriques
+    mse_train = mean_squared_error(y_train, y_pred_train)
+    mse_test = mean_squared_error(y_test, y_pred_test)
+    r2_train = r2_score(y_train, y_pred_train)
+    r2_test = r2_score(y_test, y_pred_test)
+    
+    # Calcul du BIC : BIC = n * ln(MSE) + K * ln(n)
+    n = len(y_test)
+    K = degree  # Degré du polynôme
+    bic = n * np.log(mse_test) + K * np.log(n)
+    
+    results.append({
+        'degree': degree,
+        'MSE_train': mse_train,
+        'MSE_test': mse_test,
+        'R2_train': r2_train,
+        'R2_test': r2_test,
+        'BIC': bic
+    })
+    
+    print(f"\nDegré {degree}:")
+    print(f"  MSE Train: {mse_train:.2f}, MSE Test: {mse_test:.2f}")
+    print(f"  R² Train: {r2_train:.4f}, R² Test: {r2_test:.4f}")
+    print(f"  BIC: {bic:.2f}")
+
+# Création d'un DataFrame pour visualisation
+df_results = pd.DataFrame(results)
+print("\n=== Tableau Récapitulatif ===")
+print(df_results.to_string(index=False))
+
+# ===== PARTIE 6 : Visualisation du BIC =====
+plt.figure(figsize=(12, 5))
+
+# Graphique 1 : BIC en fonction du degré
+plt.subplot(1, 2, 1)
+plt.plot(df_results['degree'], df_results['BIC'], 'o-', linewidth=2, markersize=8)
+plt.xlabel('Degré du polynôme (K)')
+plt.ylabel('BIC')
+plt.title('BIC en fonction du degré du polynôme')
+plt.grid(True)
+plt.xticks(degrees)
+
+# Identifier le minimum
+min_bic_idx = df_results['BIC'].idxmin()
+min_degree = df_results.loc[min_bic_idx, 'degree']
+min_bic = df_results.loc[min_bic_idx, 'BIC']
+plt.axvline(x=min_degree, color='r', linestyle='--', 
+            label=f'Minimum (K={min_degree})')
+plt.legend()
+
+# Graphique 2 : MSE et R² en fonction du degré
+plt.subplot(1, 2, 2)
+plt.plot(df_results['degree'], df_results['MSE_test'], 'o-', 
+         label='MSE Test', linewidth=2)
+plt.plot(df_results['degree'], df_results['R2_test'], 's-', 
+         label='R² Test', linewidth=2)
+plt.xlabel('Degré du polynôme')
+plt.ylabel('Métrique')
+plt.title('MSE et R² en fonction du degré')
+plt.legend()
+plt.grid(True)
+plt.xticks(degrees)
+
+plt.tight_layout()
+plt.show()
+
+print(f"\n=== Meilleur modèle selon BIC ===")
+print(f"Degré optimal: {min_degree}")
+print(f"BIC minimum: {min_bic:.2f}")
+
+# ===== PARTIE 7 : Visualisation des modèles =====
+X_plot = np.linspace(X.min(), X.max(), 300).reshape(-1, 1)
+
+plt.figure(figsize=(12, 8))
+plt.scatter(X, y, alpha=0.5, label='Données', s=30)
+
+colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown']
+for idx, degree in enumerate(degrees):
+    poly = PolynomialFeatures(degree=degree)
+    X_poly_plot = poly.fit_transform(X_plot)
+    model = LinearRegression()
+    X_poly_train = poly.fit_transform(X_train)
+    model.fit(X_poly_train, y_train)
+    y_plot = model.predict(X_poly_plot)
+    
+    plt.plot(X_plot, y_plot, color=colors[idx], linewidth=2, 
+             label=f'Degré {degree} (BIC={df_results.loc[idx, "BIC"]:.1f})')
+
+plt.xlabel('LSTAT')
+plt.ylabel('MEDV')
+plt.title('Comparaison des modèles polynomiales')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Questions d'analyse :
+# 1. Comment évoluent MSE et R² lorsque le degré augmente ?
+#    → R² augmente toujours (sur train), mais peut diminuer sur test (overfitting)
+# 2. Pourquoi le R² augmente toujours ?
+#    → Plus de paramètres = meilleur ajustement aux données d'entraînement
+# 3. Que signifie le paramètre K dans la formule du BIC ?
+#    → K = degré du polynôme (nombre de paramètres)
+# 4. Quel est le degré donnant le plus petit BIC ?
+#    → C'est le meilleur compromis entre qualité et simplicité
+\end{lstlisting}
+\end{exemplebox}
+
+\begin{importantbox}
+\textbf{Attention au sur-apprentissage (overfitting) :} Un degré trop élevé peut mener à un modèle qui mémorise les données d'entraînement mais généralise mal.
+\end{importantbox}
+
+\newpage
+
+\section{Classification : K-Nearest Neighbors (KNN)}
+
+\subsection{Algorithme}
+
+\begin{importantbox}
+\textbf{Principe :} Un point est classé selon la classe majoritaire de ses $k$ plus proches voisins.
+\end{importantbox}
+
+\subsection{Formules}
+
+\begin{formulebox}
+\textbf{Distance euclidienne (exemple avec 2 features) :}
+\begin{align}
+D(Z, A) = \sqrt{(Z_{PH} - A_{PH})^2 + (Z_{Diam} - A_{Diam})^2}
+\end{align}
+
+\textbf{Forme générale (n features) :}
+\begin{align}
+D(\mathbf{x}_i, \mathbf{x}_j) = \sqrt{\sum_{l=1}^{n} (x_{il} - x_{jl})^2}
+\end{align}
+
+\textbf{Exemple concret (plantes) :}
+\begin{itemize}
+    \item Plante Z : pH=4, Diam=3
+    \item Plante A : pH=2, Diam=1
+    \item Distance : $D(Z,A) = \sqrt{(4-2)^2 + (3-1)^2} = \sqrt{4 + 4} = \sqrt{8} = 2.83$
+\end{itemize}
+
+\textbf{Décision de classification (Vote) :}
+\begin{itemize}
+    \item Pour $K=1$ : On regarde le 1 plus proche voisin, sa classe est la prédiction
+    \item Pour $K=3$ : On regarde les 3 plus proches voisins, la classe majoritaire est la prédiction
+    \item Pour $K=5$ : On regarde les 5 plus proches voisins, la classe majoritaire est la prédiction
+\end{itemize}
+
+\textbf{Exemple de vote (K=3) :}
+\begin{itemize}
+    \item Voisin 1 : Comestible (0)
+    \item Voisin 2 : Toxique (1)
+    \item Voisin 3 : Comestible (0)
+    \item Vote : 2 (Comestible) vs 1 (Toxique)
+    \item Décision : COMESTIBLE
+\end{itemize}
+\end{formulebox}
+
+\subsection{Hyperparamètres}
+
+\begin{itemize}
+    \item \textbf{$K$} : Nombre de voisins (hyperparamètre principal)
+    \begin{itemize}
+        \item Généralement testé avec des valeurs impaires : 1, 3, 5, 7, 9, 11, 13, 15...
+        \item $K$ ne doit pas dépasser la taille de l'ensemble d'entraînement
+        \item $K$ trop petit (ex: K=1) : Sensible au bruit
+        \item $K$ trop grand : Modèle trop "lisse", ignore les détails locaux
+    \end{itemize}
+    \item \textbf{Métrique de distance} : euclidienne, Manhattan, Minkowski, etc.
+    \item \textbf{Poids} : uniforme ou distance (les voisins proches comptent plus)
+\end{itemize}
+
+\subsection{Optimisation du K (Grid Search)}
+
+\begin{importantbox}
+\textbf{Processus d'optimisation :}
+\begin{enumerate}
+    \item \textbf{Répartition des données} : 80\% Training Set, 20\% Test Set
+    \item \textbf{Test méthodique} : Tester plusieurs valeurs de K (1, 3, 5, 7, 9...)
+    \item \textbf{Évaluation} : Pour chaque K, calculer la précision sur le Test Set
+    \item \textbf{Sélection} : Choisir le K qui donne la meilleure précision
+\end{enumerate}
+
+\textbf{Exemple de résultats :}
+\begin{itemize}
+    \item K=1 : Précision = 85\% (sensible au bruit)
+    \item K=3 : Précision = 94\%
+    \item K=5 : Précision = 96\% (optimal)
+    \item K=7 : Précision = 95.5\%
+    \item K=25 : Précision = 85\% (trop lisse)
+\end{itemize}
+
+Le pic de la courbe (K=5) représente le meilleur compromis Biais/Variance.
+\end{importantbox}
+
+\subsection{Script Python : Entraînement et Prédiction}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+from collections import Counter
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+class KNN:
+    def __init__(self, k=3, distance_metric='euclidean', weights='uniform'):
+        self.k = k
+        self.distance_metric = distance_metric
+        self.weights = weights
+        self.X_train = None
+        self.y_train = None
+    
+    def _euclidean_distance(self, x1, x2):
+        """Distance euclidienne"""
+        return np.sqrt(np.sum((x1 - x2)**2))
+    
+    def _manhattan_distance(self, x1, x2):
+        """Distance de Manhattan"""
+        return np.sum(np.abs(x1 - x2))
+    
+    def _compute_distance(self, x1, x2):
+        """Calcul de la distance selon la métrique"""
+        if self.distance_metric == 'euclidean':
+            return self._euclidean_distance(x1, x2)
+        elif self.distance_metric == 'manhattan':
+            return self._manhattan_distance(x1, x2)
+        else:
+            raise ValueError("Métrique non supportée")
+    
+    def fit(self, X, y):
+        """
+        Entraînement (KNN est un algorithme lazy, on stocke juste les données)
+        """
+        self.X_train = X
+        self.y_train = y
+        return self
+    
+    def predict(self, X):
+        """
+        Prédiction
+        """
+        predictions = []
+        for x in X:
+            # Calculer les distances à tous les points d'entraînement
+            distances = [self._compute_distance(x, x_train) 
+                        for x_train in self.X_train]
+            
+            # Obtenir les k plus proches voisins
+            k_indices = np.argsort(distances)[:self.k]
+            k_nearest_labels = [self.y_train[i] for i in k_indices]
+            
+            if self.weights == 'uniform':
+                # Vote majoritaire simple
+                most_common = Counter(k_nearest_labels).most_common(1)
+                predictions.append(most_common[0][0])
+            else:  # weights='distance'
+                # Vote pondéré par l'inverse de la distance
+                k_distances = [distances[i] for i in k_indices]
+                weights = [1/d if d != 0 else 1e10 for d in k_distances]
+                weighted_votes = {}
+                for label, weight in zip(k_nearest_labels, weights):
+                    weighted_votes[label] = weighted_votes.get(label, 0) + weight
+                predictions.append(max(weighted_votes, key=weighted_votes.get))
+        
+        return np.array(predictions)
+    
+    def predict_proba(self, X):
+        """
+        Probabilités de prédiction
+        """
+        probabilities = []
+        for x in X:
+            distances = [self._compute_distance(x, x_train) 
+                        for x_train in self.X_train]
+            k_indices = np.argsort(distances)[:self.k]
+            k_nearest_labels = [self.y_train[i] for i in k_indices]
+            
+            # Probabilités basées sur les fréquences
+            label_counts = Counter(k_nearest_labels)
+            total = sum(label_counts.values())
+            proba = {label: count/total for label, count in label_counts.items()}
+            probabilities.append(proba)
+        
+        return probabilities
+
+# Utilisation
+from sklearn.datasets import load_iris
+
+# Chargement des données
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Normalisation (important pour KNN)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Division train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+# Test avec différents k
+for k in [1, 3, 5, 7, 10]:
+    model = KNN(k=k, distance_metric='euclidean', weights='uniform')
+    model.fit(X_train, y_train)
+    
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    
+    print(f"k={k:2d}: Accuracy = {accuracy:.4f}")
+
+# Meilleur modèle
+best_k = 3
+model = KNN(k=best_k, distance_metric='euclidean', weights='distance')
+model.fit(X_train, y_train)
+
+# Prédictions
+y_pred = model.predict(X_test)
+y_proba = model.predict_proba(X_test)
+
+# Métriques
+print("\n=== Métriques d'Évaluation ===")
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+print("\nMatrice de confusion:")
+print(confusion_matrix(y_test, y_pred))
+print("\nRapport de classification:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Classification : Support Vector Machine (SVM)}
+
+\subsection{Introduction}
+
+\begin{importantbox}
+\textbf{Qu'est-ce qu'un SVM ?}
+
+Le SVM est un algorithme d'apprentissage supervisé utilisé principalement pour :
+\begin{itemize}
+    \item \textbf{Classification} : Assigner des données à différentes catégories
+    \item \textbf{Régression} : Prédire des valeurs continues (SVR)
+\end{itemize}
+
+\textbf{Principe fondamental :} Trouver le meilleur hyperplan qui sépare les données de différentes classes en maximisant la distance (marge) entre cet hyperplan et les points les plus proches de chaque classe.
+
+\textbf{Pourquoi les SVM sont populaires ?}
+\begin{itemize}
+    \item Performance élevée même avec des données complexes
+    \item Robustesse face au surapprentissage grâce à la maximisation de la marge
+    \item Capacité à gérer des espaces de haute dimension
+    \item Base théorique solide
+\end{itemize}
+\end{importantbox}
+
+\subsection{SVM Linéaire : Principe}
+
+\begin{formulebox}
+\textbf{Hyperplan de séparation :}
+\begin{align}
+f(\mathbf{x}) = \mathbf{W}^T \cdot \mathbf{X} + B = 0
+\end{align}
+
+\textbf{Frontières de marge :}
+\begin{align}
+\mathbf{W}^T \cdot \mathbf{X} + B &= +1 \quad \text{(Frontière gauche, Classe +1)} \\
+\mathbf{W}^T \cdot \mathbf{X} + B &= 0 \quad \text{(Frontière de décision)} \\
+\mathbf{W}^T \cdot \mathbf{X} + B &= -1 \quad \text{(Frontière droite, Classe -1)}
+\end{align}
+
+\textbf{Règle de décision :}
+\begin{itemize}
+    \item Si $f(\mathbf{x}) > +1$ : Classe +1
+    \item Si $f(\mathbf{x}) < -1$ : Classe -1
+    \item Si $f(\mathbf{x}) = 0$ : Sur la frontière de décision
+\end{itemize}
+
+\textbf{Objectif :} Maximiser la marge (distance entre les deux hyperplans parallèles) pour maximiser la capacité de généralisation.
+\end{formulebox}
+
+\subsection{Calcul de la Marge}
+
+\begin{formulebox}
+\textbf{Calcul de la distance entre les deux hyperplans :}
+
+Soit deux points support vectors :
+\begin{itemize}
+    \item $\mathbf{x}^+$ sur $\mathbf{W}^T \cdot \mathbf{x}^+ + B = +1$
+    \item $\mathbf{x}^-$ sur $\mathbf{W}^T \cdot \mathbf{x}^- + B = -1$
+\end{itemize}
+
+On a : $\mathbf{x}^+ = \mathbf{x}^- + r\mathbf{w}$ où $r$ est la distance le long de la direction perpendiculaire.
+
+\textbf{Calcul de $r$ :}
+\begin{align}
+\mathbf{W}^T \cdot (\mathbf{x}^- + r\mathbf{w}) + B &= +1 \\
+r\|\mathbf{w}\|^2 + \mathbf{W}^T \cdot \mathbf{x}^- + B &= +1 \\
+r\|\mathbf{w}\|^2 - 1 &= +1 \\
+r\|\mathbf{w}\|^2 &= 2 \\
+r &= \frac{2}{\|\mathbf{w}\|^2}
+\end{align}
+
+\textbf{Marge :} La distance entre les deux hyperplans est $r = \frac{2}{\|\mathbf{w}\|^2}$
+
+\textbf{Objectif :} Maximiser la marge $\Rightarrow$ Minimiser $\|\mathbf{w}\|^2$
+\end{formulebox}
+
+\subsection{SVM Hard Margin (Marge Rigide)}
+
+\begin{formulebox}
+\textbf{Problème primal :}
+\begin{align}
+\min_{\mathbf{w}, b} \frac{1}{2} \|\mathbf{w}\|^2 \quad \text{sous la contrainte} \quad y_i(\mathbf{w}^T \mathbf{x}_i + b) \geq 1
+\end{align}
+
+\textbf{Conditions :}
+\begin{itemize}
+    \item $y_i(\mathbf{w}^T \mathbf{x}_i + b) \geq 1$ pour tous les points
+    \item $y_i = +1$ : $\mathbf{w}^T \mathbf{x}_i + b \geq 1$
+    \item $y_i = -1$ : $\mathbf{w}^T \mathbf{x}_i + b \leq -1$
+\end{itemize}
+
+\textbf{Forme unifiée :} $y_i(\mathbf{w}^T \mathbf{x}_i + b) \geq 1$
+\end{formulebox}
+
+\subsection{Optimisation avec Multiplicateurs de Lagrange}
+
+\begin{formulebox}
+\textbf{Lagrangien :}
+\begin{align}
+L(\mathbf{w}, b, \boldsymbol{\varphi}) = \frac{1}{2} \|\mathbf{w}\|^2 - \sum_{i} \varphi_i [y_i(\mathbf{w}^T \mathbf{x}_i + b) - 1]
+\end{align}
+
+où $\varphi_i \geq 0$ sont les multiplicateurs de Lagrange.
+
+\textbf{Conditions KKT (Karush-Kuhn-Tucker) :}
+\begin{align}
+\frac{\partial L}{\partial \mathbf{w}} &= 0 \Rightarrow \mathbf{w} = \sum_{i} \varphi_i y_i \mathbf{x}_i \\
+\frac{\partial L}{\partial b} &= 0 \Rightarrow \sum_{i} \varphi_i y_i = 0 \\
+\varphi_i [y_i(\mathbf{w}^T \mathbf{x}_i + b) - 1] &= 0 \quad \text{(condition de complémentarité)}
+\end{align}
+
+\textbf{Interprétation :}
+\begin{itemize}
+    \item Si $\varphi_i = 0$ : Point loin de la marge, ne contribue pas à la solution
+    \item Si $\varphi_i > 0$ : Point sur la marge (Support Vector), définit $\mathbf{w}$
+    \item $\mathbf{w} = \sum_{\text{support vectors}} \varphi_i y_i \mathbf{x}_i$
+\end{itemize}
+
+\textbf{Parcimonie du modèle SVM :}
+\begin{itemize}
+    \item Dataset : 10,000 points d'entraînement
+    \item Support vectors : 50-200 points seulement (1-2\%)
+    \item Points avec $\varphi_i = 0$ : ~9,800 points (98\%)
+    \item Impact : Modèle final très compact, prédiction rapide
+\end{itemize}
+\end{formulebox}
+
+\subsection{Problème Dual}
+
+\begin{formulebox}
+\textbf{Formulation duale :}
+\begin{align}
+\max_{\boldsymbol{\alpha}} \sum_{i} \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j \langle \mathbf{x}_i, \mathbf{x}_j \rangle
+\end{align}
+
+\textbf{Sous les contraintes :}
+\begin{align}
+\alpha_i &\geq 0 \quad \forall i \\
+\sum_{i} \alpha_i y_i &= 0
+\end{align}
+
+\textbf{Avantages du dual :}
+\begin{itemize}
+    \item Plus facile à résoudre numériquement
+    \item Les données apparaissent uniquement via des produits scalaires $\langle \mathbf{x}_i, \mathbf{x}_j \rangle$
+    \item Permet l'utilisation du kernel trick pour les cas non-linéaires
+\end{itemize}
+\end{formulebox}
+
+\subsection{SVM Soft Margin (Marge Souple)}
+
+\begin{importantbox}
+\textbf{Pourquoi le Hard Margin ne suffit pas ?}
+
+Le SVM Hard Margin suppose que les données sont parfaitement séparables :
+\begin{itemize}
+    \item Aucun point ne doit être dans la marge
+    \item Aucun point ne doit être mal classé
+\end{itemize}
+
+\textbf{Problème :} Dans la réalité, les données contiennent du bruit, des valeurs aberrantes et des classes qui se chevauchent.
+\end{importantbox}
+
+\begin{formulebox}
+\textbf{Slack variables (Variables de relâchement) :}
+
+On introduit $\xi_i \geq 0$ pour permettre à un point de violer la contrainte de marge.
+
+\textbf{Contrainte modifiée :}
+\begin{align}
+y_i(\mathbf{w}^T \mathbf{x}_i + b) \geq 1 - \xi_i, \quad \xi_i \geq 0
+\end{align}
+
+\textbf{Interprétation de $\xi_i$ :}
+\begin{itemize}
+    \item $\xi_i = 0$ : Point bien classé, hors de la marge
+    \item $0 < \xi_i < 1$ : Point dans la marge mais bien classé
+    \item $\xi_i \geq 1$ : Point mal classé
+\end{itemize}
+
+\textbf{Problème d'optimisation :}
+\begin{align}
+\min_{\mathbf{w}, b, \boldsymbol{\xi}} \frac{1}{2} \|\mathbf{w}\|^2 + C \sum_{i} \xi_i
+\end{align}
+
+\textbf{Sous les contraintes :}
+\begin{align}
+y_i(\mathbf{w}^T \mathbf{x}_i + b) &\geq 1 - \xi_i \\
+\xi_i &\geq 0
+\end{align}
+
+\textbf{Paramètre $C$ :}
+\begin{itemize}
+    \item $C$ grand : Les erreurs coûtent cher $\Rightarrow$ modèle très strict (marge étroite)
+    \item $C$ petit : Plus de flexibilité $\Rightarrow$ modèle plus tolérant (marge large)
+    \item $C$ contrôle le compromis entre maximiser la marge et pénaliser les erreurs
+\end{itemize}
+
+\textbf{Problème dual (Soft Margin) :}
+\begin{align}
+\max_{\boldsymbol{\alpha}} \sum_{i} \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j \langle \mathbf{x}_i, \mathbf{x}_j \rangle
+\end{align}
+
+\textbf{Sous les contraintes :}
+\begin{align}
+0 \leq \alpha_i &\leq C \quad \forall i \\
+\sum_{i} \alpha_i y_i &= 0
+\end{align}
+
+\textbf{Différence avec Hard Margin :} La contrainte $\alpha_i \leq C$ limite la valeur maximale des multiplicateurs de Lagrange.
+\end{formulebox}
+
+\subsection{SVM Non-Linéaire : Kernel Trick}
+
+\begin{importantbox}
+\textbf{Limitation du SVM linéaire :}
+
+Le SVM linéaire fonctionne parfaitement lorsque les classes sont séparables par une ligne droite (ou un hyperplan). Mais que faire lorsque les données ont une structure plus complexe (ex: cercles concentriques) ?
+
+\textbf{La solution : SVM non-linéaire}
+
+Grâce au kernel trick, nous transformons les données dans un espace de dimension supérieure où elles deviennent linéairement séparables, sans calculer explicitement cette transformation.
+\end{importantbox}
+
+\begin{formulebox}
+\textbf{Qu'est-ce qu'un noyau (kernel) ?}
+
+Un noyau est une fonction de similarité entre deux points. Dans un SVM, cette similarité est calculée sous forme de produit scalaire.
+
+\textbf{Kernel linéaire :}
+\begin{align}
+K(\mathbf{x}_i, \mathbf{x}_j) = \langle \mathbf{x}_i, \mathbf{x}_j \rangle = \mathbf{x}_i^T \mathbf{x}_j
+\end{align}
+
+\textbf{Transformation dans un espace de dimension supérieure :}
+\begin{align}
+\mathbf{x} \rightarrow \phi(\mathbf{x})
+\end{align}
+
+Dans ce nouvel espace, la similarité devient :
+\begin{align}
+K(\mathbf{x}_i, \mathbf{x}_j) = \langle \phi(\mathbf{x}_i), \phi(\mathbf{x}_j) \rangle
+\end{align}
+
+\textbf{Kernel trick :} Permet de calculer cette similarité comme si l'on travaillait dans l'espace transformé, sans jamais calculer explicitement $\phi(\mathbf{x})$.
+
+\textbf{Formulation duale avec kernel :}
+\begin{align}
+\max_{\boldsymbol{\alpha}} \sum_{i} \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j K(\mathbf{x}_i, \mathbf{x}_j)
+\end{align}
+
+Les données interviennent uniquement via le kernel $K(\mathbf{x}_i, \mathbf{x}_j)$.
+\end{formulebox}
+
+\subsection{Kernels Courants}
+
+\begin{formulebox}
+\textbf{1. Kernel Linéaire :}
+\begin{align}
+K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
+\end{align}
+
+\textbf{Quand l'utiliser :}
+\begin{itemize}
+    \item Données linéairement séparables
+    \item Données très haute dimension (texte, TF-IDF, bag-of-words)
+    \item Modèle très rapide et robuste
+    \item Souvent le meilleur choix quand features $>>$ nombre d'échantillons
+\end{itemize}
+
+\textbf{2. Kernel Polynomial :}
+\begin{align}
+K(\mathbf{x}_i, \mathbf{x}_j) = (\mathbf{x}_i^T \mathbf{x}_j + c)^d
+\end{align}
+
+où :
+\begin{itemize}
+    \item $d$ : degré du polynôme
+    \item $c$ : coefficient (souvent 1)
+\end{itemize}
+
+\textbf{Quand l'utiliser :}
+\begin{itemize}
+    \item Relations non linéaires mais régulières
+    \item Utile quand on soupçonne une relation quadratique/cubique entre les features
+    \item Frontières non linéaires mais "propres"
+    \item Attention : peut devenir coûteux si le degré est élevé
+\end{itemize}
+
+\textbf{Exemple (degré 2) :}
+\begin{align}
+(\mathbf{x}_i^T \mathbf{x}_j + c)^2 = (\mathbf{x}_i^T \mathbf{x}_j)^2 + 2c(\mathbf{x}_i^T \mathbf{x}_j) + c^2
+\end{align}
+
+\textbf{3. Kernel RBF (Radial Basis Function / Gaussien) :}
+\begin{align}
+K(\mathbf{x}_i, \mathbf{x}_j) = e^{-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2}
+\end{align}
+
+où $\gamma$ (gamma) contrôle l'influence des points proches.
+
+\textbf{Quand l'utiliser :}
+\begin{itemize}
+    \item Données fortement non linéaires
+    \item Frontières complexes, tordues ou irrégulières
+    \item Cas général : souvent le kernel le plus performant
+    \item Mapping implicite en dimension infinie
+\end{itemize}
+
+\textbf{Interprétation de $\gamma$ :}
+\begin{itemize}
+    \item $\gamma$ petit (ex: 0.1) : Vue large, points éloignés semblent encore similaires
+    \item $\gamma$ moyen (ex: 1) : Équilibré, influence locale modérée
+    \item $\gamma$ grand (ex: 5) : Vue étroite, seuls les points très proches comptent (risque d'overfitting)
+\end{itemize}
+
+\textbf{Exemple de calcul RBF :}
+\begin{itemize}
+    \item Points : $\mathbf{x}_i = [0, 0]$, $A = [1, 0]$, $B = [3, 0]$
+    \item Distance : $D_A = 1$, $D_B = 3$
+    \item Pour $\gamma = 0.1$ : $K(\mathbf{x}_i, A) = e^{-0.1 \times 1} = 0.90$, $K(\mathbf{x}_i, B) = e^{-0.1 \times 9} = 0.41$
+    \item Pour $\gamma = 1$ : $K(\mathbf{x}_i, A) = e^{-1} = 0.37$, $K(\mathbf{x}_i, B) = e^{-9} \approx 0.00$
+    \item Pour $\gamma = 5$ : $K(\mathbf{x}_i, A) = e^{-5} = 0.006$, $K(\mathbf{x}_i, B) = e^{-45} \approx 0.00$
+\end{itemize}
+\end{formulebox}
+
+\subsection{Script Python : SVM Linéaire (TP)}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# ===== PARTIE 1 : Chargement des données =====
+# Fichier : iris_svm_lineaire_pret.csv
+data = pd.read_csv('iris_svm_lineaire_pret.csv')
+
+# Aperçu
+print("Aperçu des données :")
+print(data.head())
+print(f"\nNombre d'observations : {len(data)}")
+
+# ===== PARTIE 2 : Préparation des données =====
+X = data[['feature1', 'feature2']].values  # Features
+y = data['class'].values                      # Classe cible
+
+# Séparation train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Normalisation (recommandé pour SVM)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# ===== PARTIE 3 : Entraînement d'un SVM Linéaire =====
+# Créer un modèle SVM linéaire avec C = 1
+svm_linear = SVC(kernel='linear', C=1.0, random_state=42)
+svm_linear.fit(X_train_scaled, y_train)
+
+# Prédictions
+y_pred_train = svm_linear.predict(X_train_scaled)
+y_pred_test = svm_linear.predict(X_test_scaled)
+
+# Métriques
+print("\n=== Métriques SVM Linéaire ===")
+print(f"Accuracy Train: {accuracy_score(y_train, y_pred_train):.4f}")
+print(f"Accuracy Test: {accuracy_score(y_test, y_pred_test):.4f}")
+
+# Informations sur les support vectors
+print(f"\nNombre de vecteurs de support: {len(svm_linear.support_)}")
+print(f"Support vectors indices: {svm_linear.support_}")
+print(f"Support vectors: \n{svm_linear.support_vectors_}")
+
+# Coefficients
+print(f"\nCoefficients (w): {svm_linear.coef_[0]}")
+print(f"Biais (b): {svm_linear.intercept_[0]}")
+
+# ===== PARTIE 4 : Visualisation =====
+def plot_svm_decision_boundary(X, y, model, title):
+    """Visualiser l'hyperplan, les marges et les support vectors"""
+    plt.figure(figsize=(10, 8))
+    
+    # Nuage de points
+    plt.scatter(X[y == 0, 0], X[y == 0, 1], c='red', marker='o', 
+                label='Classe 0', s=50, alpha=0.6)
+    plt.scatter(X[y == 1, 0], X[y == 1, 1], c='blue', marker='s', 
+                label='Classe 1', s=50, alpha=0.6)
+    
+    # Support vectors
+    plt.scatter(model.support_vectors_[:, 0], 
+                model.support_vectors_[:, 1],
+                s=200, facecolors='none', edgecolors='black', 
+                linewidth=2, label='Support Vectors')
+    
+    # Frontière de décision
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    
+    # Créer une grille pour la frontière
+    xx = np.linspace(xlim[0], xlim[1], 100)
+    yy = np.linspace(ylim[0], ylim[1], 100)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    Z = model.decision_function(xy).reshape(XX.shape)
+    
+    # Contour de la frontière de décision
+    ax.contour(XX, YY, Z, colors='black', levels=[-1, 0, 1], 
+               alpha=0.5, linestyles=['--', '-', '--'], linewidths=2)
+    
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title(title)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.show()
+
+# Visualisation
+plot_svm_decision_boundary(X_train_scaled, y_train, svm_linear, 
+                           'SVM Linéaire - Hyperplan et Marges')
+
+# ===== PARTIE 5 : Test avec différentes valeurs de C =====
+C_values = [0.1, 1, 10, 100]
+results = []
+
+for C in C_values:
+    svm = SVC(kernel='linear', C=C, random_state=42)
+    svm.fit(X_train_scaled, y_train)
+    
+    y_pred = svm.predict(X_test_scaled)
+    acc = accuracy_score(y_test, y_pred)
+    n_sv = len(svm.support_)
+    
+    results.append({
+        'C': C,
+        'Accuracy': acc,
+        'N_Support_Vectors': n_sv
+    })
+    
+    print(f"C={C:6.1f}: Accuracy={acc:.4f}, Support Vectors={n_sv}")
+
+df_results = pd.DataFrame(results)
+print("\n=== Résultats selon C ===")
+print(df_results.to_string(index=False))
+
+# Questions d'analyse :
+# 1. Quand C est grand, la marge devient-elle large ou stricte ?
+#    → C grand : marge stricte (étroite), moins d'erreurs tolérées
+# 2. Combien de support vectors y a-t-il pour chaque C ?
+#    → C grand : plus de support vectors (modèle plus strict)
+\end{lstlisting}
+\end{exemplebox}
+
+\subsection{Script Python : SVM RBF (Non-Linéaire) (TP)}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# ===== PARTIE 1 : Chargement des données =====
+# Fichier : breast_cancer_svm_rbf_2d_ready.csv
+data = pd.read_csv('breast_cancer_svm_rbf_2d_ready.csv')
+
+print("Aperçu des données :")
+print(data.head())
+print(f"\nNombre d'observations : {len(data)}")
+
+# ===== PARTIE 2 : Préparation des données =====
+X = data[['feature1', 'feature2']].values
+y = data['target'].values
+
+# Visualisation initiale
+plt.figure(figsize=(8, 6))
+plt.scatter(X[y == 0, 0], X[y == 0, 1], c='red', marker='o', 
+            label='Classe 0', s=50, alpha=0.6)
+plt.scatter(X[y == 1, 0], X[y == 1, 1], c='blue', marker='s', 
+            label='Classe 1', s=50, alpha=0.6)
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.title('Données - Structure Non-Linéaire')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Séparation train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Normalisation
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# ===== PARTIE 3 : SVM Linéaire (modèle de référence) =====
+svm_linear = SVC(kernel='linear', C=1.0, random_state=42)
+svm_linear.fit(X_train_scaled, y_train)
+
+y_pred_linear = svm_linear.predict(X_test_scaled)
+acc_linear = accuracy_score(y_test, y_pred_linear)
+
+print(f"\n=== SVM Linéaire ===")
+print(f"Accuracy: {acc_linear:.4f}")
+print(f"Support Vectors: {len(svm_linear.support_)}")
+
+# ===== PARTIE 4 : SVM RBF =====
+# Créer un modèle SVM à noyau RBF (C=1, gamma=1)
+svm_rbf = SVC(kernel='rbf', C=1.0, gamma=1.0, random_state=42)
+svm_rbf.fit(X_train_scaled, y_train)
+
+y_pred_rbf = svm_rbf.predict(X_test_scaled)
+acc_rbf = accuracy_score(y_test, y_pred_rbf)
+
+print(f"\n=== SVM RBF (C=1, gamma=1) ===")
+print(f"Accuracy: {acc_rbf:.4f}")
+print(f"Support Vectors: {len(svm_rbf.support_)}")
+
+# ===== PARTIE 5 : Test avec différentes valeurs de C et gamma =====
+C_values = [0.1, 1, 10, 100]
+gamma_values = [0.01, 0.1, 1, 10]
+
+results = []
+
+for C in C_values:
+    for gamma in gamma_values:
+        svm = SVC(kernel='rbf', C=C, gamma=gamma, random_state=42)
+        svm.fit(X_train_scaled, y_train)
+        
+        y_pred = svm.predict(X_test_scaled)
+        acc = accuracy_score(y_test, y_pred)
+        n_sv = len(svm.support_)
+        
+        results.append({
+            'C': C,
+            'gamma': gamma,
+            'Accuracy': acc,
+            'N_Support_Vectors': n_sv
+        })
+
+df_results = pd.DataFrame(results)
+print("\n=== Résultats selon C et gamma ===")
+print(df_results.to_string(index=False))
+
+# Identifier les meilleurs paramètres
+best_idx = df_results['Accuracy'].idxmax()
+best_params = df_results.loc[best_idx]
+print(f"\n=== Meilleurs paramètres ===")
+print(f"C: {best_params['C']}, gamma: {best_params['gamma']}")
+print(f"Accuracy: {best_params['Accuracy']:.4f}")
+
+# ===== PARTIE 6 : Visualisation des frontières =====
+def plot_svm_rbf_decision_boundary(X, y, model, title):
+    """Visualiser la frontière de décision RBF"""
+    plt.figure(figsize=(10, 8))
+    
+    # Nuage de points
+    plt.scatter(X[y == 0, 0], X[y == 0, 1], c='red', marker='o', 
+                label='Classe 0', s=50, alpha=0.6)
+    plt.scatter(X[y == 1, 0], X[y == 1, 1], c='blue', marker='s', 
+                label='Classe 1', s=50, alpha=0.6)
+    
+    # Support vectors
+    plt.scatter(model.support_vectors_[:, 0], 
+                model.support_vectors_[:, 1],
+                s=200, facecolors='none', edgecolors='black', 
+                linewidth=2, label='Support Vectors')
+    
+    # Frontière de décision
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    
+    xx = np.linspace(xlim[0], xlim[1], 100)
+    yy = np.linspace(ylim[0], ylim[1], 100)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    Z = model.decision_function(xy).reshape(XX.shape)
+    
+    # Contour de la frontière
+    ax.contour(XX, YY, Z, colors='black', levels=[0], 
+               alpha=0.8, linestyles=['-'], linewidths=2)
+    ax.contourf(XX, YY, Z, levels=[-np.inf, 0, np.inf], 
+                alpha=0.3, colors=['red', 'blue'])
+    
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title(title)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.show()
+
+# Visualisation SVM RBF
+svm_rbf_best = SVC(kernel='rbf', C=best_params['C'], 
+                   gamma=best_params['gamma'], random_state=42)
+svm_rbf_best.fit(X_train_scaled, y_train)
+
+plot_svm_rbf_decision_boundary(X_train_scaled, y_train, svm_rbf_best, 
+                               f'SVM RBF (C={best_params["C"]}, gamma={best_params["gamma"]})')
+
+# ===== PARTIE 7 : Comparaison Linéaire vs RBF =====
+fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+
+# SVM Linéaire
+ax = axes[0]
+ax.scatter(X_train_scaled[y_train == 0, 0], X_train_scaled[y_train == 0, 1], 
+           c='red', marker='o', label='Classe 0', s=50, alpha=0.6)
+ax.scatter(X_train_scaled[y_train == 1, 0], X_train_scaled[y_train == 1, 1], 
+           c='blue', marker='s', label='Classe 1', s=50, alpha=0.6)
+ax.scatter(svm_linear.support_vectors_[:, 0], svm_linear.support_vectors_[:, 1],
+           s=200, facecolors='none', edgecolors='black', linewidth=2)
+xlim = ax.get_xlim()
+ylim = ax.get_ylim()
+xx = np.linspace(xlim[0], xlim[1], 100)
+yy = np.linspace(ylim[0], ylim[1], 100)
+YY, XX = np.meshgrid(yy, xx)
+xy = np.vstack([XX.ravel(), YY.ravel()]).T
+Z = svm_linear.decision_function(xy).reshape(XX.shape)
+ax.contour(XX, YY, Z, colors='black', levels=[0], linewidths=2)
+ax.set_title(f'SVM Linéaire (Accuracy: {acc_linear:.4f})')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# SVM RBF
+ax = axes[1]
+ax.scatter(X_train_scaled[y_train == 0, 0], X_train_scaled[y_train == 0, 1], 
+           c='red', marker='o', label='Classe 0', s=50, alpha=0.6)
+ax.scatter(X_train_scaled[y_train == 1, 0], X_train_scaled[y_train == 1, 1], 
+           c='blue', marker='s', label='Classe 1', s=50, alpha=0.6)
+ax.scatter(svm_rbf_best.support_vectors_[:, 0], svm_rbf_best.support_vectors_[:, 1],
+           s=200, facecolors='none', edgecolors='black', linewidth=2)
+xlim = ax.get_xlim()
+ylim = ax.get_ylim()
+xx = np.linspace(xlim[0], xlim[1], 100)
+yy = np.linspace(ylim[0], ylim[1], 100)
+YY, XX = np.meshgrid(yy, xx)
+xy = np.vstack([XX.ravel(), YY.ravel()]).T
+Z = svm_rbf_best.decision_function(xy).reshape(XX.shape)
+ax.contour(XX, YY, Z, colors='black', levels=[0], linewidths=2)
+ax.contourf(XX, YY, Z, levels=[-np.inf, 0, np.inf], 
+            alpha=0.3, colors=['red', 'blue'])
+ax.set_title(f'SVM RBF (Accuracy: {acc_rbf:.4f})')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# Questions d'analyse :
+# 1. Pourquoi le SVM linéaire échoue-t-il sur ces données ?
+#    → Les données ne sont pas linéairement séparables
+# 2. Comment le kernel RBF capture-t-il la structure non-linéaire ?
+#    → Transformation implicite dans un espace de dimension supérieure
+# 3. Quel est l'effet de gamma sur la frontière ?
+#    → gamma petit : frontière lisse, gamma grand : frontière complexe (risque overfitting)
+\end{lstlisting}
+\end{exemplebox}
+
+\subsection{Hyperparamètres et Paramètres}
+
+\begin{importantbox}
+\textbf{Hyperparamètres (fixés avant l'entraînement) :}
+\begin{itemize}
+    \item \textbf{$C$} : Paramètre de régularisation
+    \begin{itemize}
+        \item Contrôle le compromis entre maximiser la marge et pénaliser les erreurs
+        \item $C$ grand : Modèle strict, marge étroite, moins d'erreurs tolérées
+        \item $C$ petit : Modèle tolérant, marge large, plus d'erreurs tolérées
+    \end{itemize}
+    \item \textbf{Kernel} : Type de kernel (linéaire, polynomial, RBF)
+    \item \textbf{$\gamma$} (pour RBF) : Contrôle l'influence des points proches
+    \begin{itemize}
+        \item $\gamma$ petit : Vue large, frontière lisse
+        \item $\gamma$ grand : Vue étroite, frontière complexe (risque d'overfitting)
+    \end{itemize}
+    \item \textbf{degree} (pour polynomial) : Degré du polynôme
+    \item \textbf{coef0} (pour polynomial) : Coefficient constant
+\end{itemize}
+
+\textbf{Paramètres (appris pendant l'entraînement) :}
+\begin{itemize}
+    \item \textbf{$\mathbf{w}$} : Vecteur de poids (coefficients)
+    \item \textbf{$b$} : Biais (ordonnée à l'origine)
+    \item \textbf{$\alpha_i$} : Multiplicateurs de Lagrange
+    \item \textbf{Support vectors} : Points sur les frontières de marge
+\end{itemize}
+\end{importantbox}
+
+\newpage
+
+\section{Classification : Arbre de Décision}
+
+\subsection{Concept}
+
+Un arbre de décision partitionne récursivement l'espace des features selon des règles de décision.
+
+\subsection{Mesures d'Impureté}
+
+\begin{formulebox}
+\textbf{Entropie :}
+\begin{align}
+H(S) = -\sum_{i=1}^{c} p_i \log_2(p_i)
+\end{align}
+
+\textbf{Gini Impurity :}
+\begin{align}
+G(S) = 1 - \sum_{i=1}^{c} p_i^2
+\end{align}
+
+\textbf{Information Gain (Gain d'information) :}
+\begin{align}
+IG(S, A) = H(S) - \sum_{v \in \text{Values}(A)} \frac{|S_v|}{|S|} H(S_v)
+\end{align}
+
+où :
+\begin{itemize}
+    \item $S$ : ensemble d'exemples
+    \item $A$ : attribut (feature)
+    \item $p_i$ : proportion de la classe $i$
+    \item $c$ : nombre de classes
+    \item $S_v$ : sous-ensemble où $A = v$
+\end{itemize}
+\end{formulebox}
+
+\subsection{Algorithme ID3 (récursif)}
+
+\begin{algorithm}
+\caption{Construction d'un Arbre de Décision}
+\begin{algorithmic}
+\REQUIRE Dataset $D$, Features $F$, Classe cible
+\ENSURE Arbre de décision
+\IF{Tous les exemples ont la même classe}
+    \RETURN Nœud feuille avec cette classe
+\ENDIF
+\IF{$F$ est vide}
+    \RETURN Nœud feuille avec classe majoritaire
+\ENDIF
+\STATE $A^*$ = attribut avec le meilleur Information Gain
+\STATE Créer nœud racine avec $A^*$
+\FOR{chaque valeur $v$ de $A^*$}
+    \STATE $D_v$ = sous-ensemble de $D$ où $A^* = v$
+    \IF{$D_v$ est vide}
+        \STATE Ajouter feuille avec classe majoritaire
+    \ELSE
+        \STATE Ajouter sous-arbre récursif avec $D_v$ et $F \setminus \{A^*\}$
+    \ENDIF
+\ENDFOR
+\RETURN Arbre
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Hyperparamètres}
+
+\begin{itemize}
+    \item \textbf{max\_depth} : Profondeur maximale de l'arbre
+    \item \textbf{min\_samples\_split} : Nombre minimum d'échantillons pour diviser un nœud
+    \item \textbf{min\_samples\_leaf} : Nombre minimum d'échantillons dans une feuille
+    \item \textbf{criterion} : 'gini' ou 'entropy'
+    \item \textbf{max\_features} : Nombre maximum de features à considérer
+\end{itemize}
+
+\subsection{Overfitting et Élagage}
+
+\begin{importantbox}
+\textbf{Overfitting (Sur-apprentissage) :}
+\begin{itemize}
+    \item L'arbre mémorise les données d'entraînement plutôt que d'apprendre des règles générales
+    \item Accuracy très élevée sur train, mais faible sur test
+    \item Arbre très profond avec beaucoup de branches
+    \item Certaines feuilles contiennent très peu d'exemples
+\end{itemize}
+
+\textbf{Élagage préventif (pre-pruning) :} Limite la croissance de l'arbre via hyperparamètres.
+\begin{itemize}
+    \item \texttt{max\_depth} : Profondeur maximale
+    \item \texttt{min\_samples\_split} : Nombre minimum d'échantillons pour diviser
+    \item \texttt{min\_samples\_leaf} : Nombre minimum d'échantillons dans une feuille
+\end{itemize}
+
+\textbf{Élagage a posteriori (post-pruning) :} Supprime des branches après construction.
+
+\textbf{Courbes d'apprentissage :}
+\begin{itemize}
+    \item Quand la profondeur augmente, l'accuracy train continue d'augmenter
+    \item L'accuracy test stagne ou diminue après un certain point
+    \item La divergence entre train et test indique l'overfitting
+\end{itemize}
+
+\textbf{Compromis Biais-Variance :}
+\begin{itemize}
+    \item Arbre très profond : Biais faible, Variance élevée (overfitting)
+    \item Arbre très simple : Biais élevé, Variance faible (underfitting)
+    \item Arbre optimal : Meilleur compromis (meilleure accuracy sur test)
+\end{itemize}
+\end{importantbox}
+
+\subsection{Script Python : Entraînement et Prédiction}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+from collections import Counter
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+class DecisionTree:
+    def __init__(self, max_depth=None, min_samples_split=2, 
+                 min_samples_leaf=1, criterion='gini'):
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.criterion = criterion
+        self.tree = None
+    
+    def _gini(self, y):
+        """Calcul de l'impureté Gini"""
+        if len(y) == 0:
+            return 0
+        counts = Counter(y)
+        proportions = [count/len(y) for count in counts.values()]
+        return 1 - sum(p**2 for p in proportions)
+    
+    def _entropy(self, y):
+        """Calcul de l'entropie"""
+        if len(y) == 0:
+            return 0
+        counts = Counter(y)
+        proportions = [count/len(y) for count in counts.values()]
+        return -sum(p * np.log2(p) if p > 0 else 0 for p in proportions)
+    
+    def _impurity(self, y):
+        """Calcul de l'impureté selon le critère"""
+        if self.criterion == 'gini':
+            return self._gini(y)
+        else:  # entropy
+            return self._entropy(y)
+    
+    def _information_gain(self, y_parent, y_left, y_right):
+        """Calcul du gain d'information"""
+        parent_impurity = self._impurity(y_parent)
+        n = len(y_parent)
+        n_left, n_right = len(y_left), len(y_right)
+        
+        if n == 0:
+            return 0
+        
+        child_impurity = (n_left/n) * self._impurity(y_left) + \
+                         (n_right/n) * self._impurity(y_right)
+        
+        return parent_impurity - child_impurity
+    
+    def _best_split(self, X, y):
+        """Trouve le meilleur split"""
+        best_gain = -1
+        best_feature = None
+        best_threshold = None
+        
+        n_features = X.shape[1]
+        
+        for feature_idx in range(n_features):
+            # Trier les valeurs uniques
+            thresholds = np.unique(X[:, feature_idx])
+            
+            for threshold in thresholds:
+                # Division
+                left_mask = X[:, feature_idx] <= threshold
+                right_mask = ~left_mask
+                
+                if np.sum(left_mask) == 0 or np.sum(right_mask) == 0:
+                    continue
+                
+                y_left = y[left_mask]
+                y_right = y[right_mask]
+                
+                # Gain d'information
+                gain = self._information_gain(y, y_left, y_right)
+                
+                if gain > best_gain:
+                    best_gain = gain
+                    best_feature = feature_idx
+                    best_threshold = threshold
+        
+        return best_feature, best_threshold, best_gain
+    
+    def _build_tree(self, X, y, depth=0):
+        """Construction récursive de l'arbre"""
+        n_samples = len(y)
+        
+        # Critères d'arrêt
+        if (self.max_depth is not None and depth >= self.max_depth) or \
+           n_samples < self.min_samples_split or \
+           len(np.unique(y)) == 1:
+            return {'class': Counter(y).most_common(1)[0][0], 'leaf': True}
+        
+        # Meilleur split
+        feature, threshold, gain = self._best_split(X, y)
+        
+        if gain == 0:  # Pas d'amélioration
+            return {'class': Counter(y).most_common(1)[0][0], 'leaf': True}
+        
+        # Division
+        left_mask = X[:, feature] <= threshold
+        right_mask = ~left_mask
+        
+        if np.sum(left_mask) < self.min_samples_leaf or \
+           np.sum(right_mask) < self.min_samples_leaf:
+            return {'class': Counter(y).most_common(1)[0][0], 'leaf': True}
+        
+        # Construction récursive
+        node = {
+            'feature': feature,
+            'threshold': threshold,
+            'left': self._build_tree(X[left_mask], y[left_mask], depth + 1),
+            'right': self._build_tree(X[right_mask], y[right_mask], depth + 1),
+            'leaf': False
+        }
+        
+        return node
+    
+    def fit(self, X, y):
+        """Entraînement"""
+        self.tree = self._build_tree(X, y)
+        return self
+    
+    def _predict_sample(self, x, node):
+        """Prédiction pour un échantillon"""
+        if node['leaf']:
+            return node['class']
+        
+        if x[node['feature']] <= node['threshold']:
+            return self._predict_sample(x, node['left'])
+        else:
+            return self._predict_sample(x, node['right'])
+    
+    def predict(self, X):
+        """Prédiction"""
+        return np.array([self._predict_sample(x, self.tree) for x in X])
+
+# Utilisation avec sklearn (version optimisée)
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+
+# Chargement des données
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Division train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Test avec différents hyperparamètres
+print("=== Test des Hyperparamètres ===")
+for max_depth in [None, 3, 5, 10]:
+    for min_samples_split in [2, 5, 10]:
+        model = DecisionTreeClassifier(
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            criterion='gini',
+            random_state=42
+        )
+        model.fit(X_train, y_train)
+        train_acc = accuracy_score(y_train, model.predict(X_train))
+        test_acc = accuracy_score(y_test, model.predict(X_test))
+        print(f"max_depth={max_depth}, min_samples_split={min_samples_split}: "
+              f"Train={train_acc:.4f}, Test={test_acc:.4f}")
+
+# Meilleur modèle
+best_model = DecisionTreeClassifier(
+    max_depth=3,
+    min_samples_split=5,
+    criterion='gini',
+    random_state=42
+)
+best_model.fit(X_train, y_train)
+
+# Prédictions
+y_pred = best_model.predict(X_test)
+
+# Métriques
+print("\n=== Métriques d'Évaluation ===")
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+print("\nMatrice de confusion:")
+print(confusion_matrix(y_test, y_pred))
+print("\nRapport de classification:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# Visualisation de l'arbre
+plt.figure(figsize=(20, 10))
+plot_tree(best_model, feature_names=iris.feature_names, 
+          class_names=iris.target_names, filled=True)
+plt.title("Arbre de Décision")
+plt.show()
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Clustering : K-Means}
+
+\subsection{Algorithme}
+
+\begin{importantbox}
+\textbf{Principe :} Partitionner les données en $k$ clusters en minimisant la somme des distances au carré entre les points et les centroïdes de leurs clusters.
+\end{importantbox}
+
+\subsection{Formules}
+
+\begin{formulebox}
+\textbf{Fonction objectif (Inertia) :}
+\begin{align}
+J = \sum_{i=1}^{k} \sum_{\mathbf{x} \in C_i} ||\mathbf{x} - \boldsymbol{\mu}_i||^2
+\end{align}
+
+\textbf{Centroïde d'un cluster :}
+\begin{align}
+\boldsymbol{\mu}_i = \frac{1}{|C_i|} \sum_{\mathbf{x} \in C_i} \mathbf{x}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $k$ : nombre de clusters
+    \item $C_i$ : ensemble des points du cluster $i$
+    \item $\boldsymbol{\mu}_i$ : centroïde du cluster $i$
+\end{itemize}
+\end{formulebox}
+
+\subsection{Algorithme K-Means}
+
+\begin{algorithm}
+\caption{K-Means}
+\begin{algorithmic}
+\REQUIRE Données $\mathbf{X}$, nombre de clusters $k$
+\ENSURE Centroïdes $\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_k$
+\STATE Initialiser aléatoirement $k$ centroïdes
+\REPEAT
+    \STATE \textbf{Étape d'assignation :} Assigner chaque point au cluster le plus proche
+    \STATE $C_i = \{\mathbf{x} : ||\mathbf{x} - \boldsymbol{\mu}_i||^2 \leq ||\mathbf{x} - \boldsymbol{\mu}_j||^2, \forall j\}$
+    \STATE \textbf{Étape de mise à jour :} Recalculer les centroïdes
+    \STATE $\boldsymbol{\mu}_i = \frac{1}{|C_i|} \sum_{\mathbf{x} \in C_i} \mathbf{x}$
+\UNTIL{Convergence (centroïdes ne changent plus)}
+\RETURN Centroïdes et assignations
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Hyperparamètres}
+
+\begin{itemize}
+    \item \textbf{$k$} : Nombre de clusters (hyperparamètre principal)
+    \item \textbf{max\_iter} : Nombre maximum d'itérations
+    \item \textbf{init} : Méthode d'initialisation ('random', 'k-means++')
+    \item \textbf{n\_init} : Nombre d'initialisations différentes
+    \item \textbf{tol} : Tolérance pour la convergence
+\end{itemize}
+
+\subsection{Méthode du Coude (Elbow Method)}
+
+\begin{importantbox}
+Pour choisir $k$, on trace l'inertia en fonction de $k$ et on cherche le "coude" dans la courbe.
+\end{importantbox}
+
+\subsection{Script Python : Entraînement et Prédiction}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+
+class KMeansClustering:
+    def __init__(self, k=3, max_iter=300, init='k-means++', n_init=10):
+        self.k = k
+        self.max_iter = max_iter
+        self.init = init
+        self.n_init = n_init
+        self.centroids = None
+        self.labels = None
+        self.inertia = None
+    
+    def _initialize_centroids(self, X):
+        """Initialisation des centroïdes"""
+        if self.init == 'random':
+            indices = np.random.choice(len(X), self.k, replace=False)
+            return X[indices]
+        elif self.init == 'k-means++':
+            # K-means++ : choisir le premier centroïde aléatoirement,
+            # puis choisir les suivants avec probabilité proportionnelle
+            # à la distance au centroïde le plus proche
+            centroids = [X[np.random.randint(len(X))]]
+            
+            for _ in range(self.k - 1):
+                distances = np.array([
+                    min([np.linalg.norm(x - c)**2 for c in centroids])
+                    for x in X
+                ])
+                probabilities = distances / distances.sum()
+                cumulative_probs = probabilities.cumsum()
+                r = np.random.rand()
+                idx = np.searchsorted(cumulative_probs, r)
+                centroids.append(X[idx])
+            
+            return np.array(centroids)
+    
+    def _assign_clusters(self, X, centroids):
+        """Assigner chaque point au cluster le plus proche"""
+        distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+        return np.argmin(distances, axis=0)
+    
+    def _update_centroids(self, X, labels):
+        """Mettre à jour les centroïdes"""
+        centroids = np.array([X[labels == i].mean(axis=0) 
+                             for i in range(self.k)])
+        return centroids
+    
+    def _compute_inertia(self, X, labels, centroids):
+        """Calculer l'inertia"""
+        inertia = 0
+        for i in range(self.k):
+            cluster_points = X[labels == i]
+            if len(cluster_points) > 0:
+                inertia += np.sum((cluster_points - centroids[i])**2)
+        return inertia
+    
+    def fit(self, X):
+        """Entraînement"""
+        best_inertia = float('inf')
+        best_centroids = None
+        best_labels = None
+        
+        # Essayer plusieurs initialisations
+        for init_idx in range(self.n_init):
+            # Initialisation
+            centroids = self._initialize_centroids(X)
+            
+            for iteration in range(self.max_iter):
+                # Assignation
+                labels = self._assign_clusters(X, centroids)
+                
+                # Nouveaux centroïdes
+                new_centroids = self._update_centroids(X, labels)
+                
+                # Vérifier la convergence
+                if np.allclose(centroids, new_centroids):
+                    break
+                
+                centroids = new_centroids
+            
+            # Calculer l'inertia
+            inertia = self._compute_inertia(X, labels, centroids)
+            
+            # Garder le meilleur résultat
+            if inertia < best_inertia:
+                best_inertia = inertia
+                best_centroids = centroids
+                best_labels = labels
+        
+        self.centroids = best_centroids
+        self.labels = best_labels
+        self.inertia = best_inertia
+        
+        return self
+    
+    def predict(self, X):
+        """Prédiction (assignation aux clusters)"""
+        return self._assign_clusters(X, self.centroids)
+
+# Utilisation
+import pandas as pd
+
+# Chargement des données (exemple avec données de céréales)
+data = pd.read_csv('cereal.csv')
+# Sélectionner des features numériques
+features = ['calories', 'protein', 'fat', 'sodium', 'fiber', 'carbo', 'sugars']
+X = data[features].values
+
+# Normalisation (important pour K-means)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Méthode du coude pour choisir k
+inertias = []
+silhouette_scores = []
+k_range = range(2, 11)
+
+for k in k_range:
+    model = KMeans(n_clusters=k, random_state=42, n_init=10)
+    model.fit(X_scaled)
+    inertias.append(model.inertia_)
+    silhouette_scores.append(silhouette_score(X_scaled, model.labels_))
+
+# Visualisation de la méthode du coude
+fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+
+axes[0].plot(k_range, inertias, 'bo-')
+axes[0].set_xlabel('Nombre de clusters (k)')
+axes[0].set_ylabel('Inertia')
+axes[0].set_title('Méthode du Coude')
+axes[0].grid(True)
+
+axes[1].plot(k_range, silhouette_scores, 'ro-')
+axes[1].set_xlabel('Nombre de clusters (k)')
+axes[1].set_ylabel('Score de Silhouette')
+axes[1].set_title('Score de Silhouette')
+axes[1].grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Meilleur k (basé sur le score de silhouette)
+best_k = k_range[np.argmax(silhouette_scores)]
+print(f"Meilleur k selon silhouette: {best_k}")
+
+# Entraînement avec le meilleur k
+model = KMeans(n_clusters=best_k, random_state=42, n_init=10)
+model.fit(X_scaled)
+labels = model.predict(X_scaled)
+
+# Métriques
+print(f"\n=== Métriques d'Évaluation ===")
+print(f"Nombre de clusters: {best_k}")
+print(f"Inertia: {model.inertia_:.2f}")
+print(f"Score de Silhouette: {silhouette_score(X_scaled, labels):.4f}")
+print(f"Score Davies-Bouldin: {davies_bouldin_score(X_scaled, labels):.4f}")
+
+# Visualisation (si 2D ou avec PCA)
+from sklearn.decomposition import PCA
+
+if X_scaled.shape[1] > 2:
+    pca = PCA(n_components=2)
+    X_2d = pca.fit_transform(X_scaled)
+else:
+    X_2d = X_scaled
+
+plt.figure(figsize=(10, 8))
+scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=labels, cmap='viridis', alpha=0.6)
+plt.scatter(model.cluster_centers_[:, 0] if X_scaled.shape[1] == 2 
+            else pca.transform(model.cluster_centers_)[:, 0],
+            model.cluster_centers_[:, 1] if X_scaled.shape[1] == 2 
+            else pca.transform(model.cluster_centers_)[:, 1],
+            c='red', marker='x', s=200, linewidths=3, label='Centroïdes')
+plt.colorbar(scatter)
+plt.xlabel('Première composante principale' if X_scaled.shape[1] > 2 else 'Feature 1')
+plt.ylabel('Deuxième composante principale' if X_scaled.shape[1] > 2 else 'Feature 2')
+plt.title(f'Clustering K-Means (k={best_k})')
+plt.legend()
+plt.grid(True)
+plt.show()
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Métriques d'Évaluation}
+
+\subsection{Régression}
+
+\begin{formulebox}
+\textbf{Mean Squared Error (MSE) :}
+\begin{align}
+\text{MSE} = \frac{1}{m} \sum_{i=1}^{m} (y_i - \hat{y}_i)^2
+\end{align}
+
+\textbf{Root Mean Squared Error (RMSE) :}
+\begin{align}
+\text{RMSE} = \sqrt{\frac{1}{m} \sum_{i=1}^{m} (y_i - \hat{y}_i)^2}
+\end{align}
+
+\textbf{Mean Absolute Error (MAE) :}
+\begin{align}
+\text{MAE} = \frac{1}{m} \sum_{i=1}^{m} |y_i - \hat{y}_i|
+\end{align}
+
+\textbf{Coefficient de Détermination (R²) :}
+\begin{align}
+R^2 = 1 - \frac{\text{SS}_{res}}{\text{SS}_{tot}} = 1 - \frac{\text{Erreur du modèle}}{\text{Variation totale}}
+\end{align}
+
+où :
+\begin{itemize}
+    \item \textbf{SS}_{res} (Somme des carrés des résidus) : Erreur du modèle
+    \begin{align}
+    \text{SS}_{res} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+    \end{align}
+    \item \textbf{SS}_{tot} (Somme des carrés totaux) : Variation totale
+    \begin{align}
+    \text{SS}_{tot} = \sum_{i=1}^{n} (y_i - \bar{y})^2
+    \end{align}
+    où $\bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i$ est la moyenne des valeurs réelles
+\end{itemize}
+
+\textbf{Interprétation :}
+\begin{itemize}
+    \item $R^2 = 1$ : Le modèle explique toute la variation (parfait)
+    \item $R^2 = 0$ : Le modèle n'explique rien (équivalent à prédire la moyenne)
+    \item $R^2 < 0$ : Le modèle est pire que la moyenne
+\end{itemize}
+
+\textbf{Exemple concret :}
+\begin{itemize}
+    \item 3 observations : Salaires de 40k, 50k, 90k
+    \item Salaire moyen : $(40k + 50k + 90k) / 3 = 60k$
+    \item Erreur totale (SS}_{tot}) : $(40k-60k)^2 + (50k-60k)^2 + (90k-60k)^2 = 1,400,000,000$
+    \item Modèle : Salaire = 25k * Expérience + 15k
+    \item Erreur du modèle (SS}_{res}) : $(40k-40k)^2 + (50k-65k)^2 + (90k-90k)^2 = 225,000,000$
+    \item $R^2 = 1 - (225,000,000 / 1,400,000,000) = 0.84$ (84\%)
+\end{itemize}
+\end{formulebox}
+
+\subsection{Classification}
+
+\begin{formulebox}
+\textbf{Matrice de Confusion (Classification Binaire) :}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+ & \textbf{Prédit : Toxique} & \textbf{Prédit : Comestible} \\
+\hline
+\textbf{Réel : Toxique} & TP (Vrai Positif) & FN (Faux Négatif) \\
+\hline
+\textbf{Réel : Comestible} & FP (Faux Positif) & TN (Vrai Négatif) \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Exemple concret (200 plantes de test, K=5) :}
+\begin{itemize}
+    \item TP = 94 : 94 plantes toxiques bien classées comme toxiques
+    \item TN = 98 : 98 plantes comestibles bien classées comme comestibles
+    \item FP = 2 : 2 plantes comestibles classées comme toxiques (moins grave)
+    \item FN = 6 : 6 plantes toxiques classées comme comestibles (très grave !)
+    \item Total = 94 + 98 + 2 + 6 = 200
+\end{itemize}
+
+\textbf{Accuracy (Exactitude) :}
+\begin{align}
+ACCURACY = \frac{\text{Prédictions correctes}}{\text{Total des prédictions}} = \frac{TP + TN}{TP + TN + FP + FN}
+\end{align}
+
+\textbf{Exemple :} $(94 + 98) / 200 = 192 / 200 = 0.96$ (96\%)
+
+\textbf{Precision (Précision) :}
+\begin{align}
+PRECISION = \frac{TP}{TP + FP}
+\end{align}
+
+\textbf{Exemple :} $94 / (94 + 2) = 94 / 96 = 0.979$ (97.9\%)
+
+\textbf{Interprétation :} Parmi les plantes prédites comme "Toxiques", 97.9\% l'étaient vraiment. La précision indique la fiabilité des prédictions positives.
+
+\textbf{Recall (Rappel) :}
+\begin{align}
+RECALL = \frac{TP}{TP + FN}
+\end{align}
+
+\textbf{Exemple :} $94 / (94 + 6) = 94 / 100 = 0.94$ (94\%)
+
+\textbf{Interprétation :} Sur toutes les plantes réellement toxiques, on en a trouvé 94\%. Le modèle a manqué 6\% des plantes toxiques (les FN).
+
+\textbf{F1-Score :}
+\begin{align}
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{align}
+
+\textbf{Choix de la métrique selon le contexte :}
+\begin{itemize}
+    \item \textbf{Accuracy} : Métrique générale, mais peut être trompeuse si classes déséquilibrées
+    \item \textbf{Precision} : Prioritaire si les Faux Positifs sont coûteux
+    \item \textbf{Recall} : Prioritaire si les Faux Négatifs sont dangereux (ex: plantes toxiques, fraudes)
+    \item Dans un problème de toxicité, le \textbf{Recall} est la métrique prioritaire car on préfère avoir plus de Faux Positifs que de Faux Négatifs
+\end{itemize}
+\end{formulebox}
+
+\subsection{Clustering}
+
+\begin{formulebox}
+\textbf{Inertia (Within-cluster sum of squares) :}
+\begin{align}
+\text{Inertia} = \sum_{i=1}^{k} \sum_{\mathbf{x} \in C_i} ||\mathbf{x} - \boldsymbol{\mu}_i||^2
+\end{align}
+
+\textbf{Score de Silhouette :}
+\begin{align}
+s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}
+\end{align}
+
+où :
+\begin{itemize}
+    \item $a(i)$ : distance moyenne aux points du même cluster
+    \item $b(i)$ : distance moyenne aux points du cluster le plus proche
+\end{itemize}
+
+\textbf{Score Davies-Bouldin :}
+\begin{align}
+DB = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \left( \frac{\sigma_i + \sigma_j}{d(\boldsymbol{\mu}_i, \boldsymbol{\mu}_j)} \right)
+\end{align}
+
+où $\sigma_i$ est l'écart-type moyen des distances dans le cluster $i$.
+\end{formulebox}
+
+\subsection{Script Python : Calcul des Métriques}
+
+\begin{exemplebox}
+\begin{lstlisting}
+import numpy as np
+from sklearn.metrics import (
+    mean_squared_error, mean_absolute_error, r2_score,
+    accuracy_score, precision_score, recall_score, f1_score,
+    confusion_matrix, classification_report,
+    silhouette_score, davies_bouldin_score
+)
+
+# ===== MÉTRIQUES DE RÉGRESSION =====
+def regression_metrics(y_true, y_pred):
+    """Calculer toutes les métriques de régression"""
+    mse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(y_true, y_pred)
+    r2 = r2_score(y_true, y_pred)
+    
+    print("=== Métriques de Régression ===")
+    print(f"MSE:  {mse:.4f}")
+    print(f"RMSE: {rmse:.4f}")
+    print(f"MAE:  {mae:.4f}")
+    print(f"R²:   {r2:.4f}")
+    
+    return {'MSE': mse, 'RMSE': rmse, 'MAE': mae, 'R²': r2}
+
+# ===== MÉTRIQUES DE CLASSIFICATION =====
+def classification_metrics(y_true, y_pred, average='weighted'):
+    """Calculer toutes les métriques de classification"""
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred, average=average, zero_division=0)
+    recall = recall_score(y_true, y_pred, average=average, zero_division=0)
+    f1 = f1_score(y_true, y_pred, average=average, zero_division=0)
+    cm = confusion_matrix(y_true, y_pred)
+    
+    print("=== Métriques de Classification ===")
+    print(f"Accuracy:  {accuracy:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall:    {recall:.4f}")
+    print(f"F1-Score:  {f1:.4f}")
+    print("\nMatrice de confusion:")
+    print(cm)
+    
+    return {
+        'Accuracy': accuracy,
+        'Precision': precision,
+        'Recall': recall,
+        'F1-Score': f1,
+        'Confusion Matrix': cm
+    }
+
+# ===== MÉTRIQUES DE CLUSTERING =====
+def clustering_metrics(X, labels, centroids=None):
+    """Calculer les métriques de clustering"""
+    silhouette = silhouette_score(X, labels)
+    davies_bouldin = davies_bouldin_score(X, labels)
+    
+    # Calcul de l'inertia si centroïdes fournis
+    if centroids is not None:
+        inertia = 0
+        for i, centroid in enumerate(centroids):
+            cluster_points = X[labels == i]
+            if len(cluster_points) > 0:
+                inertia += np.sum((cluster_points - centroid)**2)
+    else:
+        inertia = None
+    
+    print("=== Métriques de Clustering ===")
+    print(f"Score de Silhouette: {silhouette:.4f}")
+    print(f"Score Davies-Bouldin: {davies_bouldin:.4f}")
+    if inertia is not None:
+        print(f"Inertia: {inertia:.2f}")
+    
+    return {
+        'Silhouette': silhouette,
+        'Davies-Bouldin': davies_bouldin,
+        'Inertia': inertia
+    }
+
+# Exemple d'utilisation
+# Régression
+y_true_reg = np.array([3, -0.5, 2, 7])
+y_pred_reg = np.array([2.5, 0.0, 2, 8])
+regression_metrics(y_true_reg, y_pred_reg)
+
+# Classification
+y_true_clf = np.array([0, 1, 2, 2, 0, 1])
+y_pred_clf = np.array([0, 2, 2, 2, 0, 1])
+classification_metrics(y_true_clf, y_pred_clf)
+
+# Clustering
+from sklearn.datasets import make_blobs
+X_cluster, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+labels = KMeans(n_clusters=4, random_state=42).fit_predict(X_cluster)
+clustering_metrics(X_cluster, labels)
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Hyperparamètres et Paramètres}
+
+\subsection{Résumé des Hyperparamètres par Modèle}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{4cm}|p{6cm}|}
+\hline
+\textbf{Modèle} & \textbf{Hyperparamètres} & \textbf{Description} \\
+\hline
+Régression Linéaire & \texttt{learning\_rate} ($\alpha$) & Taux d'apprentissage pour gradient descent \\
+& \texttt{n\_iterations} & Nombre d'itérations \\
+\hline
+Régression Polynomiale & \texttt{degree} & Degré du polynôme \\
+\hline
+KNN & \texttt{k} & Nombre de voisins \\
+& \texttt{distance\_metric} & Métrique de distance (euclidienne, Manhattan) \\
+& \texttt{weights} & Poids uniformes ou basés sur distance \\
+\hline
+Arbre de Décision & \texttt{max\_depth} & Profondeur maximale \\
+& \texttt{min\_samples\_split} & Min échantillons pour diviser \\
+& \texttt{min\_samples\_leaf} & Min échantillons dans feuille \\
+& \texttt{criterion} & Critère (gini, entropy) \\
+& \texttt{max\_features} & Max features à considérer \\
+\hline
+K-Means & \texttt{k} (n\_clusters) & Nombre de clusters \\
+& \texttt{max\_iter} & Nombre max d'itérations \\
+& \texttt{init} & Initialisation (random, k-means++) \\
+& \texttt{n\_init} & Nombre d'initialisations \\
+& \texttt{tol} & Tolérance pour convergence \\
+\hline
+\end{tabular}
+\caption{Hyperparamètres principaux par modèle}
+\end{table}
+
+\subsection{Paramètres Appris}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{8cm}|}
+\hline
+\textbf{Modèle} & \textbf{Paramètres Appris} \\
+\hline
+Régression Linéaire & Poids $w_0, w_1, \ldots, w_n$ (biais et coefficients) \\
+\hline
+KNN & Aucun (algorithme lazy, stocke les données) \\
+\hline
+Arbre de Décision & Structure de l'arbre (nœuds, seuils, règles) \\
+\hline
+K-Means & Centroïdes $\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_k$ \\
+\hline
+\end{tabular}
+\caption{Paramètres appris par chaque modèle}
+\end{table}
+
+\subsection{Optimisation des Hyperparamètres}
+
+\begin{exemplebox}
+\begin{lstlisting}
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.cluster import KMeans
+
+# ===== Grid Search pour KNN =====
+param_grid_knn = {
+    'n_neighbors': [3, 5, 7, 9, 11],
+    'weights': ['uniform', 'distance'],
+    'metric': ['euclidean', 'manhattan']
+}
+
+knn = KNeighborsClassifier()
+grid_search_knn = GridSearchCV(
+    knn, param_grid_knn, cv=5, scoring='accuracy', n_jobs=-1
+)
+grid_search_knn.fit(X_train, y_train)
+
+print("Meilleurs hyperparamètres KNN:", grid_search_knn.best_params_)
+print("Meilleur score:", grid_search_knn.best_score_)
+
+# ===== Grid Search pour Arbre de Décision =====
+param_grid_tree = {
+    'max_depth': [3, 5, 7, 10, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'criterion': ['gini', 'entropy']
+}
+
+tree = DecisionTreeClassifier()
+grid_search_tree = GridSearchCV(
+    tree, param_grid_tree, cv=5, scoring='accuracy', n_jobs=-1
+)
+grid_search_tree.fit(X_train, y_train)
+
+print("Meilleurs hyperparamètres Arbre:", grid_search_tree.best_params_)
+print("Meilleur score:", grid_search_tree.best_score_)
+
+# ===== Validation Croisée pour K-Means =====
+from sklearn.model_selection import cross_val_score
+
+k_range = range(2, 11)
+silhouette_scores = []
+
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    labels = kmeans.fit_predict(X)
+    score = silhouette_score(X, labels)
+    silhouette_scores.append(score)
+
+best_k = k_range[np.argmax(silhouette_scores)]
+print(f"Meilleur k pour K-Means: {best_k}")
+\end{lstlisting}
+\end{exemplebox}
+
+\newpage
+
+\section{Résumé des Scripts Python Complets}
+
+\subsection{Template Général d'Entraînement}
+
+\begin{exemplebox}
+\begin{lstlisting}
+# Template général pour l'entraînement d'un modèle ML
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import *
+
+# 1. Chargement des données
+data = pd.read_csv('dataset.csv')
+X = data.drop('target', axis=1).values
+y = data['target'].values
+
+# 2. Préprocessing
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 3. Division train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+# 4. Création et entraînement du modèle
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.cluster import KMeans
+
+# Exemple pour régression
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# 5. Prédictions
+y_train_pred = model.predict(X_train)
+y_test_pred = model.predict(X_test)
+
+# 6. Évaluation
+print("Train MSE:", mean_squared_error(y_train, y_train_pred))
+print("Test MSE:", mean_squared_error(y_test, y_test_pred))
+print("Train R²:", r2_score(y_train, y_train_pred))
+print("Test R²:", r2_score(y_test, y_test_pred))
+
+# 7. Visualisation (optionnel)
+import matplotlib.pyplot as plt
+plt.scatter(y_test, y_test_pred)
+plt.xlabel('Valeurs réelles')
+plt.ylabel('Prédictions')
+plt.title('Prédictions vs Réalité')
+plt.show()
+\end{lstlisting}
+\end{exemplebox}
+
+\subsection{Checklist pour l'Examen}
+
+\begin{importantbox}
+\textbf{Points à retenir pour l'examen :}
+\begin{enumerate}
+    \item \textbf{Formules} : Connaître toutes les formules de coût, gradients, métriques
+    \item \textbf{Gradient Descent} : Comprendre l'algorithme et les mises à jour
+    \item \textbf{Hyperparamètres} : Savoir identifier et ajuster les hyperparamètres
+    \item \textbf{Métriques} : Connaître les métriques appropriées pour chaque tâche
+    \item \textbf{Scripts Python} : Maîtriser les scripts d'entraînement et de prédiction
+    \item \textbf{Overfitting} : Comprendre et éviter le sur-apprentissage
+    \item \textbf{Préprocessing} : Normalisation, division train/test
+\end{enumerate}
+\end{importantbox}
+
+\end{document}
+

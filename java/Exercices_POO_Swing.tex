@@ -1,0 +1,551 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Exercices POO et Swing}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Java
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+% Configuration pour les zones de réponse
+\tcbuselibrary{breakable}
+\newtcolorbox{reponsebox}{
+    colback=gray!5,
+    colframe=gray!50,
+    breakable,
+    title=Réponse
+}
+
+% Métadonnées
+\title{Exercices - POO et Swing\\
+\large Programmation Orientée Objet et Interfaces Graphiques}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Exercice 1 : Questions Directes en POO}
+
+\subsection{Question 1}
+
+\textbf{Quelle est la différence entre une classe abstraite et une interface en Java ? Donnez un exemple concret pour illustrer cette différence.}
+
+\begin{reponsebox}
+\vspace{3cm}
+\end{reponsebox}
+
+\subsection{Question 2}
+
+\textbf{Expliquez le concept de polymorphisme en POO. Donnez un exemple de code Java qui illustre le polymorphisme avec au moins deux classes.}
+
+\begin{reponsebox}
+\vspace{4cm}
+\end{reponsebox}
+
+\subsection{Question 3}
+
+\textbf{Qu'est-ce qu'une classe générique (generic class) en Java ? Pourquoi les utiliser ? Donnez un exemple de classe générique avec deux paramètres de type.}
+
+\begin{reponsebox}
+\vspace{4cm}
+\end{reponsebox}
+
+\subsection{Question 4}
+
+\textbf{Expliquez la différence entre \texttt{ArrayList} et \texttt{LinkedList} en Java. Dans quels cas utiliseriez-vous chacune de ces collections ?}
+
+\begin{reponsebox}
+\vspace{4cm}
+\end{reponsebox}
+
+\subsection{Question 5}
+
+\textbf{Qu'est-ce qu'un stream en Java 8+ ? Donnez un exemple d'utilisation d'un stream pour filtrer et transformer une liste d'entiers.}
+
+\begin{reponsebox}
+\vspace{4cm}
+\end{reponsebox}
+
+\newpage
+
+\section{Exercice 2 : Identifier les Erreurs et Proposer des Solutions}
+
+\subsection{Erreur 1 : Héritage}
+
+\textbf{Identifiez l'erreur dans le code suivant et proposez une solution :}
+
+\begin{lstlisting}
+class Animal {
+    private String nom;
+    
+    public Animal(String nom) {
+        this.nom = nom;
+    }
+    
+    public void manger() {
+        System.out.println(nom + " mange");
+    }
+}
+
+class Chien extends Animal {
+    public Chien(String nom) {
+        // Erreur ici
+    }
+    
+    public void aboyer() {
+        System.out.println("Wouf wouf !");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Chien chien = new Chien("Rex");
+        chien.manger();
+    }
+}
+\end{lstlisting}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\subsection{Erreur 2 : Polymorphisme}
+
+\textbf{Identifiez l'erreur dans le code suivant et proposez une solution :}
+
+\begin{lstlisting}
+class Forme {
+    public void dessiner() {
+        System.out.println("Dessiner une forme");
+    }
+}
+
+class Cercle extends Forme {
+    public void dessiner() {
+        System.out.println("Dessiner un cercle");
+    }
+    
+    public void calculerAire() {
+        System.out.println("Aire du cercle");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Forme forme = new Cercle();
+        forme.dessiner();
+        forme.calculerAire(); // Erreur ici
+    }
+}
+\end{lstlisting}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\subsection{Erreur 3 : Classes Génériques}
+
+\textbf{Identifiez l'erreur dans le code suivant et proposez une solution :}
+
+\begin{lstlisting}
+class Boite<T> {
+    private T contenu;
+    
+    public void setContenu(T contenu) {
+        this.contenu = contenu;
+    }
+    
+    public T getContenu() {
+        return contenu;
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Boite<String> boiteString = new Boite<>();
+        boiteString.setContenu("Hello");
+        
+        Boite<Integer> boiteInt = boiteString; // Erreur ici
+        boiteInt.setContenu(42);
+        
+        System.out.println(boiteString.getContenu());
+    }
+}
+\end{lstlisting}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\subsection{Erreur 4 : Collections}
+
+\textbf{Identifiez l'erreur dans le code suivant et proposez une solution :}
+
+\begin{lstlisting}
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<String> liste = new ArrayList<>();
+        liste.add("A");
+        liste.add("B");
+        liste.add("C");
+        
+        for (String element : liste) {
+            if (element.equals("B")) {
+                liste.remove(element); // Erreur ici
+            }
+        }
+        
+        System.out.println(liste);
+    }
+}
+\end{lstlisting}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\subsection{Erreur 5 : Stream}
+
+\textbf{Identifiez l'erreur dans le code suivant et proposez une solution :}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.stream.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, null, 7);
+        
+        int somme = nombres.stream()
+            .filter(n -> n > 0)
+            .mapToInt(n -> n * 2) // Erreur ici
+            .sum();
+        
+        System.out.println("Somme : " + somme);
+    }
+}
+\end{lstlisting}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\newpage
+
+\section{Exercice 3 : Code à Compléter}
+
+\textbf{Complétez le code suivant en remplissant les 10 champs manquants (marqués par \texttt{// TODO}). Comprenez la logique du programme avant de compléter.}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.stream.*;
+
+// TODO 1: Déclarer une interface fonctionnelle pour calculer
+@FunctionalInterface
+interface Calculateur {
+    // TODO 2: Déclarer la méthode abstraite
+    _____________________________
+}
+
+// TODO 3: Déclarer une classe générique
+class _____________________________<T extends Number> {
+    private List<T> elements;
+    
+    public _____________________________(List<T> elements) {
+        this.elements = elements;
+    }
+    
+    public double calculer(Calculateur calc) {
+        return elements.stream()
+            // TODO 4: Convertir en double
+            ._____________________________
+            // TODO 5: Appliquer le calcul
+            ._____________________________
+            // TODO 6: Obtenir la somme
+            ._____________________________;
+    }
+    
+    public List<T> filtrer(Predicate<T> condition) {
+        return elements.stream()
+            // TODO 7: Filtrer selon la condition
+            ._____________________________
+            // TODO 8: Collecter dans une liste
+            ._____________________________;
+    }
+}
+
+public class ExerciceComplet {
+    public static void main(String[] args) {
+        List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        
+        // TODO 9: Créer une instance de la classe générique
+        _____________________________ calculatrice = new _____________________________<>(nombres);
+        
+        // Calculer la somme des carrés
+        double resultat = calculatrice.calculer(
+            // TODO 10: Implémenter l'interface fonctionnelle avec lambda
+            _____________________________
+        );
+        
+        System.out.println("Somme des carrés : " + resultat);
+        
+        // Filtrer les nombres pairs
+        List<Integer> pairs = calculatrice.filtrer(n -> n % 2 == 0);
+        System.out.println("Nombres pairs : " + pairs);
+    }
+}
+\end{lstlisting}
+
+\textbf{Instructions :}
+\begin{itemize}
+    \item Le programme doit calculer la somme des carrés des nombres
+    \item Il doit aussi filtrer les nombres pairs
+    \item Utilisez les concepts de génériques, streams, et interfaces fonctionnelles
+    \item Le résultat attendu : "Somme des carrés : 385.0" et "Nombres pairs : [2, 4, 6, 8, 10]"
+\end{itemize}
+
+\newpage
+
+\section{Exercice 4 : Interface Swing - Identifier les Composants et Événements}
+
+\subsection{Code à Analyser}
+
+\textbf{Analysez le code suivant et répondez aux questions :}
+
+\begin{lstlisting}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class InterfaceSwing extends JFrame {
+    private JTextField champNom;
+    private JTextField champAge;
+    private JLabel labelResultat;
+    private JButton boutonValider;
+    private JButton boutonEffacer;
+    private JCheckBox checkBoxAccepte;
+    private JComboBox<String> comboBoxVille;
+    private JPanel panelPrincipal;
+    private JPanel panelBoutons;
+    
+    public InterfaceSwing() {
+        setTitle("Formulaire d'Inscription");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Configuration du layout principal
+        setLayout(new BorderLayout());
+        
+        // Panel principal
+        panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new GridLayout(4, 2, 10, 10));
+        panelPrincipal.setBorder(BorderFactory.createTitledBorder("Informations"));
+        
+        // Composants du formulaire
+        panelPrincipal.add(new JLabel("Nom :"));
+        champNom = new JTextField(20);
+        panelPrincipal.add(champNom);
+        
+        panelPrincipal.add(new JLabel("Âge :"));
+        champAge = new JTextField(20);
+        panelPrincipal.add(champAge);
+        
+        panelPrincipal.add(new JLabel("Ville :"));
+        String[] villes = {"Paris", "Lyon", "Marseille", "Toulouse"};
+        comboBoxVille = new JComboBox<>(villes);
+        panelPrincipal.add(comboBoxVille);
+        
+        panelPrincipal.add(new JLabel("Accepter les conditions :"));
+        checkBoxAccepte = new JCheckBox("J'accepte");
+        panelPrincipal.add(checkBoxAccepte);
+        
+        // Panel des boutons
+        panelBoutons = new JPanel();
+        panelBoutons.setLayout(new FlowLayout());
+        
+        boutonValider = new JButton("Valider");
+        boutonValider.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nom = champNom.getText();
+                String age = champAge.getText();
+                String ville = (String) comboBoxVille.getSelectedItem();
+                boolean accepte = checkBoxAccepte.isSelected();
+                
+                if (nom.isEmpty() || age.isEmpty()) {
+                    labelResultat.setText("Veuillez remplir tous les champs !");
+                    labelResultat.setForeground(Color.RED);
+                } else if (!accepte) {
+                    labelResultat.setText("Vous devez accepter les conditions !");
+                    labelResultat.setForeground(Color.RED);
+                } else {
+                    labelResultat.setText("Inscription réussie : " + nom + 
+                                         ", " + age + " ans, " + ville);
+                    labelResultat.setForeground(Color.GREEN);
+                }
+            }
+        });
+        
+        boutonEffacer = new JButton("Effacer");
+        boutonEffacer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                champNom.setText("");
+                champAge.setText("");
+                comboBoxVille.setSelectedIndex(0);
+                checkBoxAccepte.setSelected(false);
+                labelResultat.setText("");
+            }
+        });
+        
+        panelBoutons.add(boutonValider);
+        panelBoutons.add(boutonEffacer);
+        
+        // Label de résultat
+        labelResultat = new JLabel(" ");
+        labelResultat.setHorizontalAlignment(SwingConstants.CENTER);
+        labelResultat.setFont(new Font("Arial", Font.BOLD, 12));
+        
+        // Ajout des composants à la fenêtre
+        add(panelPrincipal, BorderLayout.CENTER);
+        add(panelBoutons, BorderLayout.SOUTH);
+        add(labelResultat, BorderLayout.NORTH);
+        
+        setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new InterfaceSwing();
+        });
+    }
+}
+\end{lstlisting}
+
+\subsection{Questions}
+
+\subsubsection{Question 1 : Identification des Composants}
+
+\textbf{Listez tous les composants Swing utilisés dans ce code et indiquez leur rôle :}
+
+\begin{reponsebox}
+\vspace{6cm}
+\end{reponsebox}
+
+\subsubsection{Question 2 : Layout Managers}
+
+\textbf{Quels layout managers sont utilisés ? Dans quels conteneurs ? Expliquez leur rôle :}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\subsubsection{Question 3 : Événements sur le Bouton "Valider"}
+
+\textbf{Décrivez en détail ce qui se passe quand on clique sur le bouton "Valider" :}
+\begin{itemize}
+    \item Quel type d'événement est déclenché ?
+    \item Quelle méthode est appelée ?
+    \item Quelles actions sont effectuées ?
+    \item Quelles sont les conditions de validation ?
+\end{itemize}
+
+\begin{reponsebox}
+\vspace{8cm}
+\end{reponsebox}
+
+\subsubsection{Question 4 : Événements sur le Bouton "Effacer"}
+
+\textbf{Décrivez en détail ce qui se passe quand on clique sur le bouton "Effacer" :}
+\begin{itemize}
+    \item Quel type d'événement est déclenché ?
+    \item Quelle méthode est appelée ?
+    \item Quelles actions sont effectuées ?
+\end{itemize}
+
+\begin{reponsebox}
+\vspace{6cm}
+\end{reponsebox}
+
+\subsubsection{Question 5 : Structure de l'Interface}
+
+\textbf{Dessinez un schéma (ou décrivez) la structure hiérarchique de l'interface :}
+\begin{itemize}
+    \item Quelle est la fenêtre principale ?
+    \item Quels sont les conteneurs intermédiaires ?
+    \item Comment sont organisés les composants ?
+\end{itemize}
+
+\begin{reponsebox}
+\vspace{6cm}
+\end{reponsebox}
+
+\subsubsection{Question 6 : Améliorations Possibles}
+
+\textbf{Proposez 3 améliorations possibles pour cette interface (validation, design, fonctionnalités) :}
+
+\begin{reponsebox}
+\vspace{5cm}
+\end{reponsebox}
+
+\end{document}
+
+
+
+
+
+

@@ -1,0 +1,1197 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Liaison Cours/TP Oracle Database - Commandes et Explications}
+\setlength{\headheight}{14.5pt}
+
+% Configuration pour le code SQL
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Boîtes colorées pour les explications
+\newtcolorbox{explication}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=#1,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{commande}[1]{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=#1,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{attention}[1]{
+    colback=orange!5!white,
+    colframe=orange!75!black,
+    title=#1,
+    fonttitle=\bfseries
+}
+
+\title{\textbf{Liaison Cours/TP Oracle Database 19c}\\
+Commandes Pratiques avec Explications Détaillées}
+\author{Cours et Travaux Pratiques Oracle Database}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Ce document fait le lien entre le cours théorique d'Oracle Database et les travaux pratiques. Pour chaque chapitre du cours, nous présentons les commandes pratiques correspondantes avec des explications détaillées.
+
+\section{TP1 : Formatage des Données et SQL*Plus}
+
+\subsection{Lien avec le cours}
+
+Ce TP correspond à l'introduction à Oracle et à la manipulation de base de données via SQL*Plus. Il couvre :
+\begin{itemize}
+    \item Connexion à Oracle Database
+    \item Gestion des utilisateurs
+    \item Formatage des données et rapports
+    \item Commandes SQL*Plus essentielles
+\end{itemize}
+
+\subsection{Connexion et Gestion des Utilisateurs}
+
+\subsubsection{Connexion à SQL*Plus}
+
+\begin{commande}{Connexion sans utilisateur}
+\begin{lstlisting}[language=SQL]
+sqlplus /nolog
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Cette commande lance SQL*Plus sans se connecter à une base de données. Utile pour se connecter ensuite avec différents utilisateurs.
+\end{explication}
+
+\begin{commande}{Connexion en tant que SYSDBA}
+\begin{lstlisting}[language=SQL]
+connect / as sysdba
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Se connecte en tant qu'administrateur système (SYSDBA). Permet d'effectuer toutes les opérations d'administration. Le \texttt{/} indique une authentification par le système d'exploitation (OS authentication).
+\end{explication}
+
+\subsubsection{Consultation des Utilisateurs}
+
+\begin{commande}{Afficher tous les utilisateurs}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM all_users;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche tous les utilisateurs visibles par l'utilisateur courant. La vue \texttt{ALL\_USERS} contient les utilisateurs accessibles.
+\end{explication}
+
+\begin{commande}{Afficher les informations détaillées des utilisateurs}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM dba_users;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche toutes les informations sur les utilisateurs de la base. Nécessite les privilèges DBA. Contient notamment : username, account\_status, created, expiry\_date, profile, etc.
+\end{explication}
+
+\begin{commande}{Afficher le statut d'un utilisateur}
+\begin{lstlisting}[language=SQL]
+SELECT account_status FROM dba_users 
+WHERE username='HR';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Le statut peut être : \texttt{OPEN} (actif), \texttt{LOCKED} (bloqué), \texttt{EXPIRED} (mot de passe expiré), \texttt{EXPIRED \& LOCKED}.
+\end{explication}
+
+\subsubsection{Activation d'un Utilisateur}
+
+\begin{commande}{Débloquer un utilisateur}
+\begin{lstlisting}[language=SQL]
+ALTER USER HR ACCOUNT UNLOCK;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Débloque le compte utilisateur HR. Un compte bloqué ne peut pas se connecter même avec le bon mot de passe.
+\end{explication}
+
+\begin{commande}{Définir le mot de passe d'un utilisateur}
+\begin{lstlisting}[language=SQL]
+ALTER USER HR IDENTIFIED BY HR;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Définit ou modifie le mot de passe de l'utilisateur HR. Le mot de passe est sensible à la casse.
+\end{explication}
+
+\begin{attention}{Attention}
+Après avoir débloqué et défini le mot de passe, l'utilisateur peut se connecter avec :
+\begin{lstlisting}[language=SQL]
+connect HR/HR
+\end{lstlisting}
+\end{attention}
+
+\subsection{Paramètres d'Affichage SQL*Plus}
+
+\subsubsection{Configuration de l'Affichage}
+
+\begin{commande}{Afficher les paramètres d'affichage}
+\begin{lstlisting}[language=SQL]
+SHOW LINESIZE PAGESIZE
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche la largeur de ligne (LINESIZE) et le nombre de lignes par page (PAGESIZE). Par défaut : LINESIZE=80, PAGESIZE=14.
+\end{explication}
+
+\begin{commande}{Modifier les paramètres d'affichage}
+\begin{lstlisting}[language=SQL]
+SET LINESIZE 200
+SET PAGESIZE 1000
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{LINESIZE} : Largeur maximale d'une ligne (en caractères)
+    \item \texttt{PAGESIZE} : Nombre de lignes avant un saut de page (0 = pas de saut)
+\end{itemize}
+Ces paramètres affectent uniquement la session courante.
+\end{explication}
+
+\subsection{Formatage des Colonnes}
+
+\subsubsection{Formatage des En-têtes}
+
+\begin{commande}{Modifier l'en-tête d'une colonne}
+\begin{lstlisting}[language=SQL]
+COLUMN FIRST_NAME HEADING 'FIRST NAME'
+COLUMN LAST_NAME HEADING 'LAST NAME'
+COLUMN HIRE_DATE HEADING 'HIRE DATE'
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Modifie le titre affiché pour une colonne. Le caractère \texttt{|} dans l'en-tête crée un saut de ligne :
+\begin{lstlisting}[language=SQL]
+COLUMN REGION_ID HEADING 'IDENTIFIANT|REGION'
+\end{lstlisting}
+\end{explication}
+
+\begin{commande}{Modifier le caractère de soulignement}
+\begin{lstlisting}[language=SQL]
+SET UNDERLINE +
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Change le caractère utilisé pour séparer l'en-tête du corps du résultat (par défaut : \texttt{-}).
+\end{explication}
+
+\subsubsection{Formatage des Données}
+
+\begin{commande}{Formater une colonne de type caractère}
+\begin{lstlisting}[language=SQL]
+COLUMN HIRE_DATE FORMAT A10
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{A10} signifie : format Alphanumérique de 10 caractères. Si la valeur dépasse, elle est tronquée.
+\end{explication}
+
+\begin{commande}{Formater une colonne numérique}
+\begin{lstlisting}[language=SQL]
+COLUMN SALARY FORMAT \$99,990
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Format numérique avec :
+\begin{itemize}
+    \item \texttt{\$} : Symbole dollar
+    \item \texttt{9} : Chiffre (supprimé si 0)
+    \item \texttt{0} : Chiffre (toujours affiché)
+    \item \texttt{,} : Séparateur de milliers
+\end{itemize}
+Exemple : 50000 devient \$50,000
+\end{explication}
+
+\subsubsection{Gestion du Retour à la Ligne (WRAP)}
+
+\begin{commande}{Effacer les formats de colonnes}
+\begin{lstlisting}[language=SQL]
+CLEAR COLUMNS
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Supprime tous les formats de colonnes définis précédemment.
+\end{explication}
+
+\begin{commande}{Configurer le retour à la ligne}
+\begin{lstlisting}[language=SQL]
+COLUMN JOB_TITLE FORMAT A22
+SET RECSEP WRAPPED
+COLUMN JOB_TITLE WORD_WRAPPED
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{RECSEP WRAPPED} : Affiche un séparateur après chaque ligne qui a été coupée
+    \item \texttt{WORD\_WRAPPED} : Coupe aux espaces (mots entiers) plutôt qu'aux caractères
+    \item \texttt{RECSEP EACH} : Affiche un séparateur après chaque ligne
+    \item \texttt{RECSEP OFF} : Désactive les séparateurs
+\end{itemize}
+\end{explication}
+
+\begin{commande}{Modifier le caractère de séparation}
+\begin{lstlisting}[language=SQL]
+SET RECSEPCHAR "*"
+SET RECSEPCHAR ""
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Change le caractère utilisé comme séparateur de ligne. Une chaîne vide supprime le séparateur.
+\end{explication}
+
+\subsection{Commandes BREAK et COMPUTE}
+
+\subsubsection{Commande BREAK}
+
+\begin{commande}{Grouper les résultats par colonne}
+\begin{lstlisting}[language=SQL]
+BREAK ON DEPARTMENT_ID
+SELECT DEPARTMENT_ID, LAST_NAME, SALARY
+FROM EMP_DETAILS_VIEW
+WHERE SALARY > 12000
+ORDER BY DEPARTMENT_ID;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+La commande \texttt{BREAK} supprime les valeurs répétées dans une colonne. Utile pour les rapports groupés. La colonne doit être triée (ORDER BY).
+\end{explication}
+
+\begin{commande}{BREAK avec saut de ligne}
+\begin{lstlisting}[language=SQL]
+BREAK ON DEPARTMENT_ID SKIP 1 ON JOB_ID SKIP PAGE
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{SKIP 1} : Saut d'une ligne lors d'un changement de valeur
+    \item \texttt{SKIP PAGE} : Saut de page lors d'un changement de valeur
+\end{itemize}
+Permet de créer des rapports structurés avec des sections.
+\end{explication}
+
+\begin{commande}{Supprimer les BREAK}
+\begin{lstlisting}[language=SQL]
+CLEAR BREAKS
+\end{lstlisting}
+\end{commande}
+
+\subsubsection{Commande COMPUTE}
+
+\begin{commande}{Calculer des statistiques par groupe}
+\begin{lstlisting}[language=SQL]
+BREAK ON JOB_ID SKIP 1
+COMPUTE AVG LABEL 'Salaire moyen' OF SALARY ON JOB_ID
+SELECT JOB_ID, LAST_NAME, SALARY
+FROM EMP_DETAILS_VIEW
+WHERE SALARY>12000
+ORDER BY JOB_ID;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{COMPUTE} calcule des statistiques (AVG, SUM, COUNT, MIN, MAX, STD, VAR) sur une colonne lors d'un changement de valeur dans la colonne du BREAK.
+\end{explication}
+
+\begin{commande}{Calculer des statistiques globales}
+\begin{lstlisting}[language=SQL]
+BREAK ON REPORT
+COMPUTE AVG LABEL 'Salaire moyen' OF SALARY ON REPORT
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{ON REPORT} calcule la statistique sur l'ensemble du résultat, à la fin du rapport.
+\end{explication}
+
+\subsubsection{Titres de Rapport}
+
+\begin{commande}{Ajouter un titre}
+\begin{lstlisting}[language=SQL]
+TTITLE 'Liste des salariés par fonction et par département'
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Ajoute un titre en haut de chaque page. Pour le supprimer : \texttt{TTITLE OFF}
+\end{explication}
+
+\subsection{Commande SPOOL}
+
+\begin{commande}{Sauvegarder les résultats dans un fichier}
+\begin{lstlisting}[language=SQL]
+SPOOL fichier.txt
+-- ou
+SPOOL fichier.txt CREATE
+SPOOL fichier.txt REPLACE
+SPOOL fichier.txt APPEND
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{CREATE} : Crée un nouveau fichier (erreur si existe)
+    \item \texttt{REPLACE} : Remplace le fichier s'il existe
+    \item \texttt{APPEND} : Ajoute à la fin du fichier existant
+\end{itemize}
+Tout ce qui s'affiche dans SQL*Plus est enregistré dans le fichier.
+\end{explication}
+
+\begin{commande}{Arrêter le SPOOL}
+\begin{lstlisting}[language=SQL]
+SPOOL OFF
+\end{lstlisting}
+\end{commande}
+
+\section{TP2 : Architecture et Instance}
+
+\subsection{Lien avec le cours}
+
+Ce TP correspond au chapitre sur l'architecture Oracle et les instances. Il couvre :
+\begin{itemize}
+    \item Gestion des sessions et connexions
+    \item Démarrage/arrêt d'une instance
+    \item Consultation de la mémoire SGA
+\end{itemize}
+
+\subsection{Gestion des Sessions}
+
+\subsubsection{Consultation des Sessions}
+
+\begin{commande}{Afficher toutes les sessions actives}
+\begin{lstlisting}[language=SQL]
+SELECT sid, serial#, username, status, osuser, machine, program, paddr
+FROM v$session;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+La vue \texttt{V\$SESSION} contient toutes les sessions actives :
+\begin{itemize}
+    \item \texttt{SID} : Identifiant de session
+    \item \texttt{SERIAL\#} : Numéro de série de la session
+    \item \texttt{USERNAME} : Nom d'utilisateur
+    \item \texttt{STATUS} : ACTIVE, INACTIVE, KILLED
+    \item \texttt{OSUSER} : Utilisateur du système d'exploitation
+    \item \texttt{MACHINE} : Machine cliente
+    \item \texttt{PROGRAM} : Programme ayant initié la session
+    \item \texttt{PADDR} : Adresse du processus serveur
+\end{itemize}
+\end{explication}
+
+\begin{commande}{Identifier les sessions inactives}
+\begin{lstlisting}[language=SQL]
+SELECT sid, serial#, username, status, seconds_in_wait
+FROM v$session
+WHERE status = 'INACTIVE' AND seconds_in_wait > 180;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Trouve les sessions inactives depuis plus de 3 minutes (180 secondes). Utile pour identifier les sessions à nettoyer.
+\end{explication}
+
+\subsubsection{Arrêt d'une Session}
+
+\begin{commande}{Tuer une session}
+\begin{lstlisting}[language=SQL]
+ALTER SYSTEM KILL SESSION '81,27';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Termine une session spécifique. Format : \texttt{'SID,SERIAL\#'}. La session est marquée comme KILLED et sera nettoyée par PMON.
+\end{explication}
+
+\begin{attention}{Attention}
+Si la session a des transactions non validées, elles seront annulées (ROLLBACK). Vérifier avant de tuer une session importante.
+\end{attention}
+
+\subsection{Gestion de l'Instance}
+
+\subsubsection{Démarrage de l'Instance}
+
+\begin{commande}{Démarrer l'instance}
+\begin{lstlisting}[language=SQL]
+STARTUP
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Démarre l'instance en trois étapes :
+\begin{enumerate}
+    \item \textbf{NOMOUNT} : Démarre l'instance, lit le SPFILE/PFILE, alloue la SGA
+    \item \textbf{MOUNT} : Monte la base, ouvre les control files
+    \item \textbf{OPEN} : Ouvre les datafiles et redo logs, rend la base accessible
+\end{enumerate}
+\end{explication}
+
+\begin{commande}{Démarrer en mode NOMOUNT}
+\begin{lstlisting}[language=SQL]
+STARTUP NOMOUNT
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Démarre uniquement l'instance sans monter la base. Utile pour certaines opérations d'administration (création de base, récupération).
+\end{explication}
+
+\begin{commande}{Monter la base}
+\begin{lstlisting}[language=SQL]
+ALTER DATABASE MOUNT;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Monte la base de données. Ouvre les control files mais pas les datafiles. La base n'est pas accessible aux utilisateurs.
+\end{explication}
+
+\begin{commande}{Ouvrir la base}
+\begin{lstlisting}[language=SQL]
+ALTER DATABASE OPEN;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Ouvre la base de données. Les datafiles et redo logs sont ouverts. La base est accessible aux utilisateurs.
+\end{explication}
+
+\subsubsection{Arrêt de l'Instance}
+
+\begin{commande}{Arrêter l'instance}
+\begin{lstlisting}[language=SQL]
+SHUTDOWN
+-- ou
+SHUTDOWN IMMEDIATE
+SHUTDOWN TRANSACTIONAL
+SHUTDOWN ABORT
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{SHUTDOWN} (NORMAL) : Attend que tous les utilisateurs se déconnectent
+    \item \texttt{IMMEDIATE} : Interrompt les transactions, fait un ROLLBACK, puis arrête
+    \item \texttt{TRANSACTIONAL} : Attend la fin des transactions en cours
+    \item \texttt{ABORT} : Arrêt immédiat sans vérification (à éviter sauf urgence)
+\end{itemize}
+\end{explication}
+
+\subsection{Consultation de la Mémoire SGA}
+
+\begin{commande}{Afficher les composants de la SGA}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM v$sgainfo;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche les informations sur les composants de la SGA :
+\begin{itemize}
+    \item Taille de chaque composant
+    \item Taille réservée
+    \item Taille utilisée
+\end{itemize}
+\end{explication}
+
+\begin{commande}{Afficher l'utilisation de la SGA}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM v$sgastat;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche l'utilisation détaillée de chaque composant de la SGA. Utile pour diagnostiquer les problèmes de mémoire.
+\end{explication}
+
+\section{TP3 : Architecture Multitenant (CDB/PDB)}
+
+\subsection{Lien avec le cours}
+
+Ce TP correspond au chapitre sur l'architecture multitenant introduite dans Oracle 12c. Il couvre :
+\begin{itemize}
+    \item Connexion aux CDB et PDB
+    \item Gestion des PDBs
+    \item Modes de démarrage
+\end{itemize}
+
+\subsection{Connexion aux CDB et PDB}
+
+\subsubsection{Connexion à la CDB}
+
+\begin{commande}{Connexion locale en SYSDBA}
+\begin{lstlisting}[language=SQL]
+connect /as sysdba
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Se connecte à la Container Database (CDB) en tant que SYSDBA. C'est la connexion principale pour l'administration.
+\end{explication}
+
+\begin{commande}{Connexion via TNSNAMES}
+\begin{lstlisting}[language=SQL]
+connect sys@cdb_name as sysdba
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Se connecte à la CDB via le fichier \texttt{tnsnames.ora}. Nécessite que le service soit configuré dans TNSNAMES.
+\end{explication}
+
+\subsubsection{Consultation des PDBs}
+
+\begin{commande}{Afficher le container courant}
+\begin{lstlisting}[language=SQL]
+SHOW CON_NAME
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche le nom du container dans lequel on se trouve (CDB\$ROOT ou nom d'une PDB).
+\end{explication}
+
+\begin{commande}{Lister les PDBs}
+\begin{lstlisting}[language=SQL]
+SHOW PDBS
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche toutes les PDBs avec leur CON\_ID, nom et mode d'ouverture (MOUNTED, READ WRITE, READ ONLY).
+\end{explication}
+
+\begin{commande}{Afficher les services actifs d'une PDB}
+\begin{lstlisting}[language=SQL]
+SELECT name FROM v$active_services 
+WHERE con_id=3;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche le nom du service pour une PDB spécifique. Ce nom est utilisé dans \texttt{tnsnames.ora} pour se connecter à la PDB.
+\end{explication}
+
+\subsubsection{Changement de Container}
+
+\begin{commande}{Changer de container}
+\begin{lstlisting}[language=SQL]
+ALTER SESSION SET CONTAINER=pdb1;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Change le container courant vers une PDB spécifique. Toutes les commandes suivantes s'exécutent dans ce container.
+\end{explication}
+
+\begin{commande}{Revenir au CDB\$ROOT}
+\begin{lstlisting}[language=SQL]
+ALTER SESSION SET CONTAINER=cdb$root;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Reviens au container root (CDB\$ROOT). Nécessaire pour certaines opérations d'administration au niveau CDB.
+\end{explication}
+
+\subsubsection{Connexion Directe à une PDB}
+
+\begin{commande}{Connexion via TNSNAMES à une PDB}
+\begin{lstlisting}[language=SQL]
+connect user/pwd@pdb_name
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Se connecte directement à une PDB via TNSNAMES. Nécessite que la PDB soit configurée dans \texttt{tnsnames.ora} et que le listener soit actif.
+\end{explication}
+
+\subsection{Gestion des PDBs}
+
+\subsubsection{Ouverture/Fermeture des PDBs}
+
+\begin{commande}{Ouvrir une PDB}
+\begin{lstlisting}[language=SQL]
+ALTER PLUGGABLE DATABASE pdb1 OPEN;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Ouvre une PDB en mode READ WRITE. La PDB devient accessible aux utilisateurs.
+\end{explication}
+
+\begin{commande}{Ouvrir plusieurs PDBs}
+\begin{lstlisting}[language=SQL]
+ALTER PLUGGABLE DATABASE pdb1, pdb2 OPEN;
+-- ou toutes
+ALTER PLUGGABLE DATABASE ALL OPEN;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Ouvre plusieurs PDBs en une seule commande. \texttt{ALL} ouvre toutes les PDBs.
+\end{explication}
+
+\begin{commande}{Fermer une PDB}
+\begin{lstlisting}[language=SQL]
+ALTER PLUGGABLE DATABASE pdb1 CLOSE;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Ferme une PDB. Elle passe en mode MOUNTED et n'est plus accessible aux utilisateurs.
+\end{explication}
+
+\begin{commande}{Vérifier l'état des PDBs}
+\begin{lstlisting}[language=SQL]
+SELECT name, open_mode FROM v$pdbs;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche l'état de toutes les PDBs : MOUNTED, READ ONLY, READ WRITE.
+\end{explication}
+
+\subsubsection{Démarrage de l'Instance CDB}
+
+\begin{commande}{Démarrage par étapes}
+\begin{lstlisting}[language=SQL]
+STARTUP NOMOUNT;
+SELECT instance_name, status FROM v$instance;
+SELECT name, open_mode FROM v$pdbs;
+
+ALTER DATABASE MOUNT;
+SELECT instance_name, status FROM v$instance;
+SELECT name, open_mode FROM v$pdbs;
+
+ALTER DATABASE OPEN;
+SELECT instance_name, status FROM v$instance;
+SELECT name, open_mode FROM v$pdbs;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Le démarrage d'une CDB suit les mêmes étapes qu'une base non-CDB :
+\begin{enumerate}
+    \item \textbf{NOMOUNT} : Instance démarrée, PDBs en MOUNTED
+    \item \textbf{MOUNT} : CDB montée, PDBs toujours en MOUNTED
+    \item \textbf{OPEN} : CDB ouverte, PDB\$SEED en READ ONLY, autres PDBs en MOUNTED (à ouvrir manuellement)
+\end{enumerate}
+\end{explication}
+
+\section{TP4 : Paramètres d'Initialisation}
+
+\subsection{Lien avec le cours}
+
+Ce TP correspond à la gestion des paramètres d'initialisation et des fichiers de paramètres (PFILE/SPFILE). Il couvre :
+\begin{itemize}
+    \item Consultation des paramètres
+    \item Modification des paramètres
+    \item Gestion des processus en arrière-plan
+\end{itemize}
+
+\subsection{Processus en Arrière-Plan}
+
+\begin{commande}{Lister les processus en arrière-plan}
+\begin{lstlisting}[language=SQL]
+SELECT paddr, name, description
+FROM v$bgprocess
+WHERE paddr <> HEXTORAW('00');
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche tous les processus en arrière-plan actifs. \texttt{paddr <> HEXTORAW('00')} filtre les processus inactifs. Contient : DBWn, LGWR, CKPT, SMON, PMON, etc.
+\end{explication}
+
+\subsection{Consultation des Paramètres}
+
+\subsubsection{Affichage des Paramètres}
+
+\begin{commande}{Afficher tous les paramètres}
+\begin{lstlisting}[language=SQL]
+SHOW PARAMETERS
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche tous les paramètres d'initialisation. Équivalent à \texttt{SELECT * FROM v\$parameter}.
+\end{explication}
+
+\begin{commande}{Afficher un paramètre spécifique}
+\begin{lstlisting}[language=SQL]
+SHOW PARAMETER control_files
+SHOW PARAMETER memory
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche les paramètres contenant le mot-clé spécifié (recherche partielle).
+\end{explication}
+
+\begin{commande}{Afficher les paramètres basiques}
+\begin{lstlisting}[language=SQL]
+SELECT num, name, type, value, ISDEFAULT, 
+       ISSES_MODIFIABLE, ISSYS_MODIFIABLE, 
+       ISINSTANCE_MODIFIABLE, ISBASIC
+FROM v$parameter
+WHERE ISBASIC = 'TRUE';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche uniquement les paramètres basiques (les plus importants). Ces paramètres sont essentiels au fonctionnement de la base.
+\end{explication}
+
+\subsubsection{Types de Paramètres}
+
+\begin{commande}{Afficher les paramètres statiques}
+\begin{lstlisting}[language=SQL]
+SELECT name, value
+FROM v$parameter
+WHERE ISSYS_MODIFIABLE = 'FALSE';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Les paramètres statiques nécessitent un redémarrage de l'instance pour être modifiés. Exemples : \texttt{db\_block\_size}, \texttt{processes}.
+\end{explication}
+
+\begin{commande}{Afficher les paramètres dynamiques}
+\begin{lstlisting}[language=SQL]
+SELECT name, value
+FROM v$parameter
+WHERE ISSYS_MODIFIABLE = 'IMMEDIATE' OR ISSYS_MODIFIABLE = 'DEFERRED';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\begin{itemize}
+    \item \texttt{IMMEDIATE} : Modification immédiate, affecte toutes les sessions
+    \item \texttt{DEFERRED} : Modification différée, affecte seulement les nouvelles sessions
+\end{itemize}
+Ces paramètres ne nécessitent pas de redémarrage.
+\end{explication}
+
+\subsubsection{Paramètres Mémoire}
+
+\begin{commande}{Afficher les paramètres mémoire}
+\begin{lstlisting}[language=SQL]
+SELECT name, value 
+FROM v$parameter 
+WHERE name IN ('sga_target', 'pga_aggregate_target', 
+               'memory_target', 'memory_max_target');
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche les paramètres de gestion automatique de la mémoire :
+\begin{itemize}
+    \item \texttt{memory\_target} : Taille cible de la mémoire totale (SGA + PGA)
+    \item \texttt{memory\_max\_target} : Taille maximale de la mémoire
+    \item \texttt{sga\_target} : Taille cible de la SGA
+    \item \texttt{pga\_aggregate\_target} : Taille cible de la PGA
+\end{itemize}
+\end{explication}
+
+\subsection{Gestion des Fichiers de Paramètres}
+
+\subsubsection{PFILE et SPFILE}
+
+\begin{commande}{Afficher l'emplacement du SPFILE}
+\begin{lstlisting}[language=SQL]
+SHOW PARAMETER spfile
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche le chemin du SPFILE (Server Parameter File). Le SPFILE est un fichier binaire modifiable uniquement via SQL.
+\end{explication}
+
+\begin{commande}{Créer un PFILE à partir du SPFILE}
+\begin{lstlisting}[language=SQL]
+CREATE PFILE FROM SPFILE;
+-- ou avec chemin spécifique
+CREATE PFILE='C:\oracle\dbs\initorcl.ora' 
+FROM SPFILE;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Crée un PFILE (fichier texte) à partir du SPFILE. Le PFILE peut être édité manuellement avec un éditeur de texte.
+\end{explication}
+
+\begin{commande}{Créer un SPFILE à partir du PFILE}
+\begin{lstlisting}[language=SQL]
+CREATE SPFILE FROM PFILE;
+-- ou avec chemins spécifiques
+CREATE SPFILE='C:\oracle\database\spfileorcl.ora' 
+FROM PFILE='C:\oracle\dbs\initorcl.ora';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Crée un SPFILE à partir d'un PFILE. Utile après modification manuelle du PFILE.
+\end{explication}
+
+\subsection{Modification des Paramètres}
+
+\subsubsection{Modification au Niveau Mémoire}
+
+\begin{commande}{Modifier un paramètre au niveau mémoire}
+\begin{lstlisting}[language=SQL]
+ALTER SYSTEM SET memory_target=600M SCOPE=MEMORY;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{SCOPE=MEMORY} : Modification uniquement en mémoire. La modification est perdue au redémarrage. Utile pour tester.
+\end{explication}
+
+\subsubsection{Modification au Niveau SPFILE}
+
+\begin{commande}{Modifier un paramètre au niveau SPFILE}
+\begin{lstlisting}[language=SQL]
+ALTER SYSTEM SET memory_target=600M SCOPE=SPFILE;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{SCOPE=SPFILE} : Modification dans le SPFILE uniquement. Nécessite un redémarrage pour être effective. Persiste après redémarrage.
+\end{explication}
+
+\subsubsection{Modification Immédiate}
+
+\begin{commande}{Modifier un paramètre dynamique}
+\begin{lstlisting}[language=SQL]
+ALTER SYSTEM SET memory_target=600M SCOPE=BOTH;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+\texttt{SCOPE=BOTH} : Modification immédiate (mémoire) + persistance (SPFILE). Pour les paramètres dynamiques.
+\end{explication}
+
+\begin{attention}{Attention}
+Si un paramètre nécessite un redémarrage (statique), utiliser \texttt{SCOPE=SPFILE} et redémarrer l'instance :
+\begin{lstlisting}[language=SQL]
+ALTER SYSTEM SET processes=300 SCOPE=SPFILE;
+SHUTDOWN IMMEDIATE;
+STARTUP;
+\end{lstlisting}
+\end{attention}
+
+\subsubsection{Correction d'Erreur de Paramètre}
+
+\begin{commande}{Démarrer avec un PFILE en cas d'erreur}
+\begin{lstlisting}[language=SQL]
+STARTUP PFILE='C:\oracle\dbs\initorcl.ora';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Si le SPFILE contient une erreur empêchant le démarrage, on peut démarrer avec un PFILE corrigé, puis recréer le SPFILE.
+\end{explication}
+
+\section{TP7 : Fichiers de Contrôle}
+
+\subsection{Lien avec le cours}
+
+Ce TP correspond au chapitre sur la gestion des fichiers de contrôle (Control Files). Il couvre :
+\begin{itemize}
+    \item Consultation des fichiers de contrôle
+    \item Multiplexage des fichiers de contrôle
+    \item Sauvegarde des fichiers de contrôle
+\end{itemize}
+
+\subsection{Consultation des Fichiers de Contrôle}
+
+\subsubsection{Informations via V\$PARAMETER}
+
+\begin{commande}{Afficher les chemins des control files}
+\begin{lstlisting}[language=SQL]
+COL name FORMAT A20
+COL value FORMAT A40
+SELECT name, value 
+FROM v$parameter 
+WHERE name = 'control_files';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche les chemins de tous les fichiers de contrôle configurés. Ces chemins sont définis dans le SPFILE/PFILE.
+\end{explication}
+
+\subsubsection{Informations via V\$CONTROLFILE}
+
+\begin{commande}{Afficher les fichiers de contrôle}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM v$controlfile;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche tous les fichiers de contrôle de l'instance. Contient : nom, statut, taille, timestamp. Accessible uniquement si la base est en mode MOUNT ou OPEN.
+\end{explication}
+
+\begin{attention}{Attention}
+En mode NOMOUNT, la vue \texttt{V\$CONTROLFILE} est vide car les control files ne sont pas encore ouverts.
+\end{attention}
+
+\subsubsection{Informations via V\$DATABASE}
+
+\begin{commande}{Afficher les informations de la base}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM v$database;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche les informations générales sur la base de données, lues depuis le control file : nom, ID, mode d'archivage, etc.
+\end{explication}
+
+\begin{commande}{Afficher le type de control file}
+\begin{lstlisting}[language=SQL]
+COL controlfile_type FORMAT A20
+COL controlfile_created FORMAT A20
+SELECT name, controlfile_type, controlfile_created 
+FROM v$database;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche le type de control file (CURRENT, BACKUP) et la date de création. Accessible uniquement en mode MOUNT ou OPEN.
+\end{explication}
+
+\subsection{Importance des Fichiers de Contrôle}
+
+\begin{attention}{Test de l'importance}
+\begin{lstlisting}[language=SQL]
+-- 1. Arrêter la base
+SHUTDOWN IMMEDIATE;
+
+-- 2. Renommer le control file (dans CMD)
+-- ren control01.ctl control01.ctl1
+
+-- 3. Essayer de démarrer
+STARTUP;
+\end{lstlisting}
+\end{attention}
+
+\begin{explication}{Explication}
+Si le control file est manquant ou inaccessible, Oracle ne peut pas démarrer la base. C'est pourquoi le multiplexage est essentiel.
+\end{explication}
+
+\subsection{Multiplexage des Fichiers de Contrôle}
+
+\subsubsection{Multiplexage via SPFILE}
+
+\begin{commande}{Étapes de multiplexage avec SPFILE}
+\begin{lstlisting}[language=SQL]
+-- 1. Modifier le paramètre dans SPFILE
+ALTER SYSTEM SET control_files=
+'C:\oracle\oradata\orcl\DiskBackup\control01.ctl',
+'C:\oracle\oradata\orcl\DiskBackup2\control02.ctl'
+SCOPE=SPFILE;
+
+-- 2. Arrêter la base
+SHUTDOWN IMMEDIATE;
+
+-- 3. Dans CMD : Créer les dossiers et copier les fichiers
+-- mkdir DiskBackup
+-- copy control01.ctl DiskBackup\
+-- mkdir DiskBackup2
+-- copy DiskBackup\control01.ctl DiskBackup2\control02.ctl
+
+-- 4. Redémarrer la base
+STARTUP;
+
+-- 5. Vérifier
+SHOW PARAMETER control_files;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Le multiplexage via SPFILE :
+\begin{enumerate}
+    \item Modifie le paramètre \texttt{control\_files} dans le SPFILE
+    \item Arrête la base pour copier physiquement les fichiers
+    \item Copie le control file existant vers les nouveaux emplacements
+    \item Redémarre la base qui utilisera maintenant tous les control files
+\end{enumerate}
+Oracle écrit simultanément dans tous les control files pour garantir la cohérence.
+\end{explication}
+
+\subsubsection{Multiplexage via PFILE}
+
+\begin{commande}{Multiplexage avec PFILE}
+\begin{lstlisting}[language=SQL]
+-- 1. Créer un PFILE depuis SPFILE
+CREATE PFILE='C:\oracle\dbs\initorcl.ora' 
+FROM SPFILE;
+
+-- 2. Arrêter la base
+SHUTDOWN IMMEDIATE;
+
+-- 3. Éditer manuellement initorcl.ora :
+-- *.control_files=
+--   'C:\oracle\oradata\orcl\DiskBackup\control01.ctl',
+--   'C:\oracle\oradata\orcl\DiskBackup2\control02.ctl'
+
+-- 4. Copier les fichiers (dans CMD)
+
+-- 5. Démarrer avec le PFILE
+STARTUP PFILE='C:\oracle\dbs\initorcl.ora';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Avec PFILE, on modifie directement le fichier texte. Plus simple mais moins flexible que SPFILE. Après modification, on peut recréer le SPFILE.
+\end{explication}
+
+\begin{attention}{Recommandation}
+Oracle recommande d'avoir au moins 2 copies de control files sur des disques physiques différents pour la redondance.
+\end{attention}
+
+\subsection{Sauvegarde des Fichiers de Contrôle}
+
+\subsubsection{Sauvegarde Binaire}
+
+\begin{commande}{Sauvegarder le control file en binaire}
+\begin{lstlisting}[language=SQL]
+ALTER DATABASE BACKUP CONTROLFILE TO 
+'C:\oracle\oradata\orcl\save\bkp.ctl';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Crée une copie binaire exacte du control file. Cette copie peut être utilisée pour restaurer le control file en cas de perte. Format identique à l'original.
+\end{explication}
+
+\subsubsection{Sauvegarde en Fichier Trace}
+
+\begin{commande}{Sauvegarder le control file en script SQL}
+\begin{lstlisting}[language=SQL]
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE;
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Crée un fichier trace contenant un script SQL pour recréer le control file. Utile si tous les control files sont perdus.
+\end{explication}
+
+\begin{commande}{Trouver le fichier trace}
+\begin{lstlisting}[language=SQL]
+SELECT name, value 
+FROM v$diag_info 
+WHERE LOWER(name) LIKE '%trace%';
+\end{lstlisting}
+\end{commande}
+
+\begin{explication}{Explication}
+Affiche l'emplacement du répertoire de trace. Le fichier généré contient un script \texttt{CREATE CONTROLFILE} avec tous les chemins des datafiles et redo logs.
+\end{explication}
+
+\begin{attention}{Recommandation}
+Oracle recommande de sauvegarder le control file à chaque modification de la structure de la base (ajout/suppression de datafiles ou redo logs).
+\end{attention}
+
+\section{Conclusion}
+
+Ce document a présenté les principales commandes Oracle Database en les liant aux concepts théoriques du cours. Chaque commande est accompagnée d'une explication détaillée de son fonctionnement et de son utilité.
+
+\subsection{Points Clés à Retenir}
+
+\begin{itemize}
+    \item \textbf{SQL*Plus} : Outil essentiel pour l'administration, avec de nombreuses commandes de formatage
+    \item \textbf{Sessions} : Gestion via \texttt{V\$SESSION}, arrêt avec \texttt{ALTER SYSTEM KILL SESSION}
+    \item \textbf{Instance} : Démarrage par étapes (NOMOUNT $\rightarrow$ MOUNT $\rightarrow$ OPEN)
+    \item \textbf{CDB/PDB} : Architecture multitenant, gestion via \texttt{ALTER SESSION SET CONTAINER}
+    \item \textbf{Paramètres} : Modification avec \texttt{ALTER SYSTEM SET} et différents SCOPE
+    \item \textbf{Control Files} : Multiplexage essentiel, sauvegarde régulière recommandée
+\end{itemize}
+
+\subsection{Bonnes Pratiques}
+
+\begin{enumerate}
+    \item Toujours multiplexer les control files (au moins 2 copies sur disques différents)
+    \item Sauvegarder le control file après chaque modification de structure
+    \item Tester les modifications de paramètres avec \texttt{SCOPE=MEMORY} avant de les rendre permanentes
+    \item Vérifier l'état des sessions avant de les tuer
+    \item Utiliser \texttt{SHUTDOWN IMMEDIATE} plutôt que \texttt{ABORT} sauf urgence
+    \item Documenter les modifications importantes dans le SPFILE
+\end{enumerate}
+
+\end{document}
+
+

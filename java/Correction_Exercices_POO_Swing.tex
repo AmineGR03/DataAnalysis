@@ -1,0 +1,1320 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Correction - POO et Swing}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{green!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{green!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Java
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+% Configuration pour les zones de correction
+\tcbuselibrary{breakable}
+\newtcolorbox{correctionbox}{
+    colback=green!5,
+    colframe=green!50,
+    breakable,
+    title=Correction
+}
+
+% Métadonnées
+\title{Correction - Exercices POO et Swing\\
+\large Solutions Détaillées}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Correction Exercice 1 : Questions Directes en POO}
+
+\subsection{Question 1 : Classe Abstraite vs Interface}
+
+\begin{correctionbox}
+\textbf{Différences principales :}
+
+\begin{itemize}
+    \item \textbf{Classe abstraite} :
+    \begin{itemize}
+        \item Peut contenir des méthodes concrètes (avec implémentation)
+        \item Peut contenir des variables d'instance
+        \item Peut avoir des constructeurs
+        \item Une classe ne peut hériter que d'une seule classe abstraite
+        \item Utilise le mot-clé \texttt{abstract}
+    \end{itemize}
+    
+    \item \textbf{Interface} :
+    \begin{itemize}
+        \item Ne contient que des méthodes abstraites (avant Java 8)
+        \item Peut contenir des méthodes par défaut (depuis Java 8)
+        \item Ne peut pas contenir de variables d'instance (seulement des constantes)
+        \item Pas de constructeurs
+        \item Une classe peut implémenter plusieurs interfaces
+        \item Utilise le mot-clé \texttt{interface}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Exemple :}
+
+\begin{lstlisting}
+// Classe abstraite
+abstract class Animal {
+    protected String nom;
+    
+    public Animal(String nom) {
+        this.nom = nom;
+    }
+    
+    // Méthode concrète
+    public void dormir() {
+        System.out.println(nom + " dort");
+    }
+    
+    // Méthode abstraite
+    public abstract void faireDuBruit();
+}
+
+// Interface
+interface Volant {
+    void voler();
+    
+    // Méthode par défaut (Java 8+)
+    default void atterrir() {
+        System.out.println("Atterrissage...");
+    }
+}
+
+// Classe qui hérite et implémente
+class Oiseau extends Animal implements Volant {
+    public Oiseau(String nom) {
+        super(nom);
+    }
+    
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Cui cui !");
+    }
+    
+    @Override
+    public void voler() {
+        System.out.println(nom + " vole");
+    }
+}
+\end{lstlisting}
+\end{correctionbox}
+
+\subsection{Question 2 : Polymorphisme}
+
+\begin{correctionbox}
+\textbf{Définition :} Le polymorphisme permet à un objet de prendre plusieurs formes. En Java, cela signifie qu'une référence de type parent peut pointer vers un objet de type enfant, et les méthodes appelées seront celles de la classe réelle de l'objet (polymorphisme d'exécution).
+
+\textbf{Exemple :}
+
+\begin{lstlisting}
+// Classe parente
+class Forme {
+    public void dessiner() {
+        System.out.println("Dessiner une forme");
+    }
+    
+    public double calculerAire() {
+        return 0;
+    }
+}
+
+// Classe enfant 1
+class Cercle extends Forme {
+    private double rayon;
+    
+    public Cercle(double rayon) {
+        this.rayon = rayon;
+    }
+    
+    @Override
+    public void dessiner() {
+        System.out.println("Dessiner un cercle de rayon " + rayon);
+    }
+    
+    @Override
+    public double calculerAire() {
+        return Math.PI * rayon * rayon;
+    }
+}
+
+// Classe enfant 2
+class Rectangle extends Forme {
+    private double largeur, hauteur;
+    
+    public Rectangle(double largeur, double hauteur) {
+        this.largeur = largeur;
+        this.hauteur = hauteur;
+    }
+    
+    @Override
+    public void dessiner() {
+        System.out.println("Dessiner un rectangle " + 
+                         largeur + "x" + hauteur);
+    }
+    
+    @Override
+    public double calculerAire() {
+        return largeur * hauteur;
+    }
+}
+
+// Test du polymorphisme
+public class TestPolymorphisme {
+    public static void main(String[] args) {
+        // Référence de type Forme, objet de type Cercle
+        Forme forme1 = new Cercle(5.0);
+        forme1.dessiner(); // Appelle la méthode de Cercle
+        System.out.println("Aire : " + forme1.calculerAire());
+        
+        // Référence de type Forme, objet de type Rectangle
+        Forme forme2 = new Rectangle(4.0, 6.0);
+        forme2.dessiner(); // Appelle la méthode de Rectangle
+        System.out.println("Aire : " + forme2.calculerAire());
+        
+        // Tableau polymorphique
+        Forme[] formes = {
+            new Cercle(3.0),
+            new Rectangle(2.0, 4.0),
+            new Cercle(7.0)
+        };
+        
+        for (Forme f : formes) {
+            f.dessiner(); // Appelle la méthode appropriée
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{Sortie attendue :}
+\begin{verbatim}
+Dessiner un cercle de rayon 5.0
+Aire : 78.53981633974483
+Dessiner un rectangle 4.0x6.0
+Aire : 24.0
+Dessiner un cercle de rayon 3.0
+Dessiner un rectangle 2.0x4.0
+Dessiner un cercle de rayon 7.0
+\end{verbatim}
+\end{correctionbox}
+
+\subsection{Question 3 : Classes Génériques}
+
+\begin{correctionbox}
+\textbf{Définition :} Une classe générique est une classe qui peut fonctionner avec différents types de données sans avoir à réécrire le code pour chaque type. Cela améliore la réutilisabilité et la sécurité de type.
+
+\textbf{Avantages :}
+\begin{itemize}
+    \item \textbf{Sécurité de type} : Évite les erreurs de cast
+    \item \textbf{Réutilisabilité} : Un seul code pour plusieurs types
+    \item \textbf{Performance} : Pas de conversion de type à l'exécution
+    \item \textbf{Code plus propre} : Moins de code dupliqué
+\end{itemize}
+
+\textbf{Exemple avec deux paramètres de type :}
+
+\begin{lstlisting}
+// Classe générique avec deux paramètres
+class Paire<K, V> {
+    private K cle;
+    private V valeur;
+    
+    public Paire(K cle, V valeur) {
+        this.cle = cle;
+        this.valeur = valeur;
+    }
+    
+    public K getCle() {
+        return cle;
+    }
+    
+    public V getValeur() {
+        return valeur;
+    }
+    
+    public void setCle(K cle) {
+        this.cle = cle;
+    }
+    
+    public void setValeur(V valeur) {
+        this.valeur = valeur;
+    }
+    
+    @Override
+    public String toString() {
+        return "Paire{" + cle + "=" + valeur + "}";
+    }
+}
+
+// Utilisation
+public class TestPaire {
+    public static void main(String[] args) {
+        // Paire String-Integer
+        Paire<String, Integer> paire1 = new Paire<>("age", 25);
+        System.out.println(paire1);
+        
+        // Paire Integer-String
+        Paire<Integer, String> paire2 = new Paire<>(1, "Premier");
+        System.out.println(paire2);
+        
+        // Paire String-String
+        Paire<String, String> paire3 = new Paire<>("nom", "Dupont");
+        System.out.println(paire3);
+    }
+}
+\end{lstlisting}
+
+\textbf{Sortie :}
+\begin{verbatim}
+Paire{age=25}
+Paire{1=Premier}
+Paire{nom=Dupont}
+\end{verbatim}
+\end{correctionbox}
+
+\subsection{Question 4 : ArrayList vs LinkedList}
+
+\begin{correctionbox}
+\textbf{Différences :}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{6cm}|p{6cm}|}
+\hline
+\textbf{ArrayList} & \textbf{LinkedList} \\
+\hline
+Structure : Tableau dynamique & Structure : Liste doublement chaînée \\
+\hline
+Accès aléatoire : O(1) & Accès aléatoire : O(n) \\
+\hline
+Insertion en fin : O(1) amorti & Insertion en fin : O(1) \\
+\hline
+Insertion au début : O(n) & Insertion au début : O(1) \\
+\hline
+Suppression : O(n) & Suppression : O(1) si on a la référence \\
+\hline
+Mémoire : Moins de surcharge & Mémoire : Plus de surcharge (pointeurs) \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Quand utiliser ArrayList :}
+\begin{itemize}
+    \item Accès fréquent aux éléments par index
+    \item Ajout/suppression principalement en fin de liste
+    \item Besoin de meilleures performances en lecture
+    \item Cas d'usage général (dans la plupart des cas)
+\end{itemize}
+
+\textbf{Quand utiliser LinkedList :}
+\begin{itemize}
+    \item Insertion/suppression fréquentes au début ou au milieu
+    \item Pas besoin d'accès aléatoire rapide
+    \item Implémentation de structures comme pile ou file
+    \item Quand on itère souvent sur la liste
+\end{itemize}
+
+\textbf{Exemple :}
+
+\begin{lstlisting}
+import java.util.*;
+
+public class ComparaisonListes {
+    public static void main(String[] args) {
+        // ArrayList - meilleur pour l'accès aléatoire
+        List<Integer> arrayList = new ArrayList<>();
+        for (int i = 0; i < 1000000; i++) {
+            arrayList.add(i);
+        }
+        
+        // Accès rapide
+        long start = System.nanoTime();
+        int valeur = arrayList.get(500000);
+        long end = System.nanoTime();
+        System.out.println("ArrayList accès : " + (end - start) + " ns");
+        
+        // LinkedList - meilleur pour insertion/suppression
+        List<Integer> linkedList = new LinkedList<>();
+        for (int i = 0; i < 1000000; i++) {
+            linkedList.add(i);
+        }
+        
+        // Insertion au début rapide
+        start = System.nanoTime();
+        linkedList.add(0, 999);
+        end = System.nanoTime();
+        System.out.println("LinkedList insertion début : " + (end - start) + " ns");
+    }
+}
+\end{lstlisting}
+\end{correctionbox}
+
+\subsection{Question 5 : Streams}
+
+\begin{correctionbox}
+\textbf{Définition :} Un stream en Java est une séquence d'éléments sur laquelle on peut effectuer des opérations fonctionnelles (filter, map, reduce, etc.). Les streams permettent un traitement déclaratif et parallélisable des collections.
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item \textbf{Non mutables} : Ne modifie pas la source
+    \item \textbf{Lazy} : Les opérations sont évaluées à la demande
+    \item \textbf{Possiblement infini} : Peut traiter des séquences infinies
+    \item \textbf{Parallélisable} : Peut être exécuté en parallèle
+\end{itemize}
+
+\textbf{Exemple : Filtrer et transformer une liste d'entiers}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.stream.*;
+
+public class ExempleStream {
+    public static void main(String[] args) {
+        List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        
+        // Filtrer les nombres pairs, les multiplier par 2, et les collecter
+        List<Integer> resultat = nombres.stream()
+            .filter(n -> n % 2 == 0)        // Garder seulement les pairs
+            .map(n -> n * 2)                // Multiplier par 2
+            .collect(Collectors.toList());  // Collecter dans une liste
+        
+        System.out.println("Nombres pairs multipliés par 2 : " + resultat);
+        // Sortie : [4, 8, 12, 16, 20]
+        
+        // Autre exemple : somme des carrés des nombres impairs
+        int somme = nombres.stream()
+            .filter(n -> n % 2 != 0)       // Nombres impairs
+            .mapToInt(n -> n * n)          // Carré (retourne IntStream)
+            .sum();                         // Somme
+        
+        System.out.println("Somme des carrés des impairs : " + somme);
+        // Sortie : 165 (1² + 3² + 5² + 7² + 9² = 1 + 9 + 25 + 49 + 81)
+        
+        // Exemple avec plusieurs opérations
+        List<String> chaines = nombres.stream()
+            .filter(n -> n > 5)                    // n > 5
+            .map(n -> n * 3)                       // Multiplier par 3
+            .map(n -> "Valeur: " + n)              // Convertir en String
+            .collect(Collectors.toList());
+        
+        System.out.println("Chaînes : " + chaines);
+        // Sortie : [Valeur: 18, Valeur: 21, Valeur: 24, Valeur: 27, Valeur: 30]
+    }
+}
+\end{lstlisting}
+\end{correctionbox}
+
+\newpage
+
+\section{Correction Exercice 2 : Erreurs et Solutions}
+
+\subsection{Erreur 1 : Héritage}
+
+\begin{correctionbox}
+\textbf{Erreur identifiée :} Le constructeur de \texttt{Chien} n'appelle pas le constructeur de la classe parente \texttt{Animal}. En Java, si une classe parente n'a pas de constructeur par défaut (sans paramètres), les classes enfants doivent appeler explicitement un constructeur parent avec \texttt{super()}.
+
+\textbf{Solution :}
+
+\begin{lstlisting}
+class Animal {
+    private String nom;
+    
+    public Animal(String nom) {
+        this.nom = nom;
+    }
+    
+    public void manger() {
+        System.out.println(nom + " mange");
+    }
+}
+
+class Chien extends Animal {
+    public Chien(String nom) {
+        super(nom); // Appel du constructeur parent
+    }
+    
+    public void aboyer() {
+        System.out.println("Wouf wouf !");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Chien chien = new Chien("Rex");
+        chien.manger(); // Affiche : Rex mange
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication :} \texttt{super(nom)} appelle le constructeur de \texttt{Animal} avec le paramètre \texttt{nom}, permettant d'initialiser correctement la variable \texttt{nom} de la classe parente.
+\end{correctionbox}
+
+\subsection{Erreur 2 : Polymorphisme}
+
+\begin{correctionbox}
+\textbf{Erreur identifiée :} On essaie d'appeler la méthode \texttt{calculerAire()} sur une référence de type \texttt{Forme}, mais cette méthode n'existe que dans la classe \texttt{Cercle}. Le compilateur ne connaît que les méthodes déclarées dans le type de la référence, pas celles de la classe réelle de l'objet.
+
+\textbf{Solution 1 : Ajouter la méthode dans la classe parente}
+
+\begin{lstlisting}
+class Forme {
+    public void dessiner() {
+        System.out.println("Dessiner une forme");
+    }
+    
+    // Ajouter la méthode dans la classe parente
+    public void calculerAire() {
+        System.out.println("Aire de la forme");
+    }
+}
+
+class Cercle extends Forme {
+    public void dessiner() {
+        System.out.println("Dessiner un cercle");
+    }
+    
+    @Override
+    public void calculerAire() {
+        System.out.println("Aire du cercle");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Forme forme = new Cercle();
+        forme.dessiner();        // OK : méthode dans Forme
+        forme.calculerAire();    // OK : méthode maintenant dans Forme
+    }
+}
+\end{lstlisting}
+
+\textbf{Solution 2 : Utiliser un cast (moins recommandé)}
+
+\begin{lstlisting}
+public class Test {
+    public static void main(String[] args) {
+        Forme forme = new Cercle();
+        forme.dessiner();
+        
+        // Cast vers Cercle pour accéder à calculerAire()
+        if (forme instanceof Cercle) {
+            ((Cercle) forme).calculerAire();
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{Recommandation :} La solution 1 est préférable car elle respecte le principe du polymorphisme et évite les casts.
+\end{correctionbox}
+
+\subsection{Erreur 3 : Classes Génériques}
+
+\begin{correctionbox}
+\textbf{Erreur identifiée :} On essaie d'assigner une \texttt{Boite<String>} à une référence \texttt{Boite<Integer>}. C'est une erreur de type car les génériques en Java sont invariants : \texttt{Boite<String>} et \texttt{Boite<Integer>} sont des types complètement différents, même si \texttt{String} et \texttt{Integer} sont tous deux des objets.
+
+\textbf{Solution :} Créer une nouvelle instance avec le bon type
+
+\begin{lstlisting}
+class Boite<T> {
+    private T contenu;
+    
+    public void setContenu(T contenu) {
+        this.contenu = contenu;
+    }
+    
+    public T getContenu() {
+        return contenu;
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Boite<String> boiteString = new Boite<>();
+        boiteString.setContenu("Hello");
+        
+        // Créer une nouvelle instance avec le bon type
+        Boite<Integer> boiteInt = new Boite<>();
+        boiteInt.setContenu(42);
+        
+        System.out.println(boiteString.getContenu()); // Hello
+        System.out.println(boiteInt.getContenu());    // 42
+    }
+}
+\end{lstlisting}
+
+\textbf{Explication :} Les génériques en Java garantissent la sécurité de type à la compilation. On ne peut pas mélanger différents types génériques, même s'ils ont la même structure. C'est ce qu'on appelle l'invariance des génériques.
+\end{correctionbox}
+
+\subsection{Erreur 4 : Collections}
+
+\begin{correctionbox}
+\textbf{Erreur identifiée :} On essaie de modifier une collection (supprimer un élément) pendant qu'on itère dessus avec une boucle for-each. Cela provoque une \texttt{ConcurrentModificationException}.
+
+\textbf{Solution 1 : Utiliser un Iterator}
+
+\begin{lstlisting}
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<String> liste = new ArrayList<>();
+        liste.add("A");
+        liste.add("B");
+        liste.add("C");
+        
+        Iterator<String> iterator = liste.iterator();
+        while (iterator.hasNext()) {
+            String element = iterator.next();
+            if (element.equals("B")) {
+                iterator.remove(); // Utiliser l'iterator pour supprimer
+            }
+        }
+        
+        System.out.println(liste); // [A, C]
+    }
+}
+\end{lstlisting}
+
+\textbf{Solution 2 : Utiliser removeIf() (Java 8+)}
+
+\begin{lstlisting}
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<String> liste = new ArrayList<>();
+        liste.add("A");
+        liste.add("B");
+        liste.add("C");
+        
+        liste.removeIf(element -> element.equals("B"));
+        
+        System.out.println(liste); // [A, C]
+    }
+}
+\end{lstlisting}
+
+\textbf{Solution 3 : Itérer à l'envers (pour ArrayList)}
+
+\begin{lstlisting}
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<String> liste = new ArrayList<>();
+        liste.add("A");
+        liste.add("B");
+        liste.add("C");
+        
+        for (int i = liste.size() - 1; i >= 0; i--) {
+            if (liste.get(i).equals("B")) {
+                liste.remove(i);
+            }
+        }
+        
+        System.out.println(liste); // [A, C]
+    }
+}
+\end{lstlisting}
+
+\textbf{Recommandation :} La solution 2 avec \texttt{removeIf()} est la plus moderne et concise.
+\end{correctionbox}
+
+\subsection{Erreur 5 : Stream}
+
+\begin{correctionbox}
+\textbf{Erreur identifiée :} La liste contient un élément \texttt{null}, et quand on filtre avec \texttt{n > 0}, le \texttt{null} passe le filtre (car \texttt{null > 0} ne lève pas d'exception, mais peut causer des problèmes). Ensuite, \texttt{mapToInt(n -> n * 2)} essaie de multiplier \texttt{null} par 2, ce qui cause une \texttt{NullPointerException}.
+
+\textbf{Solution : Filtrer les null avant les autres opérations}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.stream.*;
+
+public class Test {
+    public static void main(String[] args) {
+        List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, null, 7);
+        
+        int somme = nombres.stream()
+            .filter(Objects::nonNull)      // Filtrer les null d'abord
+            .filter(n -> n > 0)            // Puis filtrer les positifs
+            .mapToInt(n -> n * 2)          // Multiplier par 2
+            .sum();
+        
+        System.out.println("Somme : " + somme);
+        // Sortie : Somme : 44 (1*2 + 2*2 + 3*2 + 4*2 + 5*2 + 7*2)
+    }
+}
+\end{lstlisting}
+
+\textbf{Solution alternative : Utiliser filter avec vérification explicite}
+
+\begin{lstlisting}
+int somme = nombres.stream()
+    .filter(n -> n != null && n > 0)  // Vérifier null ET positif
+    .mapToInt(n -> n * 2)
+    .sum();
+\end{lstlisting}
+
+\textbf{Explication :} Il est important de filtrer les valeurs \texttt{null} avant d'effectuer des opérations qui nécessitent des valeurs non-null. \texttt{Objects::nonNull} est une méthode de référence pratique pour cela.
+\end{correctionbox}
+
+\newpage
+
+\section{Correction Exercice 3 : Code à Compléter}
+
+\begin{correctionbox}
+\textbf{Code complet avec toutes les solutions :}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.*;
+
+// TODO 1: Déclarer une interface fonctionnelle pour calculer
+@FunctionalInterface
+interface Calculateur {
+    // TODO 2: Déclarer la méthode abstraite
+    double calculer(double valeur);
+}
+
+// TODO 3: Déclarer une classe générique
+class Calculatrice<T extends Number> {
+    private List<T> elements;
+    
+    public Calculatrice(List<T> elements) {
+        this.elements = elements;
+    }
+    
+    public double calculer(Calculateur calc) {
+        return elements.stream()
+            // TODO 4: Convertir en double
+            .mapToDouble(Number::doubleValue)
+            // TODO 5: Appliquer le calcul
+            .map(calc::calculer)
+            // TODO 6: Obtenir la somme
+            .sum();
+    }
+    
+    public List<T> filtrer(Predicate<T> condition) {
+        return elements.stream()
+            // TODO 7: Filtrer selon la condition
+            .filter(condition)
+            // TODO 8: Collecter dans une liste
+            .collect(Collectors.toList());
+    }
+}
+
+public class ExerciceComplet {
+    public static void main(String[] args) {
+        List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        
+        // TODO 9: Créer une instance de la classe générique
+        Calculatrice<Integer> calculatrice = new Calculatrice<>(nombres);
+        
+        // Calculer la somme des carrés
+        double resultat = calculatrice.calculer(
+            // TODO 10: Implémenter l'interface fonctionnelle avec lambda
+            n -> n * n  // Calcul du carré
+        );
+        
+        System.out.println("Somme des carrés : " + resultat);
+        
+        // Filtrer les nombres pairs
+        List<Integer> pairs = calculatrice.filtrer(n -> n % 2 == 0);
+        System.out.println("Nombres pairs : " + pairs);
+    }
+}
+\end{lstlisting}
+
+\textbf{Explications détaillées :}
+
+\begin{enumerate}
+    \item \textbf{TODO 1-2 : Interface fonctionnelle}
+    \begin{itemize}
+        \item \texttt{@FunctionalInterface} indique que l'interface peut être utilisée avec des lambdas
+        \item La méthode \texttt{calculer(double valeur)} prend un double et retourne un double
+    \end{itemize}
+    
+    \item \textbf{TODO 3 : Classe générique}
+    \begin{itemize}
+        \item \texttt{Calculatrice<T extends Number>} : classe générique avec contrainte
+        \item \texttt{<T extends Number>} garantit que T est un sous-type de Number
+    \end{itemize}
+    
+    \item \textbf{TODO 4 : Conversion en double}
+    \begin{itemize}
+        \item \texttt{mapToDouble(Number::doubleValue)} : convertit chaque Number en double
+        \item Utilise une méthode de référence pour appeler \texttt{doubleValue()}
+    \end{itemize}
+    
+    \item \textbf{TODO 5 : Appliquer le calcul}
+    \begin{itemize}
+        \item \texttt{map(calc::calculer)} : applique la fonction du Calculateur
+        \item Utilise une méthode de référence pour appeler \texttt{calculer()} sur chaque élément
+    \end{itemize}
+    
+    \item \textbf{TODO 6 : Somme}
+    \begin{itemize}
+        \item \texttt{sum()} : opération terminale qui somme tous les éléments
+    \end{itemize}
+    
+    \item \textbf{TODO 7 : Filtrer}
+    \begin{itemize}
+        \item \texttt{filter(condition)} : garde seulement les éléments qui satisfont le prédicat
+    \end{itemize}
+    
+    \item \textbf{TODO 8 : Collecter}
+    \begin{itemize}
+        \item \texttt{collect(Collectors.toList())} : collecte les éléments dans une liste
+    \end{itemize}
+    
+    \item \textbf{TODO 9 : Instance}
+    \begin{itemize}
+        \item \texttt{Calculatrice<Integer> calculatrice = new Calculatrice<>(nombres);}
+        \item Crée une instance avec le type Integer
+    \end{itemize}
+    
+    \item \textbf{TODO 10 : Lambda}
+    \begin{itemize}
+        \item \texttt{n -> n * n} : lambda qui calcule le carré d'un nombre
+        \item Implémente l'interface fonctionnelle \texttt{Calculateur}
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Résultat attendu :}
+\begin{verbatim}
+Somme des carrés : 385.0
+Nombres pairs : [2, 4, 6, 8, 10]
+\end{verbatim}
+
+\textbf{Vérification :} $1^2 + 2^2 + ... + 10^2 = 1 + 4 + 9 + 16 + 25 + 36 + 49 + 64 + 81 + 100 = 385$
+\end{correctionbox}
+
+\newpage
+
+\section{Correction Exercice 4 : Interface Swing}
+
+\subsection{Question 1 : Identification des Composants}
+
+\begin{correctionbox}
+\textbf{Liste complète des composants Swing utilisés :}
+
+\begin{enumerate}
+    \item \textbf{JFrame} (\texttt{InterfaceSwing extends JFrame})
+    \begin{itemize}
+        \item Rôle : Fenêtre principale de l'application
+        \item Contient tous les autres composants
+    \end{itemize}
+    
+    \item \textbf{JPanel} (\texttt{panelPrincipal}, \texttt{panelBoutons})
+    \begin{itemize}
+        \item Rôle : Conteneurs pour organiser les composants
+        \item \texttt{panelPrincipal} : contient le formulaire
+        \item \texttt{panelBoutons} : contient les boutons d'action
+    \end{itemize}
+    
+    \item \textbf{JLabel} (\texttt{new JLabel("Nom :")}, \texttt{new JLabel("Âge :")}, etc., \texttt{labelResultat})
+    \begin{itemize}
+        \item Rôle : Afficher du texte statique (labels) ou dynamique (résultat)
+        \item Labels pour les champs du formulaire
+        \item Label pour afficher les résultats/erreurs
+    \end{itemize}
+    
+    \item \textbf{JTextField} (\texttt{champNom}, \texttt{champAge})
+    \begin{itemize}
+        \item Rôle : Permettre la saisie d'une ligne de texte
+        \item Pour le nom et l'âge de l'utilisateur
+    \end{itemize}
+    
+    \item \textbf{JButton} (\texttt{boutonValider}, \texttt{boutonEffacer})
+    \begin{itemize}
+        \item Rôle : Boutons cliquables pour déclencher des actions
+        \item \texttt{boutonValider} : valide et traite le formulaire
+        \item \texttt{boutonEffacer} : réinitialise tous les champs
+    \end{itemize}
+    
+    \item \textbf{JCheckBox} (\texttt{checkBoxAccepte})
+    \begin{itemize}
+        \item Rôle : Case à cocher pour choix binaire (oui/non)
+        \item Pour accepter ou non les conditions
+    \end{itemize}
+    
+    \item \textbf{JComboBox} (\texttt{comboBoxVille})
+    \begin{itemize}
+        \item Rôle : Liste déroulante pour sélectionner une option
+        \item Pour choisir une ville parmi plusieurs options
+    \end{itemize}
+    
+    \item \textbf{BorderFactory} (méthode statique)
+    \begin{itemize}
+        \item Rôle : Factory pour créer des bordures
+        \item Utilisé pour créer une bordure avec titre autour du panel principal
+    \end{itemize}
+\end{enumerate}
+\end{correctionbox}
+
+\subsection{Question 2 : Layout Managers}
+
+\begin{correctionbox}
+\textbf{Layout Managers utilisés :}
+
+\begin{enumerate}
+    \item \textbf{BorderLayout}
+    \begin{itemize}
+        \item \textbf{Où :} Sur le \texttt{ContentPane} de la JFrame (layout par défaut)
+        \item \textbf{Rôle :} Organise la fenêtre en 5 zones
+        \begin{itemize}
+            \item \texttt{BorderLayout.NORTH} : \texttt{labelResultat} (en haut)
+            \item \texttt{BorderLayout.CENTER} : \texttt{panelPrincipal} (au centre, prend l'espace restant)
+            \item \texttt{BorderLayout.SOUTH} : \texttt{panelBoutons} (en bas)
+        \end{itemize}
+        \item Permet une organisation claire : résultat en haut, formulaire au centre, actions en bas
+    \end{itemize}
+    
+    \item \textbf{GridLayout}
+    \begin{itemize}
+        \item \textbf{Où :} Sur \texttt{panelPrincipal}
+        \item \textbf{Paramètres :} \texttt{new GridLayout(4, 2, 10, 10)}
+        \begin{itemize}
+            \item 4 lignes
+            \item 2 colonnes
+            \item 10 pixels d'espacement horizontal
+            \item 10 pixels d'espacement vertical
+        \end{itemize}
+        \item \textbf{Rôle :} Organise le formulaire en grille régulière
+        \item Chaque ligne contient un label (colonne 1) et un composant de saisie (colonne 2)
+        \item Toutes les cellules ont la même taille
+    \end{itemize}
+    
+    \item \textbf{FlowLayout}
+    \begin{itemize}
+        \item \textbf{Où :} Sur \texttt{panelBoutons} (layout par défaut de JPanel)
+        \item \textbf{Rôle :} Aligne les boutons horizontalement, centrés
+        \item Les boutons sont placés côte à côte, centrés dans le panel
+        \item Si la fenêtre est redimensionnée, les boutons restent centrés
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Structure hiérarchique des layouts :}
+\begin{verbatim}
+JFrame (BorderLayout)
+├── NORTH: labelResultat
+├── CENTER: panelPrincipal (GridLayout 4x2)
+│   ├── Label "Nom :" + JTextField
+│   ├── Label "Âge :" + JTextField
+│   ├── Label "Ville :" + JComboBox
+│   └── Label "Accepter" + JCheckBox
+└── SOUTH: panelBoutons (FlowLayout)
+    ├── boutonValider
+    └── boutonEffacer
+\end{verbatim}
+\end{correctionbox}
+
+\subsection{Question 3 : Événements sur le Bouton "Valider"}
+
+\begin{correctionbox}
+\textbf{Description détaillée de l'événement :}
+
+\begin{enumerate}
+    \item \textbf{Type d'événement :}
+    \begin{itemize}
+        \item \texttt{ActionEvent} : événement déclenché par une action utilisateur
+        \item Se produit quand l'utilisateur clique sur le bouton ou appuie sur Entrée quand le bouton a le focus
+    \end{itemize}
+    
+    \item \textbf{Méthode appelée :}
+    \begin{itemize}
+        \item \texttt{actionPerformed(ActionEvent e)} de l'\texttt{ActionListener}
+        \item Cette méthode est définie dans la classe anonyme implémentant \texttt{ActionListener}
+    \end{itemize}
+    
+    \item \textbf{Actions effectuées (dans l'ordre) :}
+    \begin{enumerate}
+        \item \textbf{Récupération des données :}
+        \begin{itemize}
+            \item \texttt{champNom.getText()} : récupère le nom saisi
+            \item \texttt{champAge.getText()} : récupère l'âge saisi
+            \item \texttt{comboBoxVille.getSelectedItem()} : récupère la ville sélectionnée (cast en String)
+            \item \texttt{checkBoxAccepte.isSelected()} : vérifie si la case est cochée (boolean)
+        \end{itemize}
+        
+        \item \textbf{Validation des champs :}
+        \begin{itemize}
+            \item Vérifie si \texttt{nom} est vide avec \texttt{nom.isEmpty()}
+            \item Vérifie si \texttt{age} est vide avec \texttt{age.isEmpty()}
+            \item Si l'un des deux est vide :
+            \begin{itemize}
+                \item Affiche "Veuillez remplir tous les champs !" dans \texttt{labelResultat}
+                \item Change la couleur du texte en rouge : \texttt{setForeground(Color.RED)}
+            \end{itemize}
+        \end{itemize}
+        
+        \item \textbf{Validation de la case à cocher :}
+        \begin{itemize}
+            \item Vérifie si \texttt{accepte} est \texttt{false}
+            \item Si non coché :
+            \begin{itemize}
+                \item Affiche "Vous devez accepter les conditions !" dans \texttt{labelResultat}
+                \item Change la couleur du texte en rouge
+            \end{itemize}
+        \end{itemize}
+        
+        \item \textbf{Succès :}
+        \begin{itemize}
+            \item Si toutes les validations passent :
+            \begin{itemize}
+                \item Construit un message de succès : "Inscription réussie : [nom], [age] ans, [ville]"
+                \item Affiche ce message dans \texttt{labelResultat}
+                \item Change la couleur du texte en vert : \texttt{setForeground(Color.GREEN)}
+            \end{itemize}
+        \end{itemize}
+    \end{enumerate}
+    
+    \item \textbf{Conditions de validation :}
+    \begin{itemize}
+        \item Le champ nom ne doit pas être vide
+        \item Le champ âge ne doit pas être vide
+        \item La case "Accepter les conditions" doit être cochée
+        \item Si toutes ces conditions sont remplies, l'inscription est validée
+    \end{itemize}
+    
+    \item \textbf{Flux d'exécution :}
+    \begin{verbatim}
+    Clic sur "Valider"
+        ↓
+    actionPerformed() appelée
+        ↓
+    Récupération des données
+        ↓
+    Validation nom et âge
+        ├─ Vide ? → Message d'erreur rouge → FIN
+        └─ Rempli ? → Continue
+            ↓
+    Validation case à cocher
+        ├─ Non coché ? → Message d'erreur rouge → FIN
+        └─ Coché ? → Continue
+            ↓
+    Affichage message de succès vert
+    \end{verbatim}
+\end{enumerate}
+\end{correctionbox}
+
+\subsection{Question 4 : Événements sur le Bouton "Effacer"}
+
+\begin{correctionbox}
+\textbf{Description détaillée de l'événement :}
+
+\begin{enumerate}
+    \item \textbf{Type d'événement :}
+    \begin{itemize}
+        \item \texttt{ActionEvent} : même type que pour le bouton "Valider"
+        \item Déclenché par un clic ou la touche Entrée
+    \end{itemize}
+    
+    \item \textbf{Méthode appelée :}
+    \begin{itemize}
+        \item \texttt{actionPerformed(ActionEvent e)} de l'\texttt{ActionListener} du bouton "Effacer"
+    \end{itemize}
+    
+    \item \textbf{Actions effectuées (dans l'ordre) :}
+    \begin{enumerate}
+        \item \textbf{Réinitialisation du champ nom :}
+        \begin{itemize}
+            \item \texttt{champNom.setText("")} : vide le champ de texte du nom
+        \end{itemize}
+        
+        \item \textbf{Réinitialisation du champ âge :}
+        \begin{itemize}
+            \item \texttt{champAge.setText("")} : vide le champ de texte de l'âge
+        \end{itemize}
+        
+        \item \textbf{Réinitialisation de la combo box :}
+        \begin{itemize}
+            \item \texttt{comboBoxVille.setSelectedIndex(0)} : remet la sélection au premier élément (index 0)
+            \item Remet "Paris" comme sélection par défaut
+        \end{itemize}
+        
+        \item \textbf{Réinitialisation de la case à cocher :}
+        \begin{itemize}
+            \item \texttt{checkBoxAccepte.setSelected(false)} : décoche la case
+        \end{itemize}
+        
+        \item \textbf{Effacement du message de résultat :}
+        \begin{itemize}
+            \item \texttt{labelResultat.setText("")} : vide le label de résultat
+            \item Supprime tout message d'erreur ou de succès précédent
+        \end{itemize}
+    \end{enumerate}
+    
+    \item \textbf{Résultat :}
+    \begin{itemize}
+        \item Tous les champs du formulaire sont réinitialisés à leur état initial
+        \item Le formulaire est prêt pour une nouvelle saisie
+        \item Aucun message n'est affiché
+    \end{itemize}
+    
+    \item \textbf{Flux d'exécution :}
+    \begin{verbatim}
+    Clic sur "Effacer"
+        ↓
+    actionPerformed() appelée
+        ↓
+    champNom.setText("")
+        ↓
+    champAge.setText("")
+        ↓
+    comboBoxVille.setSelectedIndex(0)
+        ↓
+    checkBoxAccepte.setSelected(false)
+        ↓
+    labelResultat.setText("")
+        ↓
+    Formulaire réinitialisé
+    \end{verbatim}
+\end{enumerate}
+\end{correctionbox}
+
+\subsection{Question 5 : Structure de l'Interface}
+
+\begin{correctionbox}
+\textbf{Structure hiérarchique complète :}
+
+\begin{verbatim}
+InterfaceSwing (JFrame)
+│
+├── ContentPane (JPanel implicite avec BorderLayout)
+    │
+    ├── NORTH Zone (BorderLayout.NORTH)
+    │   └── labelResultat (JLabel)
+    │       - Texte : message de résultat/erreur
+    │       - Alignement : CENTER
+    │       - Police : Arial, Bold, 12pt
+    │       - Couleur : Rouge (erreur) ou Vert (succès)
+    │
+    ├── CENTER Zone (BorderLayout.CENTER)
+    │   └── panelPrincipal (JPanel avec GridLayout 4x2)
+    │       │
+    │       ├── Ligne 1, Colonne 1: JLabel("Nom :")
+    │       ├── Ligne 1, Colonne 2: champNom (JTextField, 20 colonnes)
+    │       │
+    │       ├── Ligne 2, Colonne 1: JLabel("Âge :")
+    │       ├── Ligne 2, Colonne 2: champAge (JTextField, 20 colonnes)
+    │       │
+    │       ├── Ligne 3, Colonne 1: JLabel("Ville :")
+    │       ├── Ligne 3, Colonne 2: comboBoxVille (JComboBox<String>)
+    │       │                         - Options: Paris, Lyon, Marseille, Toulouse
+    │       │
+    │       └── Ligne 4, Colonne 1: JLabel("Accepter les conditions :")
+    │       └── Ligne 4, Colonne 2: checkBoxAccepte (JCheckBox)
+    │                               - Texte: "J'accepte"
+    │
+    └── SOUTH Zone (BorderLayout.SOUTH)
+        └── panelBoutons (JPanel avec FlowLayout)
+            │
+            ├── boutonValider (JButton)
+            │   - Texte: "Valider"
+            │   - ActionListener: validation et affichage résultat
+            │
+            └── boutonEffacer (JButton)
+                - Texte: "Effacer"
+                - ActionListener: réinitialisation de tous les champs
+\end{verbatim}
+
+\textbf{Description de l'organisation :}
+
+\begin{itemize}
+    \item \textbf{Niveau 1 - JFrame :} Fenêtre principale avec titre, taille, et comportement de fermeture
+    
+    \item \textbf{Niveau 2 - ContentPane :} Conteneur principal organisé en BorderLayout avec 3 zones utilisées
+    
+    \item \textbf{Niveau 3 - Zones BorderLayout :}
+    \begin{itemize}
+        \item \textbf{NORTH :} Zone d'affichage des résultats (fixe en haut)
+        \item \textbf{CENTER :} Zone principale contenant le formulaire (prend l'espace restant)
+        \item \textbf{SOUTH :} Zone d'actions avec les boutons (fixe en bas)
+    \end{itemize}
+    
+    \item \textbf{Niveau 4 - Panel Principal :} GridLayout organisant les champs du formulaire en grille 4x2
+    
+    \item \textbf{Niveau 5 - Composants individuels :} Chaque champ du formulaire avec son label associé
+\end{itemize}
+
+\textbf{Avantages de cette structure :}
+\begin{itemize}
+    \item Séparation claire des responsabilités (affichage, formulaire, actions)
+    \item Organisation logique et intuitive pour l'utilisateur
+    \item Facile à étendre (ajouter de nouveaux champs dans le GridLayout)
+    \item Layouts adaptés à chaque section (GridLayout pour formulaire, FlowLayout pour boutons)
+\end{itemize}
+\end{correctionbox}
+
+\subsection{Question 6 : Améliorations Possibles}
+
+\begin{correctionbox}
+\textbf{3 améliorations proposées :}
+
+\subsubsection{Amélioration 1 : Validation de l'Âge}
+
+\textbf{Problème actuel :} L'âge est accepté comme n'importe quel texte, même des valeurs invalides.
+
+\textbf{Solution :}
+\begin{lstlisting}
+// Dans actionPerformed du bouton Valider
+try {
+    int ageInt = Integer.parseInt(age);
+    if (ageInt < 0 || ageInt > 150) {
+        labelResultat.setText("Âge invalide ! (0-150)");
+        labelResultat.setForeground(Color.RED);
+        return;
+    }
+} catch (NumberFormatException e) {
+    labelResultat.setText("L'âge doit être un nombre !");
+    labelResultat.setForeground(Color.RED);
+    return;
+}
+\end{lstlisting}
+
+\textbf{Bénéfices :} Assure que l'âge est un nombre valide dans une plage raisonnable.
+
+\subsubsection{Amélioration 2 : Validation de l'Email}
+
+\textbf{Problème actuel :} Pas de champ email, mais on pourrait l'ajouter avec validation.
+
+\textbf{Solution :}
+\begin{lstlisting}
+// Ajouter un champ email
+JTextField champEmail = new JTextField(20);
+
+// Dans le GridLayout
+panelPrincipal.add(new JLabel("Email :"));
+panelPrincipal.add(champEmail);
+
+// Validation avec regex
+String email = champEmail.getText();
+if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+    labelResultat.setText("Format d'email invalide !");
+    labelResultat.setForeground(Color.RED);
+    return;
+}
+\end{lstlisting}
+
+\textbf{Bénéfices :} Valide le format de l'email avant traitement.
+
+\subsubsection{Amélioration 3 : Feedback Visuel et UX}
+
+\textbf{Problème actuel :} Pas de feedback visuel immédiat, pas de désactivation du bouton pendant le traitement.
+
+\textbf{Solution :}
+\begin{lstlisting}
+// Désactiver le bouton pendant la validation
+boutonValider.setEnabled(false);
+
+// Afficher un indicateur de chargement
+labelResultat.setText("Traitement en cours...");
+labelResultat.setForeground(Color.BLUE);
+
+// Simuler un traitement (dans un thread séparé pour ne pas bloquer l'UI)
+SwingUtilities.invokeLater(() -> {
+    try {
+        Thread.sleep(500); // Simulation traitement
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    
+    // Validation et affichage résultat
+    // ...
+    
+    // Réactiver le bouton
+    boutonValider.setEnabled(true);
+});
+
+// Améliorer les tooltips
+champNom.setToolTipText("Entrez votre nom complet");
+champAge.setToolTipText("Entrez votre âge (nombre entier)");
+comboBoxVille.setToolTipText("Sélectionnez votre ville de résidence");
+\end{lstlisting}
+
+\textbf{Bénéfices :}
+\begin{itemize}
+    \item Meilleure expérience utilisateur avec feedback visuel
+    \item Évite les double-clics accidentels
+    \item Tooltips aident l'utilisateur à comprendre ce qui est attendu
+\end{itemize}
+
+\subsubsection{Amélioration Bonus : Sauvegarde des Données}
+
+\textbf{Idée :} Sauvegarder les données dans un fichier ou une base de données après validation réussie.
+
+\textbf{Solution :}
+\begin{lstlisting}
+// Après validation réussie
+try (PrintWriter writer = new PrintWriter(new FileWriter("inscriptions.txt", true))) {
+    writer.println(String.format("%s;%s;%s;%s", 
+        nom, age, ville, new Date()));
+    labelResultat.setText("Inscription sauvegardée avec succès !");
+} catch (IOException e) {
+    labelResultat.setText("Erreur lors de la sauvegarde : " + e.getMessage());
+    labelResultat.setForeground(Color.RED);
+}
+\end{lstlisting}
+\end{correctionbox}
+
+\end{document}
+
+
+
+
+
+

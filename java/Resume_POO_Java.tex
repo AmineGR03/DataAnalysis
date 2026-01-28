@@ -1,0 +1,1263 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Résumé POO Java}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Java
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{importantbox}{
+    colback=yellow!5,
+    colframe=yellow!50,
+    breakable,
+    title=Important
+}
+
+\newtcolorbox{exemplebox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Exemple
+}
+
+% Métadonnées
+\title{Résumé - Programmation Orientée Objet en Java\\
+\large Classes Génériques, Polymorphisme, Héritage, Collections et Streams}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Les Classes Génériques}
+
+\subsection{Introduction}
+
+Les classes génériques permettent de créer des classes, interfaces et méthodes qui fonctionnent avec différents types de données tout en garantissant la sécurité de type à la compilation.
+
+\begin{importantbox}
+\textbf{Avantages des génériques :}
+\begin{itemize}
+    \item \textbf{Sécurité de type} : Évite les erreurs de cast à l'exécution
+    \item \textbf{Réutilisabilité} : Un seul code pour plusieurs types
+    \item \textbf{Performance} : Pas de conversion de type (boxing/unboxing)
+    \item \textbf{Code plus propre} : Moins de code dupliqué
+\end{itemize}
+\end{importantbox}
+
+\subsection{Syntaxe de Base}
+
+\begin{lstlisting}
+// Déclaration d'une classe générique
+class NomClasse<T> {
+    private T element;
+    
+    public void setElement(T element) {
+        this.element = element;
+    }
+    
+    public T getElement() {
+        return element;
+    }
+}
+
+// Utilisation
+NomClasse<String> instance = new NomClasse<>();
+instance.setElement("Hello");
+String valeur = instance.getElement();
+\end{lstlisting}
+
+\subsection{Plusieurs Paramètres de Type}
+
+\begin{lstlisting}
+class Paire<K, V> {
+    private K cle;
+    private V valeur;
+    
+    public Paire(K cle, V valeur) {
+        this.cle = cle;
+        this.valeur = valeur;
+    }
+    
+    public K getCle() { return cle; }
+    public V getValeur() { return valeur; }
+}
+
+// Utilisation
+Paire<String, Integer> paire = new Paire<>("age", 25);
+\end{lstlisting}
+
+\subsection{Contraintes sur les Types}
+
+\begin{lstlisting}
+// T doit être un sous-type de Number
+class Calculatrice<T extends Number> {
+    private T valeur;
+    
+    public double getDoubleValue() {
+        return valeur.doubleValue();
+    }
+}
+
+// T doit implémenter Comparable
+class Triable<T extends Comparable<T>> {
+    public void trier(List<T> liste) {
+        Collections.sort(liste);
+    }
+}
+
+// Plusieurs contraintes
+class Exemple<T extends Number & Comparable<T>> {
+    // T doit être Number ET Comparable
+}
+\end{lstlisting}
+
+\subsection{Méthodes Génériques}
+
+\begin{lstlisting}
+class Utilitaires {
+    // Méthode générique statique
+    public static <T> void echanger(T[] tableau, int i, int j) {
+        T temp = tableau[i];
+        tableau[i] = tableau[j];
+        tableau[j] = temp;
+    }
+    
+    // Méthode générique avec contrainte
+    public static <T extends Comparable<T>> T maximum(T a, T b) {
+        return a.compareTo(b) > 0 ? a : b;
+    }
+}
+
+// Utilisation
+String[] mots = {"a", "b", "c"};
+Utilitaires.echanger(mots, 0, 2);
+Integer max = Utilitaires.maximum(10, 20);
+\end{lstlisting}
+
+\subsection{Wildcards (Jokers)}
+
+\begin{lstlisting}
+// ? extends Type : accepte Type et ses sous-types
+public void afficher(List<? extends Number> liste) {
+    for (Number n : liste) {
+        System.out.println(n);
+    }
+}
+
+// ? super Type : accepte Type et ses super-types
+public void ajouter(List<? super Integer> liste) {
+    liste.add(42);
+}
+
+// ? : accepte n'importe quel type
+public void traiter(List<?> liste) {
+    for (Object o : liste) {
+        System.out.println(o);
+    }
+}
+\end{lstlisting}
+
+\newpage
+
+\section{Le Polymorphisme}
+
+\subsection{Introduction}
+
+Le polymorphisme permet à un objet de prendre plusieurs formes. En Java, cela signifie qu'une référence de type parent peut pointer vers un objet de type enfant.
+
+\begin{importantbox}
+\textbf{Types de polymorphisme :}
+\begin{itemize}
+    \item \textbf{Polymorphisme d'exécution} : Les méthodes appelées sont celles de la classe réelle de l'objet
+    \item \textbf{Polymorphisme de compilation} : Surcharge de méthodes (méthodes avec le même nom mais signatures différentes)
+\end{itemize}
+\end{importantbox}
+
+\subsection{Polymorphisme d'Exécution}
+
+\begin{exemplebox}
+\begin{lstlisting}
+// Classe parente
+class Animal {
+    public void faireDuBruit() {
+        System.out.println("L'animal fait du bruit");
+    }
+}
+
+// Classes enfants
+class Chien extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Wouf wouf !");
+    }
+}
+
+class Chat extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Miaou !");
+    }
+}
+
+// Utilisation polymorphique
+public class Test {
+    public static void main(String[] args) {
+        Animal animal1 = new Chien();  // Référence Animal, objet Chien
+        Animal animal2 = new Chat();   // Référence Animal, objet Chat
+        
+        animal1.faireDuBruit();  // Affiche : Wouf wouf !
+        animal2.faireDuBruit();  // Affiche : Miaou !
+    }
+}
+\end{lstlisting}
+\end{exemplebox}
+
+\subsection{Tableaux et Collections Polymorphiques}
+
+\begin{lstlisting}
+// Tableau polymorphique
+Animal[] animaux = {
+    new Chien(),
+    new Chat(),
+    new Chien()
+};
+
+for (Animal animal : animaux) {
+    animal.faireDuBruit();  // Appelle la méthode appropriée
+}
+
+// Collection polymorphique
+List<Animal> listeAnimaux = new ArrayList<>();
+listeAnimaux.add(new Chien());
+listeAnimaux.add(new Chat());
+
+for (Animal animal : listeAnimaux) {
+    animal.faireDuBruit();
+}
+\end{lstlisting}
+
+\subsection{Polymorphisme avec Interfaces}
+
+\begin{lstlisting}
+// Interface
+interface Volant {
+    void voler();
+}
+
+// Implémentations
+class Avion implements Volant {
+    @Override
+    public void voler() {
+        System.out.println("L'avion vole avec des moteurs");
+    }
+}
+
+class Oiseau implements Volant {
+    @Override
+    public void voler() {
+        System.out.println("L'oiseau vole en battant des ailes");
+    }
+}
+
+// Utilisation polymorphique
+Volant[] volants = {new Avion(), new Oiseau()};
+for (Volant v : volants) {
+    v.voler();
+}
+\end{lstlisting}
+
+\subsection{Méthodes Utiles avec le Polymorphisme}
+
+\begin{lstlisting}
+// instanceof : vérifier le type réel
+if (animal instanceof Chien) {
+    Chien chien = (Chien) animal;
+    chien.aboyer();
+}
+
+// getClass() : obtenir la classe réelle
+Class<?> classe = animal.getClass();
+System.out.println("Classe : " + classe.getName());
+\end{lstlisting}
+
+\newpage
+
+\section{L'Héritage}
+
+\subsection{Introduction}
+
+L'héritage permet à une classe (classe enfant) d'hériter des caractéristiques d'une autre classe (classe parente).
+
+\begin{importantbox}
+\textbf{Avantages de l'héritage :}
+\begin{itemize}
+    \item \textbf{Réutilisabilité} : Réutiliser le code de la classe parente
+    \item \textbf{Extensibilité} : Ajouter de nouvelles fonctionnalités
+    \item \textbf{Maintenabilité} : Modifications centralisées
+    \item \textbf{Polymorphisme} : Traiter les objets de manière uniforme
+\end{itemize}
+\end{importantbox}
+
+\subsection{Syntaxe de Base}
+
+\begin{lstlisting}
+// Classe parente
+class Vehicule {
+    protected String marque;
+    protected int vitesse;
+    
+    public Vehicule(String marque) {
+        this.marque = marque;
+        this.vitesse = 0;
+    }
+    
+    public void accelerer(int increment) {
+        vitesse += increment;
+    }
+    
+    public void afficherInfo() {
+        System.out.println("Marque : " + marque + ", Vitesse : " + vitesse);
+    }
+}
+
+// Classe enfant
+class Voiture extends Vehicule {
+    private int nombrePortes;
+    
+    public Voiture(String marque, int nombrePortes) {
+        super(marque);  // Appel du constructeur parent
+        this.nombrePortes = nombrePortes;
+    }
+    
+    // Redéfinition (override)
+    @Override
+    public void afficherInfo() {
+        super.afficherInfo();  // Appel de la méthode parente
+        System.out.println("Nombre de portes : " + nombrePortes);
+    }
+    
+    // Nouvelle méthode spécifique
+    public void klaxonner() {
+        System.out.println("Tut tut !");
+    }
+}
+\end{lstlisting}
+
+\subsection{Mots-clés Importants}
+
+\subsubsection{super}
+
+\begin{lstlisting}
+class Parent {
+    protected String nom;
+    
+    public Parent(String nom) {
+        this.nom = nom;
+    }
+    
+    public void afficher() {
+        System.out.println("Parent : " + nom);
+    }
+}
+
+class Enfant extends Parent {
+    private int age;
+    
+    public Enfant(String nom, int age) {
+        super(nom);  // Appel du constructeur parent
+        this.age = age;
+    }
+    
+    @Override
+    public void afficher() {
+        super.afficher();  // Appel de la méthode parente
+        System.out.println("Enfant : " + age + " ans");
+    }
+}
+\end{lstlisting}
+
+\subsubsection{this}
+
+\begin{lstlisting}
+class Exemple {
+    private String nom;
+    
+    public Exemple(String nom) {
+        this.nom = nom;  // this.nom fait référence à l'attribut de la classe
+    }
+    
+    public void setNom(String nom) {
+        this.nom = nom;  // Distingue l'attribut du paramètre
+    }
+}
+\end{lstlisting}
+
+\subsection{Modificateurs d'Accès}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Modificateur} & \textbf{Même classe} & \textbf{Même package} & \textbf{Classe enfant} & \textbf{Autre package} \\
+\hline
+\texttt{private} & ✓ & ✗ & ✗ & ✗ \\
+\hline
+\texttt{(package)} & ✓ & ✓ & ✗ & ✗ \\
+\hline
+\texttt{protected} & ✓ & ✓ & ✓ & ✗ \\
+\hline
+\texttt{public} & ✓ & ✓ & ✓ & ✓ \\
+\hline
+\end{tabular}
+\caption{Visibilité des modificateurs d'accès}
+\end{table}
+
+\subsection{Classes Abstraites}
+
+\begin{lstlisting}
+// Classe abstraite
+abstract class Forme {
+    protected String couleur;
+    
+    public Forme(String couleur) {
+        this.couleur = couleur;
+    }
+    
+    // Méthode concrète
+    public String getCouleur() {
+        return couleur;
+    }
+    
+    // Méthode abstraite (doit être redéfinie)
+    public abstract double calculerAire();
+    
+    public abstract double calculerPerimetre();
+}
+
+// Classe concrète
+class Cercle extends Forme {
+    private double rayon;
+    
+    public Cercle(String couleur, double rayon) {
+        super(couleur);
+        this.rayon = rayon;
+    }
+    
+    @Override
+    public double calculerAire() {
+        return Math.PI * rayon * rayon;
+    }
+    
+    @Override
+    public double calculerPerimetre() {
+        return 2 * Math.PI * rayon;
+    }
+}
+\end{lstlisting}
+
+\subsection{Interfaces}
+
+\begin{lstlisting}
+// Interface
+interface Dessinable {
+    void dessiner();
+    void effacer();
+    
+    // Méthode par défaut (Java 8+)
+    default void redessiner() {
+        effacer();
+        dessiner();
+    }
+    
+    // Méthode statique (Java 8+)
+    static void info() {
+        System.out.println("Interface Dessinable");
+    }
+}
+
+// Implémentation
+class Rectangle implements Dessinable {
+    @Override
+    public void dessiner() {
+        System.out.println("Dessiner un rectangle");
+    }
+    
+    @Override
+    public void effacer() {
+        System.out.println("Effacer le rectangle");
+    }
+}
+\end{lstlisting}
+
+\subsection{Héritage Multiple (via Interfaces)}
+
+\begin{lstlisting}
+interface A {
+    void methodeA();
+}
+
+interface B {
+    void methodeB();
+}
+
+// Une classe peut implémenter plusieurs interfaces
+class C implements A, B {
+    @Override
+    public void methodeA() {
+        System.out.println("Méthode A");
+    }
+    
+    @Override
+    public void methodeB() {
+        System.out.println("Méthode B");
+    }
+}
+\end{lstlisting}
+
+\newpage
+
+\section{Les Collections}
+
+\subsection{Introduction}
+
+Les collections sont des structures de données qui permettent de stocker et manipuler des groupes d'objets.
+
+\begin{importantbox}
+\textbf{Hierarchie des collections :}
+\begin{itemize}
+    \item \textbf{Collection} : Interface racine
+    \begin{itemize}
+        \item \textbf{List} : Collections ordonnées, avec doublons
+        \item \textbf{Set} : Collections sans doublons
+        \item \textbf{Queue} : Collections FIFO/LIFO
+    \end{itemize}
+    \item \textbf{Map} : Paires clé-valeur (n'hérite pas de Collection)
+\end{itemize}
+\end{importantbox}
+
+\subsection{List}
+
+\subsubsection{ArrayList}
+
+\begin{lstlisting}
+import java.util.*;
+
+// Création
+List<String> liste = new ArrayList<>();
+
+// Méthodes principales
+liste.add("Element 1");              // Ajouter un élément
+liste.add(0, "Element 0");           // Ajouter à un index
+liste.addAll(Arrays.asList("A", "B")); // Ajouter plusieurs éléments
+
+String element = liste.get(0);        // Récupérer un élément
+int taille = liste.size();           // Taille de la liste
+boolean vide = liste.isEmpty();      // Vérifier si vide
+
+liste.set(0, "Nouveau");             // Modifier un élément
+liste.remove(0);                     // Supprimer par index
+liste.remove("Element 1");           // Supprimer par valeur
+liste.removeAll(Arrays.asList("A")); // Supprimer plusieurs
+
+boolean contient = liste.contains("Element 1"); // Vérifier présence
+int index = liste.indexOf("Element 1");         // Index d'un élément
+
+liste.clear();                        // Vider la liste
+
+// Itération
+for (String s : liste) {
+    System.out.println(s);
+}
+
+Iterator<String> it = liste.iterator();
+while (it.hasNext()) {
+    System.out.println(it.next());
+}
+
+// Conversion
+String[] tableau = liste.toArray(new String[0]);
+List<String> nouvelleListe = new ArrayList<>(liste);
+\end{lstlisting}
+
+\subsubsection{LinkedList}
+
+\begin{lstlisting}
+List<String> liste = new LinkedList<>();
+
+// Méthodes spécifiques à LinkedList
+LinkedList<String> linkedList = (LinkedList<String>) liste;
+linkedList.addFirst("Premier");      // Ajouter au début
+linkedList.addLast("Dernier");       // Ajouter à la fin
+String premier = linkedList.getFirst(); // Premier élément
+String dernier = linkedList.getLast();  // Dernier élément
+linkedList.removeFirst();             // Supprimer le premier
+linkedList.removeLast();              // Supprimer le dernier
+\end{lstlisting}
+
+\subsubsection{Vector}
+
+\begin{lstlisting}
+// Vector est thread-safe (synchronisé)
+Vector<String> vector = new Vector<>();
+// Mêmes méthodes que ArrayList mais synchronisées
+\end{lstlisting}
+
+\subsection{Set}
+
+\subsubsection{HashSet}
+
+\begin{lstlisting}
+Set<String> set = new HashSet<>();
+
+// Méthodes principales
+set.add("Element 1");
+set.add("Element 2");
+set.add("Element 1");  // Ignoré (déjà présent)
+
+boolean ajoute = set.add("Nouveau"); // Retourne true si ajouté
+set.remove("Element 1");
+boolean contient = set.contains("Element 2");
+int taille = set.size();
+
+// Itération (ordre non garanti)
+for (String s : set) {
+    System.out.println(s);
+}
+\end{lstlisting}
+
+\subsubsection{TreeSet}
+
+\begin{lstlisting}
+// TreeSet maintient un ordre trié
+Set<String> treeSet = new TreeSet<>();
+treeSet.add("Zebra");
+treeSet.add("Apple");
+treeSet.add("Banana");
+// Ordre : Apple, Banana, Zebra
+
+// Avec Comparator personnalisé
+Set<String> treeSet2 = new TreeSet<>((a, b) -> b.compareTo(a));
+// Ordre décroissant
+\end{lstlisting}
+
+\subsubsection{LinkedHashSet}
+
+\begin{lstlisting}
+// LinkedHashSet maintient l'ordre d'insertion
+Set<String> linkedSet = new LinkedHashSet<>();
+linkedSet.add("Premier");
+linkedSet.add("Deuxieme");
+linkedSet.add("Troisieme");
+// Ordre : Premier, Deuxieme, Troisieme
+\end{lstlisting}
+
+\subsection{Map}
+
+\subsubsection{HashMap}
+
+\begin{lstlisting}
+Map<String, Integer> map = new HashMap<>();
+
+// Méthodes principales
+map.put("un", 1);                    // Ajouter/modifier
+map.put("deux", 2);
+map.putIfAbsent("un", 10);           // Ajouter si absent
+
+Integer valeur = map.get("un");       // Récupérer une valeur
+Integer valeurDefaut = map.getOrDefault("trois", 0); // Valeur par défaut
+
+boolean contientCle = map.containsKey("un");
+boolean contientValeur = map.containsValue(1);
+
+map.remove("un");                    // Supprimer par clé
+map.remove("deux", 2);               // Supprimer si clé=valeur
+
+int taille = map.size();
+boolean vide = map.isEmpty();
+map.clear();
+
+// Itération
+for (Map.Entry<String, Integer> entry : map.entrySet()) {
+    System.out.println(entry.getKey() + " = " + entry.getValue());
+}
+
+for (String cle : map.keySet()) {
+    System.out.println(cle);
+}
+
+for (Integer valeur : map.values()) {
+    System.out.println(valeur);
+}
+
+// Méthodes utiles
+map.replace("un", 10);               // Remplacer si existe
+map.replace("un", 1, 10);            // Remplacer si clé=valeur
+map.compute("un", (k, v) -> v * 2); // Calculer nouvelle valeur
+\end{lstlisting}
+
+\subsubsection{TreeMap}
+
+\begin{lstlisting}
+// TreeMap maintient un ordre trié par clé
+Map<String, Integer> treeMap = new TreeMap<>();
+treeMap.put("Zebra", 26);
+treeMap.put("Apple", 1);
+treeMap.put("Banana", 2);
+// Ordre des clés : Apple, Banana, Zebra
+\end{lstlisting}
+
+\subsubsection{LinkedHashMap}
+
+\begin{lstlisting}
+// LinkedHashMap maintient l'ordre d'insertion
+Map<String, Integer> linkedMap = new LinkedHashMap<>();
+linkedMap.put("Premier", 1);
+linkedMap.put("Deuxieme", 2);
+// Ordre : Premier, Deuxieme
+\end{lstlisting}
+
+\subsection{Queue}
+
+\subsubsection{PriorityQueue}
+
+\begin{lstlisting}
+// File de priorité
+Queue<Integer> queue = new PriorityQueue<>();
+queue.offer(5);                      // Ajouter
+queue.offer(1);
+queue.offer(3);
+
+Integer tete = queue.peek();         // Voir la tête (sans supprimer)
+Integer element = queue.poll();      // Récupérer et supprimer
+Integer element2 = queue.remove();   // Récupérer et supprimer (exception si vide)
+\end{lstlisting}
+
+\subsubsection{ArrayDeque}
+
+\begin{lstlisting}
+// Double-ended queue
+Deque<String> deque = new ArrayDeque<>();
+deque.addFirst("Début");
+deque.addLast("Fin");
+deque.offerFirst("Début2");
+deque.offerLast("Fin2");
+
+String premier = deque.getFirst();
+String dernier = deque.getLast();
+String element = deque.pollFirst();  // Récupérer et supprimer le premier
+\end{lstlisting}
+
+\subsection{Collections Utilitaires}
+
+\begin{lstlisting}
+List<Integer> liste = Arrays.asList(3, 1, 4, 1, 5);
+
+// Tri
+Collections.sort(liste);              // Tri naturel
+Collections.sort(liste, Collections.reverseOrder()); // Tri inverse
+Collections.sort(liste, (a, b) -> b - a); // Tri personnalisé
+
+// Recherche (liste doit être triée)
+int index = Collections.binarySearch(liste, 4);
+
+// Mélange
+Collections.shuffle(liste);
+
+// Inversion
+Collections.reverse(liste);
+
+// Min/Max
+Integer min = Collections.min(liste);
+Integer max = Collections.max(liste);
+
+// Fréquence
+int freq = Collections.frequency(liste, 1);
+
+// Copie
+List<Integer> copie = new ArrayList<>(liste.size());
+Collections.copy(copie, liste);
+
+// Remplissage
+Collections.fill(liste, 0);
+
+// Collections immuables
+List<String> immuable = Collections.unmodifiableList(liste);
+Set<String> setImmuable = Collections.unmodifiableSet(new HashSet<>());
+Map<String, Integer> mapImmuable = Collections.unmodifiableMap(new HashMap<>());
+\end{lstlisting}
+
+\newpage
+
+\section{Les Streams}
+
+\subsection{Introduction}
+
+Les streams (introduits en Java 8) permettent un traitement fonctionnel et déclaratif des collections.
+
+\begin{importantbox}
+\textbf{Caractéristiques des streams :}
+\begin{itemize}
+    \item \textbf{Non mutables} : Ne modifient pas la source
+    \item \textbf{Lazy} : Opérations évaluées à la demande
+    \item \textbf{Possiblement infini} : Peuvent traiter des séquences infinies
+    \item \textbf{Parallélisables} : Peuvent être exécutés en parallèle
+\end{itemize}
+\end{importantbox}
+
+\subsection{Création de Streams}
+
+\begin{lstlisting}
+import java.util.*;
+import java.util.stream.*;
+
+// Depuis une collection
+List<String> liste = Arrays.asList("a", "b", "c");
+Stream<String> stream1 = liste.stream();
+Stream<String> streamParallele = liste.parallelStream();
+
+// Depuis un tableau
+String[] tableau = {"a", "b", "c"};
+Stream<String> stream2 = Arrays.stream(tableau);
+
+// Stream vide
+Stream<String> streamVide = Stream.empty();
+
+// Stream avec valeurs
+Stream<String> stream3 = Stream.of("a", "b", "c");
+
+// Stream infini
+Stream<Integer> infini = Stream.iterate(0, n -> n + 1);
+Stream<Double> aleatoire = Stream.generate(Math::random);
+
+// Stream de primitives
+IntStream intStream = IntStream.range(0, 10);      // 0 à 9
+IntStream intStream2 = IntStream.rangeClosed(0, 10); // 0 à 10
+LongStream longStream = LongStream.of(1L, 2L, 3L);
+DoubleStream doubleStream = DoubleStream.of(1.0, 2.0, 3.0);
+\end{lstlisting}
+
+\subsection{Opérations Intermédiaires}
+
+Les opérations intermédiaires retournent un nouveau stream et sont \textbf{lazy} (non évaluées immédiatement).
+
+\subsubsection{filter}
+
+\begin{lstlisting}
+// Filtrer les éléments selon une condition
+List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, 6);
+List<Integer> pairs = nombres.stream()
+    .filter(n -> n % 2 == 0)
+    .collect(Collectors.toList());
+// Résultat : [2, 4, 6]
+\end{lstlisting}
+
+\subsubsection{map}
+
+\begin{lstlisting}
+// Transformer chaque élément
+List<String> mots = Arrays.asList("hello", "world");
+List<String> majuscules = mots.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+// Résultat : [HELLO, WORLD]
+
+List<Integer> longueurs = mots.stream()
+    .map(String::length)
+    .collect(Collectors.toList());
+// Résultat : [5, 5]
+\end{lstlisting}
+
+\subsubsection{flatMap}
+
+\begin{lstlisting}
+// Aplatir une structure imbriquée
+List<List<Integer>> listes = Arrays.asList(
+    Arrays.asList(1, 2),
+    Arrays.asList(3, 4),
+    Arrays.asList(5, 6)
+);
+List<Integer> aplati = listes.stream()
+    .flatMap(List::stream)
+    .collect(Collectors.toList());
+// Résultat : [1, 2, 3, 4, 5, 6]
+\end{lstlisting}
+
+\subsubsection{distinct}
+
+\begin{lstlisting}
+// Éliminer les doublons
+List<Integer> avecDoublons = Arrays.asList(1, 2, 2, 3, 3, 3);
+List<Integer> sansDoublons = avecDoublons.stream()
+    .distinct()
+    .collect(Collectors.toList());
+// Résultat : [1, 2, 3]
+\end{lstlisting}
+
+\subsubsection{sorted}
+
+\begin{lstlisting}
+// Trier les éléments
+List<Integer> nonTrie = Arrays.asList(3, 1, 4, 1, 5);
+List<Integer> trie = nonTrie.stream()
+    .sorted()
+    .collect(Collectors.toList());
+// Résultat : [1, 1, 3, 4, 5]
+
+// Tri personnalisé
+List<String> mots2 = Arrays.asList("zebra", "apple", "banana");
+List<String> trie2 = mots2.stream()
+    .sorted((a, b) -> b.compareTo(a))  // Ordre décroissant
+    .collect(Collectors.toList());
+// Résultat : [zebra, banana, apple]
+\end{lstlisting}
+
+\subsubsection{peek}
+
+\begin{lstlisting}
+// Examiner les éléments sans les modifier (débogage)
+List<Integer> resultat = nombres.stream()
+    .filter(n -> n > 2)
+    .peek(n -> System.out.println("Filtré : " + n))
+    .map(n -> n * 2)
+    .collect(Collectors.toList());
+\end{lstlisting}
+
+\subsubsection{limit}
+
+\begin{lstlisting}
+// Limiter le nombre d'éléments
+List<Integer> limites = nombres.stream()
+    .limit(3)
+    .collect(Collectors.toList());
+// Résultat : [1, 2, 3]
+\end{lstlisting}
+
+\subsubsection{skip}
+
+\begin{lstlisting}
+// Ignorer les n premiers éléments
+List<Integer> sautes = nombres.stream()
+    .skip(2)
+    .collect(Collectors.toList());
+// Résultat : [3, 4, 5, 6]
+\end{lstlisting}
+
+\subsubsection{takeWhile / dropWhile (Java 9+)}
+
+\begin{lstlisting}
+// Prendre les éléments tant que la condition est vraie
+List<Integer> prend = nombres.stream()
+    .takeWhile(n -> n < 4)
+    .collect(Collectors.toList());
+// Résultat : [1, 2, 3]
+
+// Ignorer les éléments tant que la condition est vraie
+List<Integer> ignore = nombres.stream()
+    .dropWhile(n -> n < 4)
+    .collect(Collectors.toList());
+// Résultat : [4, 5, 6]
+\end{lstlisting}
+
+\subsection{Opérations Terminales}
+
+Les opérations terminales déclenchent l'évaluation du stream et retournent un résultat non-stream.
+
+\subsubsection{collect}
+
+\begin{lstlisting}
+// Collecter dans une collection
+List<String> liste = Arrays.asList("a", "b", "c");
+List<String> resultat = liste.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+
+// Collecter dans un Set
+Set<String> set = liste.stream()
+    .collect(Collectors.toSet());
+
+// Collecter dans une Map
+Map<String, Integer> map = liste.stream()
+    .collect(Collectors.toMap(
+        s -> s,
+        String::length
+    ));
+
+// Joindre les éléments
+String joint = liste.stream()
+    .collect(Collectors.joining(", "));
+// Résultat : "a, b, c"
+
+// Grouper
+Map<Integer, List<String>> groupe = liste.stream()
+    .collect(Collectors.groupingBy(String::length));
+// Groupe par longueur
+
+// Partitionner
+Map<Boolean, List<String>> partition = liste.stream()
+    .collect(Collectors.partitioningBy(s -> s.length() > 1));
+// Partition selon une condition
+\end{lstlisting}
+
+\subsubsection{forEach}
+
+\begin{lstlisting}
+// Parcourir et effectuer une action
+nombres.stream()
+    .filter(n -> n % 2 == 0)
+    .forEach(System.out::println);
+\end{lstlisting}
+
+\subsubsection{reduce}
+
+\begin{lstlisting}
+// Réduire à une valeur unique
+Optional<Integer> somme = nombres.stream()
+    .reduce((a, b) -> a + b);
+// Résultat : Optional[21]
+
+// Avec valeur initiale
+Integer somme2 = nombres.stream()
+    .reduce(0, (a, b) -> a + b);
+// Résultat : 21
+
+// Produit
+Integer produit = nombres.stream()
+    .reduce(1, (a, b) -> a * b);
+// Résultat : 720
+\end{lstlisting}
+
+\subsubsection{count}
+
+\begin{lstlisting}
+// Compter les éléments
+long nombre = nombres.stream()
+    .filter(n -> n > 3)
+    .count();
+// Résultat : 3
+\end{lstlisting}
+
+\subsubsection{anyMatch / allMatch / noneMatch}
+
+\begin{lstlisting}
+// Vérifier si au moins un élément correspond
+boolean auMoinsUn = nombres.stream()
+    .anyMatch(n -> n > 5);
+// Résultat : true
+
+// Vérifier si tous les éléments correspondent
+boolean tous = nombres.stream()
+    .allMatch(n -> n > 0);
+// Résultat : true
+
+// Vérifier si aucun élément ne correspond
+boolean aucun = nombres.stream()
+    .noneMatch(n -> n < 0);
+// Résultat : true
+\end{lstlisting}
+
+\subsubsection{findFirst / findAny}
+
+\begin{lstlisting}
+// Trouver le premier élément
+Optional<Integer> premier = nombres.stream()
+    .filter(n -> n > 3)
+    .findFirst();
+// Résultat : Optional[4]
+
+// Trouver n'importe quel élément (utile en parallèle)
+Optional<Integer> nimporte = nombres.stream()
+    .filter(n -> n > 3)
+    .findAny();
+\end{lstlisting}
+
+\subsubsection{min / max}
+
+\begin{lstlisting}
+// Minimum
+Optional<Integer> min = nombres.stream()
+    .min(Integer::compareTo);
+// Résultat : Optional[1]
+
+// Maximum
+Optional<Integer> max = nombres.stream()
+    .max(Integer::compareTo);
+// Résultat : Optional[6]
+
+// Avec Comparator personnalisé
+Optional<String> minString = mots.stream()
+    .min((a, b) -> a.length() - b.length());
+\end{lstlisting}
+
+\subsubsection{sum / average (IntStream, LongStream, DoubleStream)}
+
+\begin{lstlisting}
+// Somme
+int somme = IntStream.of(1, 2, 3, 4, 5)
+    .sum();
+// Résultat : 15
+
+// Moyenne
+OptionalDouble moyenne = IntStream.of(1, 2, 3, 4, 5)
+    .average();
+// Résultat : OptionalDouble[3.0]
+
+// Statistiques complètes
+IntSummaryStatistics stats = IntStream.of(1, 2, 3, 4, 5)
+    .summaryStatistics();
+// Contient : count, sum, min, max, average
+\end{lstlisting}
+
+\subsection{Streams de Primitives}
+
+\begin{lstlisting}
+// IntStream
+IntStream intStream = IntStream.range(0, 10);
+int somme = intStream.sum();
+OptionalInt max = IntStream.of(1, 2, 3).max();
+
+// LongStream
+LongStream longStream = LongStream.range(0, 10);
+long sommeLong = longStream.sum();
+
+// DoubleStream
+DoubleStream doubleStream = DoubleStream.of(1.0, 2.0, 3.0);
+double sommeDouble = doubleStream.sum();
+OptionalDouble moyenne = DoubleStream.of(1.0, 2.0, 3.0).average();
+
+// Conversion
+IntStream ints = liste.stream().mapToInt(String::length);
+Stream<Integer> boxed = ints.boxed();
+\end{lstlisting}
+
+\subsection{Exemples Complets}
+
+\begin{exemplebox}
+\begin{lstlisting}
+// Exemple 1 : Filtrer, transformer et collecter
+List<Personne> personnes = Arrays.asList(
+    new Personne("Alice", 25),
+    new Personne("Bob", 30),
+    new Personne("Charlie", 20)
+);
+
+List<String> nomsMajuscules = personnes.stream()
+    .filter(p -> p.getAge() > 20)
+    .map(Personne::getNom)
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+// Résultat : [ALICE, BOB]
+
+// Exemple 2 : Grouper par âge
+Map<Integer, List<Personne>> parAge = personnes.stream()
+    .collect(Collectors.groupingBy(Personne::getAge));
+
+// Exemple 3 : Statistiques
+IntSummaryStatistics stats = personnes.stream()
+    .mapToInt(Personne::getAge)
+    .summaryStatistics();
+System.out.println("Moyenne : " + stats.getAverage());
+System.out.println("Min : " + stats.getMin());
+System.out.println("Max : " + stats.getMax());
+
+// Exemple 4 : Chaînage complexe
+Optional<String> resultat = personnes.stream()
+    .filter(p -> p.getAge() >= 25)
+    .map(Personne::getNom)
+    .sorted()
+    .findFirst();
+\end{lstlisting}
+\end{exemplebox}
+
+\subsection{Streams Parallèles}
+
+\begin{lstlisting}
+// Créer un stream parallèle
+List<Integer> nombres = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+// Méthode 1 : parallelStream()
+long somme = nombres.parallelStream()
+    .mapToInt(Integer::intValue)
+    .sum();
+
+// Méthode 2 : parallel()
+long somme2 = nombres.stream()
+    .parallel()
+    .mapToInt(Integer::intValue)
+    .sum();
+
+// Vérifier si parallèle
+boolean estParallele = nombres.stream().isParallel();
+
+// Forcer séquentiel
+Stream<Integer> sequentiel = nombres.parallelStream().sequential();
+\end{lstlisting}
+
+\begin{importantbox}
+\textbf{Attention :} Les streams parallèles ne sont pas toujours plus rapides. Ils sont utiles pour :
+\begin{itemize}
+    \item Grandes quantités de données
+    \item Opérations coûteuses
+    \item Pas de dépendances entre éléments
+    \item Pas d'ordre requis
+\end{itemize}
+\end{importantbox}
+
+\end{document}
+
+
+
+
+

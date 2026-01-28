@@ -1,0 +1,738 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Résumé Oracle Database - Administration}
+\setlength{\headheight}{14.5pt}
+
+% Configuration pour le code SQL
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+\title{\textbf{Résumé Complet Oracle Database 19c}\\
+Administration et Architecture}
+\author{Cours Oracle Database}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction à Oracle Database}
+
+\subsection{Définitions}
+
+\textbf{Base de données (DB)} : Ensemble structuré d'informations organisées en tables, permettant leur exploitation avec le moins de redondance possible.
+
+\textbf{Système de gestion de base de données (SGBD)} : Logiciel qui gère et contrôle l'accès à une base de données, assurant une interface normalisée entre les applications et les bases de données.
+
+\subsection{Rôle du DBA (Database Administrator)}
+
+L'administrateur de base de données est responsable de :
+\begin{itemize}
+    \item Installer Oracle et les outils, créer les bases de données
+    \item Assurer la maintenance et la disponibilité de la base de données
+    \item Créer la structure logique de stockage (tablespaces, tables, vues, index)
+    \item Manager la structure physique (datafiles, control files, redo logs)
+    \item Allouer et prévoir l'espace disque nécessaire
+    \item Maintenir, contrôler et monitorer les accès des utilisateurs
+    \item Assurer la sécurité du système
+    \item Monitorer les performances
+    \item Créer un plan de sauvegarde et de récupération
+\end{itemize}
+
+\subsection{Éditions Oracle Database 11g/19c}
+
+\begin{itemize}
+    \item \textbf{Enterprise Edition (EE)} : Pour OLTP, data warehouses, applications critiques
+    \item \textbf{Standard Edition One (SE1)} : Pour PME, facile à utiliser
+    \item \textbf{Personal Edition (PE)} : Pour un seul utilisateur, compatible avec les autres éditions
+    \item \textbf{Express Edition (XE)} : Version gratuite et légère pour développement
+\end{itemize}
+
+\subsection{Types de connexion}
+
+\begin{enumerate}
+    \item \textbf{Connexion locale} : Utilisateur directement sur le serveur Oracle
+    \item \textbf{Client/Serveur (2 tiers)} : Application distante se connectant directement au serveur
+    \item \textbf{Multi-tiers (3 tiers)} : Utilisateur $\rightarrow$ Serveur applicatif $\rightarrow$ Serveur Oracle
+\end{enumerate}
+
+\section{Architecture du Serveur Oracle}
+
+\subsection{Composants principaux}
+
+L'architecture d'un serveur Oracle se base sur deux composants :
+\begin{enumerate}
+    \item \textbf{Instance} : Programme chargé en mémoire (RAM)
+    \item \textbf{Stockage de Base de Données} : Fichiers physiques sur disque
+\end{enumerate}
+
+Elle comprend trois types de structures :
+\begin{itemize}
+    \item \textbf{Memory Structures} (Structures mémoire) : SGA, PGA
+    \item \textbf{Process Structures} (Structures de processus) : User, Server, Background, Listener
+    \item \textbf{Storage Structures} (Structures de stockage) : Datafiles, Control files, Redo Logs
+\end{itemize}
+
+\subsection{Instance Oracle}
+
+\textbf{Définition} : L'instance Oracle est un programme chargé sur la RAM du serveur. Elle existe uniquement dans la mémoire et est créée à chaque démarrage de la base de données.
+
+\textbf{Caractéristiques} :
+\begin{itemize}
+    \item Non persistante : disparaît au redémarrage
+    \item Contient des structures de mémoire partagées (SGA) et des processus Oracle
+    \item Chaque instance est associée à une seule base de données
+    \item Avec RAC (Real Application Cluster), une base peut être ouverte par plusieurs instances
+\end{itemize}
+
+\section{Structures Mémoire}
+
+\subsection{SGA (System Global Area)}
+
+La SGA est une zone de mémoire partagée contenant les données et informations de contrôle pour une instance Oracle.
+
+\subsubsection{Composants de la SGA}
+
+\begin{enumerate}
+    \item \textbf{Shared Pool (Zone de mémoire partagée)}
+    \begin{itemize}
+        \item \textbf{Library Cache} : Contient les requêtes SQL récemment utilisées, leurs plans d'exécution
+        \item \textbf{Data Dictionary Cache} : Contient les métadonnées de la base (objets, utilisateurs, privilèges)
+    \end{itemize}
+    
+    \item \textbf{Database Buffer Cache (Cache de tampons)}
+    \begin{itemize}
+        \item Contient les blocs de données lus depuis les fichiers de données
+        \item Permet un accès rapide aux données fréquemment utilisées
+        \item Types spéciaux : Keep Pool, Recycle Pool, nK Buffer Cache
+    \end{itemize}
+    
+    \item \textbf{Redo Log Buffer (Tampon de journalisation)}
+    \begin{itemize}
+        \item Mémorise les modifications apportées à la base
+        \item Utilisé pour la récupération d'instance
+        \item Écrit par LGWR dans les fichiers redo log
+    \end{itemize}
+    
+    \item \textbf{Large Pool}
+    \begin{itemize}
+        \item Mémoire pour sauvegarde/restauration
+        \item Serveurs partagés
+        \item Processus serveur d'E/S
+    \end{itemize}
+    
+    \item \textbf{Java Pool}
+    \begin{itemize}
+        \item Code Java et données JVM
+    \end{itemize}
+    
+    \item \textbf{Streams Pool}
+    \begin{itemize}
+        \item Pour Oracle Streams (partage de données entre bases)
+    \end{itemize}
+    
+    \item \textbf{Fixed SGA}
+    \begin{itemize}
+        \item Informations générales sur l'état de la base et communication entre processus
+    \end{itemize}
+\end{enumerate}
+
+\subsection{PGA (Program Global Area)}
+
+La PGA est une zone de mémoire privée associée à chaque processus serveur.
+
+\subsubsection{Composants de la PGA}
+
+\begin{itemize}
+    \item \textbf{Stack Space} : Espace de pile
+    \item \textbf{UGA (User Global Area)} : Dans un environnement serveur dédié
+    \begin{itemize}
+        \item \textbf{Cursor State} : Informations sur les curseurs SQL
+        \item \textbf{User Session Data} : Données de session utilisateur
+        \item \textbf{SQL Work Areas} :
+        \begin{itemize}
+            \item Sort Area : Pour ORDER BY, GROUP BY
+            \item Hash Area : Pour jointures de hachage
+            \item Create Bitmap Area : Pour création d'index bitmap
+            \item Bitmap Merge Area : Pour plans d'exécution avec index bitmap
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Note} : Dans un environnement serveur partagé, la mémoire UGA est transférée dans la SGA (Shared Pool ou Large Pool).
+
+\section{Structure des Processus}
+
+\subsection{Types de processus}
+
+\begin{enumerate}
+    \item \textbf{User Process (Processus utilisateur)} : Application ou outil qui se connecte à la base
+    \item \textbf{Server Process (Processus serveur)} : Traite les requêtes SQL, lit/écrit les fichiers de données
+    \item \textbf{Background Processes (Processus en arrière-plan)} : Démarrent avec l'instance
+    \item \textbf{Listener Process (Processus d'écoute)} : Gère les connexions réseau
+\end{enumerate}
+
+\subsection{Processus en arrière-plan principaux}
+
+\begin{description}
+    \item[DBWn (Database Writer)] Écrit les blocs modifiés (dirty) du Buffer Cache sur disque. Déclenché quand :
+    \begin{itemize}
+        \item Le cache est plein
+        \item Un checkpoint est atteint
+        \item Pas de tampon "clean" disponible
+    \end{itemize}
+    
+    \item[LGWR (Log Writer)] Écrit le Redo Log Buffer dans les fichiers redo log. Déclenché quand :
+    \begin{itemize}
+        \item Une transaction est validée (COMMIT)
+        \item Un tiers du buffer est plein
+        \item Avant qu'un DBWn écrive sur disque
+        \item Toutes les 3 secondes
+    \end{itemize}
+    
+    \item[CKPT (Checkpoint)] Met à jour le fichier de contrôle et les en-têtes des fichiers de données avec le SCN (System Change Number)
+    
+    \item[SMON (System Monitor)] 
+    \begin{itemize}
+        \item Récupération des données au démarrage
+        \item Nettoyage des segments temporaires inutilisés
+        \item Récupération des transactions ignorées
+    \end{itemize}
+    
+    \item[PMON (Process Monitor)]
+    \begin{itemize}
+        \item Récupération des processus utilisateur échoués
+        \item Nettoyage du cache de tampons
+        \item Libération des ressources
+        \item Surveillance des sessions inactives
+    \end{itemize}
+    
+    \item[RECO (Recoverer)] Résout les transactions distribuées équivoques
+    
+    \item[ARCn (Archiver)] Copie les fichiers redo log sur stockage pour archivage
+    
+    \item[LREG (Listener Registration)] Enregistre l'instance auprès du listener
+\end{description}
+
+\section{Structure de Stockage}
+
+\subsection{Fichiers principaux}
+
+\begin{description}
+    \item[Control Files] Fichiers binaires contenant des informations essentielles sur la structure physique de la base (noms et emplacements des datafiles, redo logs, tablespaces, checkpoints, SCN)
+    
+    \item[Data Files] Contiennent les données utilisateurs, métadonnées et dictionnaire de données
+    
+    \item[Online Redo Log Files] Enregistrent toutes les modifications pour récupération d'instance. Organisés en groupes, chaque groupe contient un ou plusieurs membres identiques
+    
+    \item[Archived Redo Log Files] Contiennent l'historique complet des modifications. Permettent la récupération complète après perte de fichiers
+    
+    \item[Backup Files] Copies de sauvegarde pour récupération
+    
+    \item[Parameter Files] Configuration de l'instance au démarrage (PFILE ou SPFILE)
+    
+    \item[Password Files] Accès distant pour administration (SYSDBA, SYSOPER)
+    
+    \item[Trace Files \& Alert Log] Diagnostic et suivi des erreurs
+\end{description}
+
+\subsection{Organisation logique}
+
+\subsubsection{Hiérarchie}
+
+\begin{enumerate}
+    \item \textbf{Data Block} : Plus petite unité de stockage
+    \begin{itemize}
+        \item Taille définie lors de la création du tablespace : 2K, 4K, 8K (défaut), 16K, 32K
+        \item Contient : En-tête, données des lignes, espace disponible
+    \end{itemize}
+    
+    \item \textbf{Extent} : Ensemble de blocs contigus alloués pour un type d'information
+    \begin{itemize}
+        \item Ne peut se trouver que dans un seul fichier de données
+    \end{itemize}
+    
+    \item \textbf{Segment} : Ensemble d'extents alloués à une structure logique
+    \begin{itemize}
+        \item Types : Segments de données, segments d'index, segments d'annulation (undo), segments temporaires
+    \end{itemize}
+    
+    \item \textbf{Tablespace} : Regroupe les segments liés à une application
+    \begin{itemize}
+        \item Composé d'un ou plusieurs fichiers de données
+        \item Ne peut appartenir qu'à une seule base de données
+    \end{itemize}
+    
+    \item \textbf{Database} : Collection de tous les tablespaces
+\end{enumerate}
+
+\subsubsection{Tablespaces spéciaux}
+
+\begin{description}
+    \item[SYSTEM] Métadonnées système et dictionnaire de données. Toujours en ligne
+    
+    \item[SYSAUX] Composants supplémentaires (Enterprise Manager). Toujours en ligne
+    
+    \item[UNDO] Segments d'annulation pour transactions non validées ou rollback
+    
+    \item[TEMP] Stockage temporaire pour opérations de tri, segments temporaires. Utilise des tempfiles (toujours NOLOGGING)
+    
+    \item[USERS] Stocke les objets et données des utilisateurs (par défaut)
+\end{description}
+
+\section{Gestion des Fichiers de Contrôle (Control Files)}
+
+\subsection{Description}
+
+\subsubsection{Définition et rôle}
+
+Le fichier de contrôle est un fichier binaire qui :
+\begin{itemize}
+    \item Contient des informations sur la structure physique de la base
+    \item Garantit la cohérence de toute la base
+    \item Est commun pour CDB et les PDBs
+    \item Est créé pendant la création de la base et modifié en permanence
+    \item Est nécessaire au démarrage, au bon fonctionnement et à la restauration
+    \item Est associé à une seule base de données Oracle
+    \item Est lu avant l'ouverture de la base pour vérifier son intégrité
+    \item Ne peut être modifié que par le serveur Oracle (pas par l'administrateur)
+\end{itemize}
+
+\subsubsection{Contenu du fichier de contrôle}
+
+\begin{itemize}
+    \item Nom et identifiant de la base de données (SID)
+    \item Horodatage de création
+    \item Noms et emplacements des fichiers de données et redo logs
+    \item Informations sur les tablespaces
+    \item Historique de journalisation
+    \item Statut et emplacement des journaux archivés
+    \item Emplacement et statut des sauvegardes
+    \item Numéro de séquence du journal en cours
+    \item Points de reprise (checkpoints)
+    \item Numéro de changement système (SCN) actuel
+\end{itemize}
+
+\subsection{Informations sur les fichiers de contrôle}
+
+\subsubsection{Vues dynamiques}
+
+\begin{itemize}
+    \item \textbf{V\$CONTROLFILE} : Liste des fichiers de contrôle de l'instance
+    \item \textbf{V\$PARAMETER} : Paramètre \texttt{control\_files} avec les chemins
+    \item \textbf{V\$DATABASE} : Informations générales sur la base
+    \item \textbf{V\$CONTROLFILE\_RECORD\_SECTION} : Sections du fichier de contrôle
+\end{itemize}
+
+\textbf{Commandes utiles} :
+\begin{lstlisting}[language=SQL]
+-- Afficher les control files
+SHOW PARAMETER control_files;
+
+-- Ou via la vue
+SELECT name FROM v$controlfile;
+
+-- Informations sur la base
+SELECT * FROM v$database;
+\end{lstlisting}
+
+\subsubsection{Autres vues utilisant le control file}
+
+\begin{itemize}
+    \item V\$BACKUP, V\$TEMPFILE, V\$ARCHIVE, V\$LOGFILE
+    \item V\$ARCHIVED\_LOG, V\$DATAFILE, V\$TABLESPACE
+    \item V\$LOG, V\$LOGHIST
+\end{itemize}
+
+\subsection{Multiplexage des fichiers de contrôle}
+
+\subsubsection{Principe}
+
+\begin{itemize}
+    \item Il est \textbf{fortement recommandé} de multiplexer les fichiers de contrôle
+    \item Chaque copie doit être sur un disque différent
+    \item Si un fichier est perdu, une copie multiplexée peut être utilisée pour redémarrer sans restaurer
+    \item Les fichiers peuvent être multiplexés jusqu'à 8 fois
+\end{itemize}
+
+\subsubsection{Multiplexage via SPFILE}
+
+\textbf{Étapes} :
+\begin{enumerate}
+    \item Modifier le paramètre \texttt{control\_files} dans SPFILE :
+    \begin{lstlisting}[language=SQL]
+ALTER SYSTEM SET control_files =
+'/u01/app/oracle/oradata/orcl/Disk1/control01.ctl',
+'/u01/app/oracle/oradata/orcl/Disk2/control02.ctl'
+SCOPE=SPFILE;
+    \end{lstlisting}
+    
+    \item Arrêter la base : \texttt{SHUTDOWN IMMEDIATE}
+    
+    \item Copier physiquement le fichier :
+    \begin{lstlisting}[language=bash]
+cp '/u01/app/oracle/oradata/orcl/Disk1/control01.ctl' \
+   '/u01/app/oracle/oradata/orcl/Disk2/control02.ctl'
+    \end{lstlisting}
+    
+    \item Démarrer la base : \texttt{STARTUP}
+\end{enumerate}
+
+\subsubsection{Multiplexage via PFILE}
+
+Même principe mais modification directe du fichier \texttt{init.ora} :
+\begin{lstlisting}
+control_files = (
+    '/u01/app/oracle/oradata/orcl/Disk1/control01.ctl',
+    '/u01/app/oracle/oradata/orcl/Disk2/control02.ctl'
+)
+\end{lstlisting}
+
+\subsection{Sauvegarde des fichiers de contrôle}
+
+\subsubsection{Recommandations}
+
+Oracle recommande de sauvegarder le fichier de contrôle à chaque modification de la structure de la base (ajout, renommage ou suppression d'un fichier de données ou redo log).
+
+\subsubsection{Deux méthodes de sauvegarde}
+
+\begin{enumerate}
+    \item \textbf{Sauvegarde binaire} :
+    \begin{lstlisting}[language=SQL]
+ALTER DATABASE BACKUP CONTROLFILE TO 
+'/backup/controlfile_backup.ctl';
+    \end{lstlisting}
+    
+    \item \textbf{Sauvegarde en fichier trace} (script SQL de recréation) :
+    \begin{lstlisting}[language=SQL]
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE;
+    \end{lstlisting}
+    Le fichier trace est créé dans le répertoire \texttt{udump} ou \texttt{trace}.
+\end{enumerate}
+
+\subsection{Création d'un fichier de contrôle}
+
+\subsubsection{Étapes de création}
+
+\begin{enumerate}
+    \item Sauvegarder le fichier de contrôle existant
+    \item Créer un script SQL à partir de la sauvegarde trace ou utiliser les informations de V\$DATABASE, V\$DATAFILE, V\$LOGFILE
+    \item Arrêter la base : \texttt{SHUTDOWN IMMEDIATE}
+    \item Exécuter le script CREATE CONTROLFILE
+    \item Ouvrir la base : \texttt{ALTER DATABASE OPEN}
+    \item Si nécessaire, récupérer la base : \texttt{RECOVER DATABASE}
+\end{enumerate}
+
+\textbf{Exemple de script CREATE CONTROLFILE} :
+\begin{lstlisting}[language=SQL]
+CREATE CONTROLFILE REUSE DATABASE "ORCL" NORESETLOGS
+NOARCHIVELOG
+MAXLOGFILES 16
+MAXLOGMEMBERS 3
+MAXDATAFILES 100
+MAXINSTANCES 8
+MAXLOGHISTORY 292
+LOGFILE
+  GROUP 1 '/u01/oradata/orcl/redo01.log' SIZE 50M,
+  GROUP 2 '/u01/oradata/orcl/redo02.log' SIZE 50M
+DATAFILE
+  '/u01/oradata/orcl/system01.dbf',
+  '/u01/oradata/orcl/sysaux01.dbf',
+  '/u01/oradata/orcl/users01.dbf'
+CHARACTER SET AL32UTF8;
+\end{lstlisting}
+
+\section{Architecture Multitenant (CDB/PDB)}
+
+\subsection{Introduction}
+
+Depuis Oracle 12c, Oracle a introduit l'architecture multitenant avec les concepts de Container Database (CDB) et Pluggable Database (PDB).
+
+\subsection{Container Database (CDB)}
+
+\begin{itemize}
+    \item Collection logique de données et métadonnées
+    \item Permet de regrouper plusieurs bases de données
+    \item Contient au moins un conteneur Root et peut contenir plusieurs PDBs
+    \item Contient par défaut :
+    \begin{itemize}
+        \item \textbf{CDB\$ROOT (Root)} : Métadonnées communes aux utilisateurs et PDBs
+        \item \textbf{PDB\$SEED (Seed)} : Base template pour créer de nouvelles PDB
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pluggable Database (PDB)}
+
+\begin{itemize}
+    \item Base de données "insérable" dans un CDB
+    \item Contient des objets, schémas, données
+    \item Apparaît aux utilisateurs comme une base normale
+    \item Peut être clonée à partir du Seed PDB\$SEED
+\end{itemize}
+
+\subsection{Avantages}
+
+\begin{itemize}
+    \item Partage des ressources entre les bases
+    \item Déplacement facile des données et du code
+    \item Administration simplifiée (sauvegarde, restauration centralisée)
+\end{itemize}
+
+\subsection{Gestion des PDBs}
+
+\subsubsection{Commandes principales}
+
+\begin{lstlisting}[language=SQL]
+-- Connexion en SYSDBA
+sqlplus / as sysdba
+
+-- Afficher les PDBs
+SHOW PDBS;
+
+-- Afficher le container courant
+SHOW CON_NAME;
+
+-- Changer de container
+ALTER SESSION SET CONTAINER=pdb1;
+
+-- Vérifier l'état des PDBs
+SELECT name, open_mode FROM v$pdbs;
+
+-- Ouvrir une PDB
+ALTER PLUGGABLE DATABASE pdb1 OPEN;
+
+-- Fermer une PDB
+ALTER PLUGGABLE DATABASE pdb1 CLOSE;
+\end{lstlisting}
+
+\section{Tablespaces}
+
+\subsection{Création de tablespaces}
+
+\subsubsection{Tablespace permanent standard}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLESPACE tbs_01
+DATAFILE '/u01/oradata/tbs_01.dbf' SIZE 100M;
+\end{lstlisting}
+
+\subsubsection{Options importantes}
+
+\begin{itemize}
+    \item \texttt{MINIMUM EXTENT integer[K|M]} : Taille minimale d'un extent
+    \item \texttt{BLOCKSIZE integer[K]} : Taille des blocs
+    \item \texttt{LOGGING|NOLOGGING} : Journalisation des modifications
+    \item \texttt{ONLINE|OFFLINE} : Disponibilité du tablespace
+    \item \texttt{PERMANENT|TEMPORARY} : Type de tablespace
+    \item \texttt{EXTENT MANAGEMENT LOCAL UNIFORM SIZE 128K} : Gestion des extents
+    \item \texttt{SEGMENT SPACE MANAGEMENT AUTO|MANUAL} : Gestion de l'espace dans les segments
+\end{itemize}
+
+\subsubsection{BigFile Tablespace}
+
+Tablespace composé d'un seul très gros fichier (jusqu'à 1TB ou plus) :
+\begin{lstlisting}[language=SQL]
+CREATE BIGFILE TABLESPACE tbs_big
+DATAFILE '/u01/oradata/tbs_big.dbf' SIZE 1T;
+\end{lstlisting}
+
+\subsection{Tablespace Undo}
+
+Stocke les segments d'annulation pour transactions non validées :
+\begin{lstlisting}[language=SQL]
+CREATE UNDO TABLESPACE undo1
+DATAFILE '/u01/oradata/undo01.dbf' SIZE 40M;
+\end{lstlisting}
+
+\textbf{Note} : Ne peut contenir aucun autre objet.
+
+\subsection{Tablespace Temporaire}
+
+Utilisé pour opérations de tri lorsque la mémoire est insuffisante :
+\begin{lstlisting}[language=SQL]
+CREATE TEMPORARY TABLESPACE temp
+TEMPFILE '/u01/oradata/temp01.dbf' SIZE 500M
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 4M;
+
+-- Définir comme tablespace temporaire par défaut
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE temp;
+\end{lstlisting}
+
+\textbf{Caractéristiques des tempfiles} :
+\begin{itemize}
+    \item Toujours en mode NOLOGGING
+    \item Ne peuvent pas être en lecture seule
+    \item Ne peuvent pas être renommés
+    \item Ne peuvent pas être restaurés physiquement
+\end{itemize}
+
+\textbf{Restrictions} : Les DEFAULT TEMPORARY TABLESPACES ne peuvent pas être supprimés, mis offline, ou transformés en tablespaces permanents tant qu'ils sont par défaut.
+
+\subsection{Gestion des tablespaces}
+
+\subsubsection{ONLINE/OFFLINE}
+
+\begin{lstlisting}[language=SQL]
+-- Mettre offline
+ALTER TABLESPACE userdata OFFLINE;
+
+-- Mettre online
+ALTER TABLESPACE userdata ONLINE;
+\end{lstlisting}
+
+\textbf{Restrictions} : SYSTEM, SYSAUX, TEMPORARY par défaut et tablespaces avec undo actifs ne peuvent pas être mis offline.
+
+\subsubsection{READ ONLY / READ WRITE}
+
+\begin{lstlisting}[language=SQL]
+-- Lecture seule
+ALTER TABLESPACE userdata READ ONLY;
+
+-- Lecture/écriture
+ALTER TABLESPACE userdata READ WRITE;
+\end{lstlisting}
+
+\subsubsection{Redimensionnement}
+
+\textbf{1. Autoextend} :
+\begin{lstlisting}[language=SQL]
+CREATE TABLESPACE user_data
+DATAFILE '/u01/oradata/userdata01.dbf' SIZE 200M
+AUTOEXTEND ON NEXT 10M MAXSIZE 500M;
+\end{lstlisting}
+
+\textbf{2. Redimensionnement manuel} :
+\begin{lstlisting}[language=SQL]
+ALTER DATABASE DATAFILE '/u01/oradata/userdata01.dbf' 
+RESIZE 600M;
+\end{lstlisting}
+
+\textbf{3. Ajouter des fichiers} :
+\begin{lstlisting}[language=SQL]
+ALTER TABLESPACE user_data
+ADD DATAFILE '/u01/oradata/userdata03.dbf' SIZE 200M;
+\end{lstlisting}
+
+\subsubsection{Déplacer/Renommer un fichier de données}
+
+\textbf{Étapes} :
+\begin{enumerate}
+    \item Mettre le tablespace offline
+    \item Déplacer/copier le fichier avec le système d'exploitation
+    \item Renommer dans Oracle :
+    \begin{lstlisting}[language=SQL]
+ALTER TABLESPACE userdata RENAME DATAFILE 
+'/u01/oradata/userdata01.dbf' TO '/u02/oradata/userdata01.dbf';
+    \end{lstlisting}
+    \item Mettre le tablespace online
+    \item Supprimer l'ancien fichier si nécessaire
+\end{enumerate}
+
+\subsubsection{Supprimer un tablespace}
+
+\begin{lstlisting}[language=SQL]
+DROP TABLESPACE userdata 
+INCLUDING CONTENTS AND DATAFILES;
+\end{lstlisting}
+
+\textbf{Options} :
+\begin{itemize}
+    \item \texttt{INCLUDING CONTENTS} : Supprime les segments
+    \item \texttt{INCLUDING CONTENTS AND DATAFILES} : Supprime aussi les fichiers physiques
+    \item \texttt{CASCADE CONSTRAINTS} : Supprime les contraintes d'intégrité référentielle
+\end{itemize}
+
+\textbf{Restrictions} : Ne peut pas supprimer SYSTEM, SYSAUX ou tablespace avec segments actifs.
+
+\subsection{Informations sur tablespaces et datafiles}
+
+\subsubsection{Vues utiles}
+
+\begin{itemize}
+    \item \textbf{DBA\_TABLESPACES, V\$TABLESPACE} : Informations sur les tablespaces
+    \item \textbf{DBA\_DATA\_FILES, V\$DATAFILE} : Informations sur les datafiles
+    \item \textbf{DBA\_TEMP\_FILES, V\$TEMPFILE} : Informations sur les fichiers temporaires
+\end{itemize}
+
+\section{Interaction Utilisateur / Mémoire / Processus / Stockage}
+
+\subsection{Flux d'exécution d'une requête}
+
+\begin{enumerate}
+    \item L'instance Oracle démarre sur le serveur
+    \item L'utilisateur lance un processus utilisateur via une application
+    \item Le listener détecte la demande et crée un processus serveur dédié
+    \item L'utilisateur exécute une requête SQL :
+    \begin{itemize}
+        \item Le serveur cherche la requête dans la Shared Pool
+        \item Vérifie les privilèges dans le Data Dictionary Cache
+        \item Exécute la requête avec les données du Database Buffer Cache ou du fichier de données
+    \end{itemize}
+    \item Les modifications sont enregistrées :
+    \begin{itemize}
+        \item Dans le Redo Log Buffer
+        \item LGWR écrit dans les fichiers redo log
+        \item DBWn écrit les blocs modifiés sur disque au moment opportun
+    \end{itemize}
+    \item Le serveur renvoie le résultat à l'utilisateur
+    \item Les processus en arrière-plan surveillent et maintiennent la cohérence
+\end{enumerate}
+
+\section{Conclusion}
+
+Ce résumé couvre les aspects fondamentaux de l'administration Oracle Database 19c, de l'architecture générale jusqu'à la gestion détaillée des fichiers de contrôle. La compréhension de ces concepts est essentielle pour l'administration efficace d'une base de données Oracle.
+
+\vspace{1cm}
+
+\textbf{Points clés à retenir} :
+\begin{itemize}
+    \item L'instance (mémoire + processus) est distincte du stockage (fichiers)
+    \item La SGA est partagée, la PGA est privée à chaque processus serveur
+    \item Les fichiers de contrôle sont critiques et doivent être multiplexés
+    \item Les tablespaces organisent logiquement le stockage
+    \item L'architecture multitenant (CDB/PDB) permet la consolidation
+\end{itemize}
+
+\end{document}
+
+
