@@ -1,0 +1,733 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{booktabs}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{.NET Framework}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration du code
+\lstset{
+    language=[Sharp]C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Métadonnées
+\title{Résumé Complet - .NET Framework\\
+\large ASP.NET Core, Entity Framework Core, LINQ}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction à .NET}
+
+\subsection{Qu'est-ce que .NET ?}
+
+\textbf{.NET} est :
+\begin{itemize}
+    \item Un standard proposé par Microsoft en 2002
+    \item Une plateforme de développement, gratuite et open source qui supporte un grand nombre de langages de programmation
+    \item Un cadre de travail formé d'outils, de modules actifs au runtime et de classes formant une API très étendue
+    \item Un environnement d'exécution sécurisé
+    \item Le remplaçant de l'architecture 3-tiers DNA (Distributed interNet Architecture)
+\end{itemize}
+
+\subsection{Architecture .NET}
+
+L'architecture .NET est composée de plusieurs couches :
+
+\begin{enumerate}
+    \item \textbf{CLR (Common Language Runtime)} : Il représente la machine virtuelle de la plate-forme (un peu comme la JVM pour Java). Il est responsable de l'exécution des applications et gère tous les aspects de sécurité.
+    
+    \item \textbf{Un ensemble de librairie de classes} : Située au-dessus du CLR, cette couche offre une API pour la gestion des données. On y retrouve :
+    \begin{itemize}
+        \item Windows Forms (WinForms) : ensemble de classes permettant la conception d'IHM pour Windows
+        \item ADO.NET (Data and XML) : une nouvelle génération de composants d'accès aux bases de données
+        \item ASP.NET : fournit un ensemble de classes pour la conception de sites dynamiques, la création d'IHM pour le web, les WebForms et la conception de services web
+    \end{itemize}
+    
+    \item \textbf{Les langages supportés} : Au sommet de la pile, nous avons les langages supportés par .NET tels que C\#, VB.NET, C++, F\#, qui sont des produits de Microsoft, et d'autres tels que Cobol, Delphi, etc.
+\end{enumerate}
+
+\subsection{Les bases .NET}
+
+\subsubsection{Le CLR}
+
+Ce runtime est le moteur de .NET, c'est lui qui est en charge de l'exécution des logiciels écrits pour .NET compilés en CIL (Common Intermediate Language) avec un système appelé JIT (Just in Time).
+
+\vspace{0.3cm}
+\noindent\textbf{Le CLR gère} :
+\begin{itemize}
+    \item La compilation en code natif et l'exécution de code IL (Intermediate Language)
+    \item La gestion de la sécurité
+    \item La gestion de la mémoire
+    \item La gestion des processus
+    \item La gestion des threads (tâches)
+\end{itemize}
+
+\subsubsection{La BCL ou FCL}
+
+La Base Class Library (BCL) ou Framework Class Library (FCL) :
+\begin{itemize}
+    \item Se place directement au-dessus du CLR
+    \item Offre de nombreuses classes, interfaces et types qui forment le socle des développements sous .NET
+    \item Permet d'unifier les développements puisqu'elle fournit l'ensemble des outils de base aux applications
+\end{itemize}
+
+\subsubsection{Les espaces de noms}
+
+\begin{itemize}
+    \item Une sorte de « boîte » dans laquelle des classes ayant (plus ou moins) rapport entre elles sont regroupées
+    \item Exemples : \texttt{System.Data.SqlClient}, \texttt{System.Web}
+    \item Une \textbf{Assembly} (assemblée en français) est un fichier DLL dans lequel les classes sont stockées
+\end{itemize}
+
+\subsection{Du code source au binaire exécuté}
+
+Le processus de compilation en .NET :
+\begin{enumerate}
+    \item Code source (C\#, VB.NET, etc.)
+    \item Compilation en CIL (Common Intermediate Language)
+    \item Exécution par le CLR avec compilation JIT en code natif
+    \item Exécution du code natif
+\end{enumerate}
+
+\section{ASP.NET et ASP.NET Core}
+
+\subsection{Qu'est-ce qu'ASP.NET ?}
+
+\textbf{ASP.NET} est :
+\begin{itemize}
+    \item Une plateforme de développement d'applications web sous Windows
+    \item Utilise, par défaut, le serveur Web de référence de Microsoft : IIS (Internet Information Services)
+    \item Repose sur le .NET Framework
+    \item Une plateforme Web unifiée fournissant les services nécessaires à la création des applications
+    \item Ne dépend ni du langage de programmation ni du navigateur
+\end{itemize}
+
+\subsection{ASP.NET vs ASP.NET Core}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{p{6cm}|p{6cm}}
+\textbf{ASP.NET} & \textbf{ASP.NET Core} \\
+\hline
+Pour Windows & Pour Windows, Mac et Linux \\
+Utilise le runtime .NET Framework & Utilise le runtime .NET Core \\
+Bonnes performances & Plus performant qu'ASP.NET \\
+Supporte C\#, F\# et VB & Supporte C\# et F\# \\
+Disponible sous Visual Studio & Disponible sous VS, VSCode \\
+\end{tabular}
+\caption{Comparaison ASP.NET et ASP.NET Core}
+\end{table}
+
+\section{Modèle MVC}
+
+\subsection{Introduction}
+
+Le modèle MVC (Model-View-Controller) :
+\begin{itemize}
+    \item Introduit par Trygve Reenskaug en 1978
+    \item Permet de bien organiser le code source
+    \item Conçu, initialement, pour les applications client-lourd et ensuite généralisé aux applications client-léger (Web)
+    \item Une approche consistant à séparer l'affichage des informations, les actions de l'utilisateur et l'accès aux données
+    \item Chacun de ces composants est construit pour manipuler un aspect particulier de développement de l'application
+    \item Indispensable pour des applications dynamiques et de taille importante
+\end{itemize}
+
+\subsection{Les trois composants}
+
+\subsubsection{1. Modèle}
+
+La partie qui concerne les données et l'état de notre application. Pour le cas d'une base de données, on peut utiliser un ORM (Object-Relational Mapping) comme Entity Framework.
+
+\subsubsection{2. Vue}
+
+La partie qui concerne l'affichage : l'interface avec laquelle l'utilisateur interagit (HTML + CSS...)
+
+\subsubsection{3. Contrôleur}
+
+C'est l'intermédiaire entre le modèle et la vue. Il reçoit la requête de l'utilisateur. Il demande les données au modèle, les analyse et renvoie le résultat à afficher à la vue.
+
+\subsection{ASP.NET MVC}
+
+\textbf{ASP.NET MVC} :
+\begin{itemize}
+    \item Créé en 2007 par Scott Guthrie et intégré dans ASP.NET depuis 2009
+    \item Framework de développement d'applications web selon le design pattern : MVC
+    \item Par rapport à ASP.NET : ASP.NET MVC permet de structurer davantage l'application, en créant des composants avec des rôles bien identifiés
+    \item Indispensable pour des applications dynamiques et de taille importante
+\end{itemize}
+
+\subsection{Déroulement d'une requête MVC}
+
+\begin{enumerate}
+    \item Le client envoie une requête depuis la Vue
+    \item Le Contrôleur intercepte et analyse la requête du client
+    \item Le Contrôleur détermine quelle partie du Modèle est concernée afin d'effectuer les traitements nécessaires
+    \item Le Modèle s'occupe de l'interaction avec les données, applique les règles métier et renvoie les données au Contrôleur
+    \item Le Contrôleur sélectionne la Vue correspondante et lui injecte les données
+    \item La Vue affiche les données au client
+\end{enumerate}
+
+\subsection{Structure d'un projet ASP.NET MVC}
+
+\begin{itemize}
+    \item \textbf{Controllers/} : Logique métier, actions (C\#)
+    \item \textbf{Models/} : Données, objets, classes (C\#)
+    \item \textbf{Views/} : Pages HTML dynamiques (.cshtml)
+    \begin{itemize}
+        \item \textbf{Shared/} : Layout général (\_Layout.cshtml)
+        \item \textbf{Home/} : Pages spécifiques au contrôleur Home
+    \end{itemize}
+    \item \textbf{App\_Start/} : Fichiers de config (RouteConfig.cs)
+    \item \textbf{Global.asax} : Point de départ de l'app, appelle RouteConfig
+    \item \textbf{packages.config} : Packages NuGet installés
+    \item \textbf{Web.config} : Config de l'application (base de données, etc.)
+\end{itemize}
+
+\section{Entity Framework Core}
+
+\subsection{Introduction à ORM}
+
+\textbf{ORM (Object-Relational Mapping)} : Mapping Objet-Relationnel
+
+\begin{itemize}
+    \item Programme informatique jouant le rôle de traducteur entre le modèle relationnel et le modèle objet
+    \item Permet d'interroger et manipuler les données à partir d'une base de données à l'aide d'un paradigme orienté objet
+    \item Deux composants dans les ORM :
+    \begin{itemize}
+        \item \textbf{Entités} : Instanciation d'une classe (étudiant, enseignant, cours, projet, etc.)
+        \item \textbf{Gestionnaire d'entités} : à utiliser pour persister les entités dans la base de données
+    \end{itemize}
+\end{itemize}
+
+\subsection{Entity Framework}
+
+\textbf{Entity Framework} est :
+\begin{itemize}
+    \item Un framework ORM open source pour les applications .NET prises en charge par Microsoft
+    \item Permet de créer une couche d'accès aux données liées à une base de données relationnelle
+    \item Permet aux développeurs de manipuler des données à l'aide d'objets de classes C\# sans se concentrer sur les tables et colonnes d'une base de données (où ces données sont stockées)
+    \item Permet aux développeurs de créer et maintenir des applications orientées données avec moins de code, par rapport aux applications traditionnelles, grâce à LINQ vers les entités
+\end{itemize}
+
+\subsection{Fonctionnement d'Entity Framework}
+
+\subsubsection{Composants principaux}
+
+\begin{itemize}
+    \item \textbf{Entité} : Une classe qui correspond à une table de base de données
+    \item \textbf{Le gestionnaire d'entités} : LINQ to Entities
+\end{itemize}
+
+\subsubsection{EDM : Entity Data Model}
+
+EDM est une représentation en mémoire de l'ensemble des métadonnées. EDM consiste en trois parties :
+
+\begin{enumerate}
+    \item \textbf{Conceptuelle} : contient les classes du modèle et ses relations
+    \item \textbf{Stockage} : contient le modèle physique de la base : tables, vues, procédures stockées, les relations et les clés
+    \item \textbf{Mapping} : définit les mécanismes de passage du modèle conceptuel au stockage
+\end{enumerate}
+
+\subsubsection{Fonctionnalités d'EF}
+
+À l'aide d'EDM, EF peut :
+\begin{itemize}
+    \item Effectuer des opérations CRUD (Create, Read, Update and Delete)
+    \item Créer des requêtes SQL à partir de requêtes LINQ, créer des commandes INSERT, UPDATE et DELETE et transformer le résultat de la base de données en objets d'entité
+    \item Traduire les requêtes LINQ-to-Entities en requêtes SQL pour les bases de données relationnelles
+    \item Reconvertir les résultats (requêtes SQL) en objets d'entité
+    \item Suivre et sauvegarder les changements dans la base de données
+\end{itemize}
+
+\subsection{Architecture d'Entity Framework}
+
+\begin{itemize}
+    \item \textbf{Object Service} : est le point d'entrée pour l'accès aux données d'une base de données. Il convertit les résultats SQL en objets C\#
+    \item \textbf{Entity Client Data Provider} : la tâche principale est de transformer une expression de LINQ à une requête SQL
+    \item \textbf{ADO.NET Data Provider} : Gère la communication technique avec la BD
+\end{itemize}
+
+\subsection{Les différentes approches}
+
+\subsubsection{1. Database First}
+
+On crée la base de données (ou on a une base de données qui existe déjà) et Entity Framework génère nos entités à partir de cette base de données.
+
+\subsubsection{2. Code First}
+
+On crée les entités puis Entity Framework génère la base de données.
+
+\subsubsection{3. Model First}
+
+On crée notre modèle (de classe) et Entity Framework génère la base de données et les entités correspondantes.
+
+\subsection{Approche Database First : Étapes pratiques}
+
+\subsubsection{1. Création de la base de données}
+
+\begin{lstlisting}[language=SQL]
+CREATE DATABASE BDVENTE;
+USE BDVENTE;
+
+CREATE TABLE PRODUITS (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    NOM VARCHAR(100) NOT NULL,
+    DESCRIPTION VARCHAR(255),
+    PRIX DECIMAL(10,2) NOT NULL,
+    QUANTITE INT NOT NULL,
+    DATE_AJOUT DATE DEFAULT GETDATE(),
+    DISPONIBLE BIT DEFAULT 1
+);
+\end{lstlisting}
+
+\subsubsection{2. Création d'une application ASP.NET Core MVC}
+
+\begin{enumerate}
+    \item Créer un nouveau projet sous Visual Studio : \texttt{Fichier $\rightarrow$ Nouveau $\rightarrow$ Projet}
+    \item Sélectionner \texttt{Application web ASP.NET Core MVC}
+    \item Remplir le champ Nom par : \texttt{App\_ACHAT}
+    \item Valider et attendre la fin de création du projet
+\end{enumerate}
+
+\subsubsection{3. Installation des packages NuGet}
+
+\textbf{Méthode 1 - Interface graphique} :
+\begin{itemize}
+    \item \texttt{Outils $>$ Gestionnaire de packages NuGet $>$ Gérer les packages NuGet pour la solution}
+    \item Chercher et installer ces packages :
+    \begin{itemize}
+        \item \texttt{Microsoft.EntityFrameworkCore}
+        \item \texttt{Microsoft.EntityFrameworkCore.SqlServer}
+        \item \texttt{Microsoft.EntityFrameworkCore.Tools}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Méthode 2 - Console} :
+\begin{lstlisting}
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.EntityFrameworkCore.Tools
+\end{lstlisting}
+
+\subsubsection{4. Génération des modèles (Database First)}
+
+Exécuter la commande suivante dans la console NuGet :
+
+\begin{lstlisting}
+Scaffold-DbContext "Server=...;Database=BDVENTE;..." 
+    Microsoft.EntityFrameworkCore.SqlServer 
+    -OutputDir Models
+\end{lstlisting}
+
+Cela crée : \texttt{VenteContext.cs} (classe DbContext) et \texttt{Produit.cs} (classe Model)
+
+\subsubsection{5. Configuration de la chaîne de connexion}
+
+Dans \texttt{appsettings.json} :
+
+\begin{lstlisting}
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=...;Database=BDVENTE;..."
+  }
+}
+\end{lstlisting}
+
+\subsubsection{6. Ajout du DbContext dans Program.cs}
+
+\begin{lstlisting}
+builder.Services.AddDbContext<BdVenteContext>(options =>
+    options.UseSqlServer(builder.Configuration
+        .GetConnectionString("DefaultConnection")));
+\end{lstlisting}
+
+\subsection{DbContext}
+
+\subsubsection{Définition}
+
+Une classe héritant de la classe \texttt{DbContext} est appelée \textbf{classe de contexte} (context class) dans le framework d'entité.
+
+\subsubsection{Rôles du DbContext}
+
+\texttt{DbContext} est la classe principale responsable de l'interaction avec la base de données. Il est responsable de plusieurs activités :
+
+\begin{itemize}
+    \item \textbf{Querying} : convertit les requêtes LINQ-to-Entities en requêtes SQL et les envoie à la base de données
+    \item \textbf{Change Tracking} : assure le suivi des modifications apportées aux entités après une requête à partir de la base de données
+    \item \textbf{Persisting Data} : effectue les opérations d'insertion, de mise à jour et de suppression dans la base de données, en fonction des états de l'entité
+    \item \textbf{Object Materialization} : convertit les données brutes de la base de données en objets d'entité
+\end{itemize}
+
+\subsection{DbSet}
+
+\begin{itemize}
+    \item La classe de contexte (\texttt{BdVenteContext}) inclut l'ensemble d'entités de type \texttt{DbSet<TEntity>}
+    \item \texttt{DbSet} est considérée comme une propriété de la classe de contexte et liée à une table de la base de données
+    \item \texttt{DbSet} contient un ensemble de méthodes permettant d'effectuer les opérations CRUD nécessaires
+\end{itemize}
+
+\section{Opérations CRUD avec Entity Framework}
+
+\subsection{Read (Lire)}
+
+\begin{lstlisting}
+public async Task<IActionResult> Index()
+{
+    return View(await _context.Produits.ToListAsync());
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item Récupère la liste de tous les produits depuis la base de données
+    \item Retourne la vue \texttt{Index.cshtml} avec les données
+\end{itemize}
+
+\subsection{Create (Créer)}
+
+\begin{lstlisting}
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create([Bind(...)] Produit produit)
+{
+    if (ModelState.IsValid)
+    {
+        _context.Add(produit);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    return View(produit);
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item Récupère les données saisies dans le formulaire
+    \item Les ajoute à la base de données avec \texttt{\_context.Add(...)}
+    \item Enregistre avec \texttt{SaveChangesAsync()}
+    \item Redirige vers \texttt{Index()} après création
+\end{itemize}
+
+\subsection{Update (Mettre à jour)}
+
+\begin{lstlisting}
+[HttpPost]
+public async Task<IActionResult> Edit(int id, [Bind(...)] Produit produit)
+{
+    if (id != produit.Id)
+    {
+        return NotFound();
+    }
+    
+    if (ModelState.IsValid)
+    {
+        try
+        {
+            _context.Update(produit);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Gestion des erreurs de concurrence
+        }
+        return RedirectToAction(nameof(Index));
+    }
+    return View(produit);
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item Vérifie que l'id correspond bien à l'objet envoyé
+    \item Met à jour le produit dans la base avec \texttt{\_context.Update(...)}
+    \item Gère les erreurs de concurrence avec \texttt{try...catch}
+\end{itemize}
+
+\subsection{Delete (Supprimer)}
+
+\begin{lstlisting}
+[HttpPost, ActionName("Delete")]
+public async Task<IActionResult> DeleteConfirmed(int id)
+{
+    var produit = await _context.Produits.FindAsync(id);
+    if (produit != null)
+    {
+        _context.Produits.Remove(produit);
+        await _context.SaveChangesAsync();
+    }
+    return RedirectToAction(nameof(Index));
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item Supprime réellement le produit avec \texttt{\_context.Produits.Remove(...)}
+    \item Enregistre les changements
+\end{itemize}
+
+\section{LINQ to Entities}
+
+\subsection{Introduction}
+
+\textbf{LINQ to Entities} :
+\begin{itemize}
+    \item Assure une prise en charge de la technologie LINQ (Language Integrated Query), ce qui permet aux développeurs d'écrire des requêtes par rapport au modèle conceptuel Entity Framework à l'aide du langage C\#
+    \item Convertit les requêtes Language-Integrated en requêtes sous forme d'arbre de commande, exécute les requêtes dans le Framework Entity et retourne des objets qui peuvent être utilisés à la fois par le Framework Entity et LINQ
+    \item \textbf{LINQ to Entities} = utilisation de LINQ sur Entity Framework Core
+\end{itemize}
+
+\subsection{Types d'opérateurs LINQ}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l|l}
+\textbf{Type} & \textbf{Opérateurs LINQ} \\
+\hline
+Projection & Select, SelectMany \\
+Filtrage & Where, OfType \\
+Tri & OrderBy, ThenBy, Reverse, OrderByDescending \\
+Jointures & Join, GroupJoin, Include \\
+Agrégation & Count, Sum, Min, Max, Average \\
+Groupement & GroupBy \\
+Quantification & Any, All, Contains \\
+\end{tabular}
+\caption{Opérateurs LINQ principaux}
+\end{table}
+
+\subsection{Syntaxe de requête}
+
+\subsubsection{Sélection : Select, SelectMany}
+
+\textbf{Syntaxe de requête} :
+\begin{lstlisting}
+var produits = from p in _context.Produits
+               select p;
+\end{lstlisting}
+
+\textbf{Syntaxe Lambda} :
+\begin{lstlisting}
+var produits = _context.Produits.Select(p => p.Nom);
+\end{lstlisting}
+
+\subsubsection{Filtrage : Where}
+
+\textbf{Syntaxe de requête} :
+\begin{lstlisting}
+var produits = from p in Produits
+               where p.Prix > 50
+               select p;
+\end{lstlisting}
+
+\textbf{Syntaxe Lambda} :
+\begin{lstlisting}
+var produits = Produits.Where(p => p.Prix > 50);
+\end{lstlisting}
+
+\subsubsection{Jointure simple : Join}
+
+\textbf{Syntaxe de requête} :
+\begin{lstlisting}
+var resultat = from p in Produits
+               join c in Categories
+               on p.CategorieId equals c.Id
+               select p;
+\end{lstlisting}
+
+\textbf{Syntaxe Lambda} :
+\begin{lstlisting}
+var resultat = Produits.Join(
+    Categories,
+    p => p.CategorieId,
+    c => c.Id,
+    (p, c) => new {
+        ProduitNom = p.Nom,
+        Prix = p.Prix,
+        CategorieNom = c.Nom
+    }
+);
+\end{lstlisting}
+
+\subsubsection{Tri : OrderBy, OrderByDescending}
+
+\textbf{Syntaxe de requête} :
+\begin{lstlisting}
+var produits = from p in Produits
+               orderby p.Nom
+               select p;
+\end{lstlisting}
+
+\textbf{Syntaxe Lambda} :
+\begin{lstlisting}
+var produits = Produits.OrderBy(p => p.Nom);
+var produitsDesc = Produits.OrderByDescending(p => p.Prix);
+\end{lstlisting}
+
+\subsubsection{Agrégation}
+
+\begin{lstlisting}
+// Compter
+int nombre = Produits.Count();
+
+// Somme
+decimal total = Produits.Sum(p => p.Prix);
+
+// Minimum
+decimal min = Produits.Min(p => p.Prix);
+
+// Maximum
+decimal max = Produits.Max(p => p.Prix);
+
+// Moyenne
+decimal moyenne = Produits.Average(p => p.Prix);
+\end{lstlisting}
+
+\subsubsection{Groupement : GroupBy}
+
+\begin{lstlisting}
+var groupes = from p in Produits
+              group p by p.CategorieId into g
+              select new {
+                  CategorieId = g.Key,
+                  Produits = g
+              };
+\end{lstlisting}
+
+\subsubsection{Quantification : Any, All, Contains}
+
+\begin{lstlisting}
+// Vérifier si au moins un élément existe
+bool existe = Produits.Any(p => p.Prix > 100);
+
+// Vérifier si tous les éléments satisfont une condition
+bool tous = Produits.All(p => p.Prix > 0);
+
+// Vérifier si un élément est contenu
+bool contient = Produits.Any(p => p.Nom.Contains("Ordinateur"));
+\end{lstlisting}
+
+\section{Migrations Entity Framework}
+
+\subsection{Introduction aux migrations}
+
+Les migrations permettent de :
+\begin{itemize}
+    \item Créer et mettre à jour le schéma de la base de données
+    \item Suivre les changements du modèle de données
+    \item Appliquer les modifications de manière contrôlée
+\end{itemize}
+
+\subsection{Commandes de migration}
+
+\begin{lstlisting}
+// Créer une migration
+dotnet ef migrations add NomMigration
+
+// Appliquer les migrations
+dotnet ef database update
+
+// Supprimer la dernière migration
+dotnet ef migrations remove
+\end{lstlisting}
+
+\section{ASP.NET Core Identity}
+
+\subsection{Introduction}
+
+ASP.NET Core Identity est un système d'authentification et d'autorisation intégré à ASP.NET Core qui permet de :
+\begin{itemize}
+    \item Gérer les utilisateurs et leurs rôles
+    \item Gérer l'authentification (connexion/déconnexion)
+    \item Gérer l'autorisation (accès aux ressources)
+    \item Gérer les mots de passe (hachage, réinitialisation)
+\end{itemize}
+
+\section{Concepts Clés à Retenir}
+
+\subsection{Architecture .NET}
+
+\begin{itemize}
+    \item \textbf{CLR} : Machine virtuelle pour l'exécution
+    \item \textbf{BCL/FCL} : Bibliothèque de classes de base
+    \item \textbf{Assemblies} : Fichiers DLL contenant les classes
+\end{itemize}
+
+\subsection{ASP.NET MVC}
+
+\begin{itemize}
+    \item \textbf{Modèle} : Données et logique métier
+    \item \textbf{Vue} : Interface utilisateur (HTML/CSS)
+    \item \textbf{Contrôleur} : Intermédiaire entre Modèle et Vue
+\end{itemize}
+
+\subsection{Entity Framework Core}
+
+\begin{itemize}
+    \item \textbf{ORM} : Mapping Objet-Relationnel
+    \item \textbf{DbContext} : Classe de contexte pour l'accès aux données
+    \item \textbf{DbSet} : Représentation d'une table
+    \item \textbf{Approches} : Database First, Code First, Model First
+\end{itemize}
+
+\subsection{LINQ to Entities}
+
+\begin{itemize}
+    \item \textbf{Syntaxe de requête} : \texttt{from...where...select}
+    \item \textbf{Syntaxe Lambda} : Méthodes d'extension (\texttt{Where}, \texttt{Select}, etc.)
+    \item \textbf{Opérateurs} : Projection, Filtrage, Tri, Jointures, Agrégation
+\end{itemize}
+
+\section{Conclusion}
+
+Le framework .NET offre une plateforme complète pour le développement d'applications web modernes. La combinaison d'ASP.NET Core MVC, Entity Framework Core et LINQ permet de créer des applications robustes, maintenables et performantes avec une séparation claire des responsabilités grâce au pattern MVC.
+
+\end{document}
+

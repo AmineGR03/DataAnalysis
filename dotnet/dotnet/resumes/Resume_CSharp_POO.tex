@@ -1,0 +1,691 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{booktabs}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{C\# - POO}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration du code
+\lstset{
+    language=[Sharp]C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Métadonnées
+\title{Résumé Complet - C\#\\
+\large Programmation Orientée Objet}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction à la Programmation Orientée Objet}
+
+\subsection{Concepts fondamentaux}
+
+\textbf{Objet} : Représente un concept, une idée ou toute entité du monde physique comme une voiture, une personne ou encore un livre, etc.
+
+\textbf{POO (Programmation Orientée Objet)} : Un paradigme de programmation informatique qui consiste en la définition et l'assemblage de briques logicielles appelées objets.
+
+\subsection{Installation de Visual Studio}
+
+Pour développer en C\#, il est nécessaire d'installer Visual Studio :
+
+\begin{enumerate}
+    \item Télécharger Visual Studio Community depuis \texttt{https://visualstudio.microsoft.com/fr/downloads/}
+    \item Double-cliquer sur le programme d'installation
+    \item Dans Visual Studio Installer, cliquer sur "Modifier"
+    \item Sélectionner les charges de travail :
+    \begin{itemize}
+        \item .NET Desktop development
+        \item ASP.NET and web development
+    \end{itemize}
+    \item Cliquer sur "Install"
+\end{enumerate}
+
+\section{Les Classes}
+
+\subsection{Définition}
+
+Une \textbf{classe} est une manière de représenter un objet. En bref, c'est la structure d'un objet.
+
+\vspace{0.3cm}
+\noindent\textbf{Caractéristiques importantes} :
+\begin{itemize}
+    \item En C\#, la définition des attributs et leurs getters/setters est assez simplifiée
+    \item La classe ne doit pas forcément avoir le même nom que le fichier
+    \item Dans un fichier, on peut définir plusieurs classes
+    \item C'est elle qui contient la méthode spéciale \texttt{Main()} qui sert de point d'entrée à l'application
+\end{itemize}
+
+\subsection{Création d'une classe sous Visual Studio}
+
+\begin{enumerate}
+    \item Faire un clic droit sur le nom du projet dans l'Explorateur de solutions
+    \item Aller dans \texttt{Ajouter $\rightarrow$ Class}
+    \item Choisir \texttt{Class}
+    \item Saisir le nom de la classe (ex: \texttt{Voiture}) et valider
+\end{enumerate}
+
+\subsubsection{Exemple de structure de classe}
+
+\begin{lstlisting}
+namespace MaPremiereApplication
+{
+    class Voiture
+    {
+        // Attributs et méthodes ici
+    }
+}
+\end{lstlisting}
+
+\section{Création d'Objets}
+
+\subsection{Instanciation}
+
+Pour instancier une classe, il faut :
+\begin{itemize}
+    \item Le nom de la classe
+    \item Le nom de l'objet
+    \item L'opérateur \texttt{new}
+    \item Un constructeur de la classe
+\end{itemize}
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+static void Main(string[] args) 
+{
+    Voiture voiture1 = new Voiture();
+    Voiture voiture2 = new Voiture();
+}
+\end{lstlisting}
+
+\subsection{Ajout d'attributs à une classe}
+
+\begin{lstlisting}
+namespace MaPremiereApplication
+{
+    class Voiture
+    {
+        string Color;
+        string Model;
+        int Price;
+    }
+}
+\end{lstlisting}
+
+\vspace{0.3cm}
+\noindent\textcolor{red}{\textbf{Attention : Remarque importante}} : Il est impossible d'affecter des valeurs aux attributs de l'objet \texttt{Voiture} car la visibilité par défaut, en C\#, est \texttt{private}.
+
+\section{Notion de Visibilité}
+
+\subsection{Modificateurs d'accès}
+
+Il existe plusieurs indicateurs de visibilité (peuvent être ajoutés avant attributs/classes/méthodes), mais les plus utilisés sont :
+
+\begin{itemize}
+    \item \texttt{public} : Accessible partout
+    \item \texttt{private} : Accessible uniquement dans la classe (défaut en C\#)
+    \item \texttt{protected} : Accessible dans la classe et ses dérivées
+    \item \texttt{internal} : Accessible dans le même assembly
+\end{itemize}
+
+\subsection{Exemple avec visibilité public}
+
+\begin{lstlisting}
+namespace MaPremiereApplication 
+{
+    class Voiture
+    {
+        // Déclaration des attributs
+        public string Color;
+        public string Model;
+        public int Price;
+    }
+}
+\end{lstlisting}
+
+\subsection{Initialisation et affichage}
+
+\begin{lstlisting}
+static void Main(string[] args)
+{
+    Voiture voiture = new Voiture();
+    voiture.Color = "red";
+    voiture.Model = "Toyota";
+    voiture.Price = 167000;
+    
+    // Affichage avec interpolation de chaînes
+    Console.WriteLine($"Les caractéristiques sont: {voiture.Color} {voiture.Model}");
+    Console.ReadKey();
+}
+\end{lstlisting}
+
+\section{La Méthode ToString()}
+
+\subsection{Définition}
+
+La méthode \texttt{ToString()} permet d'afficher les détails d'un objet. Par défaut, elle retourne le nom complet de la classe.
+
+\subsection{Code généré par défaut}
+
+\begin{lstlisting}
+public override string ToString()
+{
+    return base.ToString();
+}
+\end{lstlisting}
+
+\subsection{Modification personnalisée}
+
+\begin{lstlisting}
+public override string ToString()
+{
+    return "Voiture [Color=" + Color + ", Model=" + Model + 
+           ", Price=" + Price + "]";
+}
+\end{lstlisting}
+
+\section{Accesseurs (Getters et Setters)}
+
+\subsection{Propriétés avec accesseurs explicites}
+
+\begin{lstlisting}
+class Person 
+{
+    private string name;
+    
+    public string Name 
+    {
+        get => name;
+        set => name = value;
+    }
+}
+\end{lstlisting}
+
+\subsection{Utilisation}
+
+\begin{lstlisting}
+Person person = new Person();
+person.Name = "Sara";  // Le set accessor est invoqué ici
+Console.WriteLine($"Je m'appelle {person.Name}"); 
+// Le get accessor est invoqué ici
+\end{lstlisting}
+
+\subsection{Propriétés auto-implémentées}
+
+Si les getters et setters ne contiennent pas un traitement particulier, on peut utiliser des propriétés auto-implémentées :
+
+\begin{lstlisting}
+public class Person 
+{
+    public string Name { get; set; }
+}
+\end{lstlisting}
+
+\subsection{Propriétés en lecture seule / écriture seule}
+
+\begin{itemize}
+    \item \textbf{Lecture seule} : Supprimer le \texttt{set}
+    \begin{lstlisting}
+    public int Age { get; }
+    \end{lstlisting}
+    
+    \item \textbf{Écriture seule} : Supprimer le \texttt{get}
+    \begin{lstlisting}
+    public int Age { set; }
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Exemple avec validation}
+
+\begin{lstlisting}
+public class Personne 
+{
+    private int age;
+    
+    public int Age 
+    {
+        get { return age; }
+        set 
+        {
+            if (value > 0 && value < 100)
+                age = value;
+            else
+                throw new ArgumentException("L'âge doit être entre 0 et 100");
+        }
+    }
+}
+\end{lstlisting}
+
+\section{Les Constructeurs}
+
+\subsection{Définition}
+
+Un \textbf{constructeur} est une méthode particulière portant le nom de la classe et ne retournant aucune valeur.
+
+\vspace{0.3cm}
+\noindent\textbf{Caractéristiques} :
+\begin{itemize}
+    \item Toute classe en C\# a un constructeur par défaut sans paramètre
+    \item Ce constructeur sans paramètre n'a aucun code
+    \item On peut le définir si un traitement est nécessaire
+    \item La déclaration d'un objet de la classe fait appel à ce constructeur sans paramètre
+    \item On peut définir un nouveau constructeur qui prend en paramètre plusieurs attributs
+\end{itemize}
+
+\subsection{Exemple de constructeur avec paramètres}
+
+\begin{lstlisting}
+public class CompteBancaire
+{
+    private string titulaire, devise;
+    private double solde;
+    
+    // Constructeur
+    public CompteBancaire(string Titulaire, double Solde, string Devise)
+    {
+        this.titulaire = Titulaire;
+        this.solde = Solde;
+        this.devise = Devise;
+    }
+}
+\end{lstlisting}
+
+\subsection{Utilisation}
+
+\begin{lstlisting}
+static void Main(string[] args) 
+{
+    CompteBancaire compte = new CompteBancaire("Jad", 1700000, "Euro");
+    Console.WriteLine(compte);
+    
+    CompteBancaire compte2 = new CompteBancaire("Rhizlane", 200000, "MAD");
+    Console.WriteLine(compte2);
+}
+\end{lstlisting}
+
+\vspace{0.3cm}
+\noindent\textcolor{red}{\textbf{Important}} : En définissant un constructeur avec paramètres, le constructeur par défaut (sans paramètre) n'existe plus automatiquement.
+
+\subsection{Solution : Définir les deux constructeurs}
+
+\begin{lstlisting}
+public class CompteBancaire
+{
+    public string titulaire, devise;
+    public double solde;
+    
+    // Constructeur avec paramètres
+    public CompteBancaire(string Titulaire, double Solde, string Devise)
+    {
+        this.titulaire = Titulaire;
+        this.solde = Solde;
+        this.devise = Devise;
+    }
+    
+    // Constructeur sans paramètres
+    public CompteBancaire() { }
+}
+\end{lstlisting}
+
+\section{Attributs et Méthodes Statiques}
+
+\subsection{Concept}
+
+Les instances d'une même classe ont toutes les mêmes attributs mais pas les mêmes valeurs. Si nous désirions qu'un attribut ait une valeur partagée par toutes les instances (le nombre d'objets instanciés de la classe Personne), on utilise un \textbf{attribut statique} ou \textbf{attribut de classe}.
+
+\subsection{Définition d'un attribut statique}
+
+\begin{lstlisting}
+public class Personne
+{
+    public static int NbrPersonnes { get; set; }
+    
+    // Autres attributs...
+}
+\end{lstlisting}
+
+\subsection{Incrémentation dans les constructeurs}
+
+\begin{lstlisting}
+public Personne(int num, string name) 
+{
+    this.num = num;
+    this.name = name;
+    NbrPersonnes++;  // Incrémenter le compteur
+}
+
+public Personne() 
+{
+    NbrPersonnes++;  // Incrémenter le compteur
+}
+\end{lstlisting}
+
+\subsection{Utilisation}
+
+\begin{lstlisting}
+static void Main(string[] args) 
+{
+    Console.WriteLine(Personne.NbrPersonnes);  // Affiche 0
+    
+    Personne personne1 = new Personne(200, "Ahmed Ahmed");
+    Console.WriteLine(Personne.NbrPersonnes);  // Affiche 1
+    
+    Console.WriteLine(personne1);
+}
+\end{lstlisting}
+
+\vspace{0.3cm}
+\noindent\textbf{Remarque} : Les attributs et méthodes statiques sont accessibles directement via le nom de la classe, sans avoir besoin d'instancier un objet.
+
+\section{L'Héritage}
+
+\subsection{Définition}
+
+L'\textbf{héritage} est utilisé lorsque deux ou plusieurs classes partagent plusieurs attributs (et méthodes). Il consiste à créer une nouvelle classe dite \textbf{classe dérivée} ou \textbf{classe fille} à partir d'une classe existante dite \textbf{classe de base} ou \textbf{classe parente} ou \textbf{classe mère}.
+
+\subsection{Avantages de l'héritage}
+
+L'héritage permet de :
+\begin{itemize}
+    \item Récupérer le comportement standard d'une classe objet (classe parente) à partir de propriétés et de méthodes définies dans celle-ci
+    \item Ajouter des fonctionnalités supplémentaires en créant de nouvelles propriétés et méthodes dans la classe dérivée
+    \item Modifier le comportement standard d'une classe d'objet (classe parente), en surchargeant certaines méthodes de la classe parente dans la classe dérivée
+\end{itemize}
+
+\subsection{Exemple conceptuel}
+
+\begin{itemize}
+    \item Un \texttt{Enseignant} a un ID, un nom, un prénom et un salaire
+    \item Un \texttt{Etudiant} a aussi un ID, un nom, un prénom et une note
+    \item Sémantiquement, \texttt{Enseignant} et \texttt{Etudiant} sont une sorte de \texttt{Personne}
+    \item Les deux partagent plusieurs attributs tels que ID, nom et prénom
+    \item On peut mettre en commun les attributs ID, nom et prénom dans une classe \texttt{Personne}
+    \item Les classes \texttt{Etudiant} et \texttt{Enseignant} hériteront de la classe \texttt{Personne}
+\end{itemize}
+
+\subsection{Syntaxe de l'héritage}
+
+\subsubsection{Classe parente}
+
+\begin{lstlisting}
+class ClassA 
+{
+    // Propriété de la classe
+    public int DataA;
+    
+    // Méthode de la classe
+    public int FonctionA1()
+    {
+        // Code de la fonction fonctionA1
+    }
+    
+    // Méthode redéfinissable
+    public virtual int FonctionA2()
+    {
+        // Code de la méthode fonctionA2
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Classe fille}
+
+\begin{lstlisting}
+class ClassB : ClassA 
+{
+    // Propriété de la classe
+    public int DataB;
+    
+    // Redéfinition de la méthode de la classe parente
+    public override int FonctionA2()
+    {
+        // Code de la fonction fonctionA2
+    }
+    
+    // Nouvelle méthode
+    public int FonctionB1()
+    {
+        // Code de la méthode fonctionB1
+    }
+}
+\end{lstlisting}
+
+\subsection{Exemple complet : Personne, Enseignant, Etudiant}
+
+\subsubsection{Classe Personne}
+
+\begin{lstlisting}
+namespace MonProjet 
+{
+    class Personne
+    {
+        public int Num { get; set; }
+        public string Nom { get; set; }
+        public string Prenom { get; set; }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Classe Enseignant}
+
+\begin{lstlisting}
+namespace MonProjet 
+{
+    class Enseignant : Personne
+    {
+        public int Salaire { get; set; }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Classe Etudiant}
+
+\begin{lstlisting}
+namespace MonProjet 
+{
+    class Etudiant : Personne
+    {
+        public string Niveau { get; set; }
+    }
+}
+\end{lstlisting}
+
+\subsection{Redéfinition de ToString()}
+
+\subsubsection{Dans la classe Enseignant}
+
+\begin{lstlisting}
+public override string ToString() 
+{
+    return base.ToString() + " Enseignant [salaire=" + Salaire + "]";
+}
+\end{lstlisting}
+
+\subsubsection{Dans la classe Etudiant}
+
+\begin{lstlisting}
+public override string ToString() 
+{
+    return base.ToString() + " Etudiant [niveau=" + Niveau + "]";
+}
+\end{lstlisting}
+
+\vspace{0.3cm}
+\noindent\textbf{Remarque} : Le mot-clé \texttt{base} permet d'appeler une méthode de la classe mère.
+
+\subsection{Constructeurs avec héritage}
+
+\subsubsection{Classe Enseignant avec constructeur}
+
+\begin{lstlisting}
+class Enseignant : Personne
+{
+    public Enseignant(int num, string nom, string prenom, int salaire) 
+        : base(num, nom, prenom) 
+    {
+        Salaire = salaire;
+    }
+    
+    public Enseignant() { }
+    
+    public int Salaire { get; set; }
+    
+    public override string ToString() 
+    {
+        return base.ToString() + " Enseignant [salaire=" + Salaire + "]";
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Classe Etudiant avec constructeur}
+
+\begin{lstlisting}
+class Etudiant : Personne
+{
+    public Etudiant(int num, string nom, string prenom, string niveau) 
+        : base(num, nom, prenom) 
+    {
+        Niveau = niveau;
+    }
+    
+    public Etudiant() { }
+    
+    public string Niveau { get; set; }
+    
+    public override string ToString()
+    {
+        return base.ToString() + " Etudiant [niveau=" + Niveau + "]";
+    }
+}
+\end{lstlisting}
+
+\subsection{Polymorphisme}
+
+Un objet de la classe \texttt{Personne} peut être créé à partir d'une classe dérivée :
+
+\begin{lstlisting}
+// Correct
+Enseignant enseignant2 = new Enseignant(4, "Adib", "Abdellah", 40000);
+
+// Correct aussi (polymorphisme)
+Personne enseignant2 = new Enseignant(4, "Adib", "Abdellah", 40000);
+
+// Incorrect - À ne pas faire !
+Enseignant enseignant2 = new Personne(4, "Adib", "Abdellah", 40000);
+\end{lstlisting}
+
+\subsection{Opérateur is}
+
+Pour connaître la classe d'un objet, on peut utiliser le mot-clé \texttt{is} :
+
+\begin{lstlisting}
+Console.WriteLine(enseignant2 is Enseignant);  // Affiche True
+Console.WriteLine(enseignant2 is Personne);   // Affiche True
+Console.WriteLine(personne is Enseignant);    // Affiche False
+\end{lstlisting}
+
+\section{Concepts Clés à Retenir}
+
+\subsection{Modificateurs de visibilité}
+
+\begin{itemize}
+    \item \texttt{public} : Accessible partout
+    \item \texttt{private} : Accessible uniquement dans la classe (défaut)
+    \item \texttt{protected} : Accessible dans la classe et ses dérivées
+    \item \texttt{internal} : Accessible dans le même assembly
+\end{itemize}
+
+\subsection{Mots-clés importants}
+
+\begin{itemize}
+    \item \texttt{new} : Instanciation d'un objet
+    \item \texttt{override} : Redéfinition d'une méthode virtuelle
+    \item \texttt{virtual} : Méthode redéfinissable dans une classe dérivée
+    \item \texttt{base} : Accès aux membres de la classe parente
+    \item \texttt{static} : Membres de classe (partagés par toutes les instances)
+    \item \texttt{is} : Vérification du type d'un objet
+\end{itemize}
+
+\subsection{Propriétés vs Attributs}
+
+\begin{itemize}
+    \item \textbf{Attributs} : Variables de classe (peuvent être privées)
+    \item \textbf{Propriétés} : Encapsulation avec get/set (recommandé)
+    \item \textbf{Propriétés auto-implémentées} : \texttt{\{ get; set; \}}
+\end{itemize}
+
+\section{Exercices Pratiques}
+
+\subsection{Exercice 1 : Classe Personne}
+
+Définir une classe \texttt{Personne} avec trois propriétés (Nom, Prénom et Age). L'Age doit être supérieur à 0 et inférieur à 100.
+
+\subsection{Exercice 2 : Classe Cercle}
+
+Créer un constructeur \texttt{Cercle} qui crée un cercle avec un rayon fourni par un argument. Les cercles construits doivent avoir deux méthodes \texttt{GetAire()} et \texttt{GetPerimetere()} qui donnent à la fois l'aire et le périmètre respectifs.
+
+\vspace{0.5cm}
+\noindent\textbf{Formules} :
+\begin{itemize}
+    \item Aire = $\pi \times r^2$
+    \item Périmètre = $2 \times \pi \times r$
+\end{itemize}
+
+\section{Conclusion}
+
+La Programmation Orientée Objet en C\# permet de structurer le code de manière modulaire et réutilisable. Les concepts fondamentaux (classes, objets, héritage, encapsulation) sont essentiels pour développer des applications maintenables et extensibles.
+
+\end{document}
+
