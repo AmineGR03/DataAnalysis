@@ -1,0 +1,810 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{R\'esum\'e Administration Unix}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{}
+
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    showstringspaces=false
+}
+
+\title{\textbf{R\'esum\'e Complet - Administration Unix}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section*{Note importante}
+Les parties suivantes sont exclues de ce r\'esum\'e :
+\begin{itemize}
+    \item L'int\'egration dans les r\'eseaux (TP5)
+    \item LVM (TP8)
+    \item RAID (TP9)
+    \item Sauvegarde et restauration (TP10)
+    \item Quotas
+\end{itemize}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction et G\'en\'eralit\'es}
+
+\subsection{Histoire d'Unix}
+\begin{itemize}
+    \item \textbf{1969} : Cr\'eation d'UNIX par Ken Thompson aux laboratoires Bell
+    \item \textbf{1973} : R\'e\'ecriture compl\`ete en langage C par Denis Ritchie
+    \item \textbf{1974} : AT\&T propose les premi\`eres licences aux universit\'es
+    \item \textbf{Ann\'ees 80} : Clonage d'UNIX par d'autres constructeurs (ULTRIX, BSD, AIX)
+    \item \textbf{1983} : Lancement du projet GNU par Richard Stallman
+    \item \textbf{1991} : Cr\'eation du noyau Linux par Linus Torvalds
+\end{itemize}
+
+\subsection{Linux : D\'efinition}
+Linux est le noyau d'un OS de type Unix, initi\'e par Linus Torvalds en 1991. Il d\'esigne un OS comparable \`a Windows ou Mac OS compos\'e de nombreux logiciels libres.
+
+\subsection{Caract\'eristiques de Linux}
+\begin{itemize}
+    \item Code source disponible (licence GPL)
+    \item Syst\`eme multit\^ache et multi-utilisateur
+    \item Multi-plateforme (Intel x86, Sun Sparc, etc.)
+    \item Gestion du multiprocesseur (SMP)
+    \item Compatible POSIX
+    \item Gestion des consoles virtuelles
+    \item Impl\'ementation compl\`ete de la pile TCP/IP
+    \item Interface graphique X-Window
+\end{itemize}
+
+\subsection{Architecture d'un syst\`eme Linux}
+Trois couches :
+\begin{enumerate}
+    \item \textbf{Couche physique} : p\'eriph\'eriques + BIOS
+    \item \textbf{Couche syst\`eme} : kernel et processus
+    \item \textbf{Couche interface} : shell + X-Window
+\end{enumerate}
+
+\subsection{Le Shell}
+Le Shell est l'interpr\'eteur de commande, interface entre l'utilisateur et l'OS. Types de shell disponibles : bash (sh), csh, ksh, zsh, etc.
+
+\section{Standard de Hi\'erarchie des Syst\`emes de Fichiers (FHS)}
+
+\subsection{D\'efinition}
+Le FHS (Filesystem Hierarchy Standard) d\'efinit l'arborescence et le contenu des principaux r\'epertoires des syst\`emes de fichiers Linux/Unix.
+
+\subsection{R\'epertoires principaux}
+
+\subsubsection{/bin, /sbin, /lib}
+\begin{itemize}
+    \item \textbf{/bin} : ex\'ecutables pour tous les utilisateurs (ls, cp, mv, vi, bash)
+    \item \textbf{/sbin} : ex\'ecutables pour administration (shutdown, ifconfig, fsck)
+    \item \textbf{/lib} : biblioth\`eques partag\'ees (shared libraries)
+\end{itemize}
+
+\subsubsection{/dev}
+Contient des fichiers sp\'eciaux (device files) correspondant aux p\'eriph\'eriques.
+\begin{itemize}
+    \item Block device files (disques)
+    \item Character device files (terminaux)
+    \item Commande : \texttt{mknod} pour cr\'eer des fichiers sp\'eciaux
+\end{itemize}
+
+\subsubsection{/etc}
+Contient les fichiers et scripts de configuration des diff\'erents services :
+\begin{itemize}
+    \item /etc/X11 : configuration X-window
+    \item /etc/rc.d : scripts de d\'emarrage
+    \item /etc/cron : t\^aches p\'eriodiques
+    \item /etc/skel : fichiers \`a recopier pour nouveaux utilisateurs
+    \item /etc/sysconfig : configuration des p\'eriph\'eriques
+\end{itemize}
+
+\subsubsection{/usr}
+Unix System Resources - programmes et utilitaires non indispensables :
+\begin{itemize}
+    \item /usr/bin, /usr/sbin, /usr/lib : \'equivalents de /bin, /sbin, /lib
+    \item /usr/etc : fichiers de configuration (rarement utilis\'e)
+    \item /usr/include : fichiers .h pour le compilateur C
+    \item /usr/local : arborescence propre \`a la machine
+    \item /usr/share : fichiers ind\'ependants de l'architecture
+    \item /usr/src : sources
+\end{itemize}
+
+\subsubsection{/var}
+Fichiers dont la taille peut cro\^itre :
+\begin{itemize}
+    \item /var/lock : fichiers de verrouillage
+    \item /var/log : journaux du syst\`eme
+    \item /var/spool : files d'attentes (cron, lpd, mail)
+    \item /var/run : fichiers contenant les PID des services
+\end{itemize}
+
+\subsubsection{/proc}
+Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de donn\'ees du noyau. Fichiers virtuels cr\'e\'es dynamiquement en m\'emoire.
+
+\subsubsection{Autres r\'epertoires}
+\begin{itemize}
+    \item \textbf{/boot} : fichiers utiles pour le chargeur et noyaux Linux
+    \item \textbf{/home} : espaces priv\'es des utilisateurs
+    \item \textbf{/mnt} : points de montage des partitions externes
+    \item \textbf{/media} : points de montage des unit\'es amovibles
+    \item \textbf{/tmp} : fichiers temporaires
+    \item \textbf{/root} : espace de travail de l'administrateur
+    \item \textbf{/lost+found} : fichiers perdus et r\'ecup\'er\'es par fsck
+\end{itemize}
+
+\section{D\'emarrage et Arr\^et du Syst\`eme Linux}
+
+\subsection{Processus de d\'emarrage}
+\begin{enumerate}
+    \item Power on
+    \item BIOS/UEFI
+    \item BootLoader (GRUB)
+    \item Linux Kernel
+    \item Processus PID 1 (init/systemd)
+    \item System Ready
+\end{enumerate}
+
+\subsection{BIOS vs UEFI}
+\begin{itemize}
+    \item \textbf{BIOS} : Basic Input Output System, situ\'e sur la ROM de la carte m\`ere
+    \item \textbf{UEFI} : Unified Extensible Firmware Interface, remplace le BIOS
+    \begin{itemize}
+        \item Interface graphique \`a fen\^etre
+        \item Acc\`es \`a Internet
+        \item Support GPT (partitions $>$ 2TB)
+        \item Architecture modulaire
+    \end{itemize}
+\end{itemize}
+
+\subsection{Chargeur de d\'emarrage (BootLoader)}
+\begin{itemize}
+    \item \textbf{GRUB} : GRand Unified Bootloader (version 2)
+    \item Fichiers GRUB2 :
+    \begin{itemize}
+        \item /etc/default/grub : param\`etres du menu
+        \item /etc/grub.d/ : scripts de cr\'eation du menu
+        \item /boot/grub2/grub.cfg : fichier de configuration final (g\'en\'er\'e automatiquement)
+    \end{itemize}
+    \item Commande : \texttt{grub2-mkconfig} pour r\'eg\'en\'erer grub.cfg
+\end{itemize}
+
+\subsection{InitRamFs (Initial RAM Disk)}
+\begin{itemize}
+    \item Syst\`eme de fichiers racine temporaire
+    \item Contient les pilotes n\'ecessaires pour acc\'eder au syst\`eme de fichiers racine
+    \item Charg\'e en m\'emoire par le bootloader
+    \item Permet de monter le "vrai" syst\`eme de fichiers racine
+\end{itemize}
+
+\subsection{Gestionnaires de services}
+
+\subsubsection{SysVinit}
+\begin{itemize}
+    \item Processus /sbin/init (PID = 1)
+    \item Niveaux d'ex\'ecution (runlevels) :
+    \begin{itemize}
+        \item 0 : arr\^et
+        \item 1 : mode utilisateur unique (maintenance)
+        \item 3 : mode multi-utilisateurs complet (texte)
+        \item 5 : mode multi-utilisateurs graphique
+        \item 6 : red\'emarrage
+    \end{itemize}
+    \item Fichier /etc/inittab : configuration
+    \item R\'epertoires /etc/rc.d/rcX.d : scripts par niveau
+\end{itemize}
+
+\subsubsection{Systemd}
+\begin{itemize}
+    \item Remplace /sbin/init
+    \item Notion d'unit\'e (service, target, mount, socket)
+    \item R\'epertoires :
+    \begin{itemize}
+        \item /usr/lib/systemd/system : unit\'es syst\`eme par d\'efaut
+        \item /etc/systemd/system : unit\'es personnalis\'ees
+    \end{itemize}
+    \item Commandes principales :
+    \begin{itemize}
+        \item \texttt{systemctl status service} : \'etat d'un service
+        \item \texttt{systemctl start/stop/restart service} : contr\^ole
+        \item \texttt{systemctl enable/disable service} : activation au boot
+        \item \texttt{systemctl mask/unmask service} : bloquer/d\'ebloquer
+    \end{itemize}
+    \item Cibles (targets) remplacent les runlevels :
+    \begin{itemize}
+        \item poweroff.target (runlevel 0)
+        \item rescue.target (runlevel 1)
+        \item multi-user.target (runlevel 3)
+        \item graphical.target (runlevel 5)
+        \item reboot.target (runlevel 6)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Arr\^et du syst\`eme}
+\begin{itemize}
+    \item \texttt{systemctl poweroff} : arr\^et et hors-tension
+    \item \texttt{systemctl halt} : arr\^et sans hors-tension
+    \item \texttt{systemctl reboot} : red\'emarrage
+    \item \texttt{systemctl suspend} : suspension (RAM)
+    \item \texttt{systemctl hibernate} : hibernation (disque)
+    \item \texttt{shutdown [OPTION] [HEURE] [MESSAGE]} : arr\^et programm\'e
+\end{itemize}
+
+\subsection{Gestion des services}
+\begin{itemize}
+    \item \texttt{systemctl status service} : \'etat d\'etaill\'e
+    \item \texttt{systemctl is-active service} : v\'erifier si actif
+    \item \texttt{systemctl is-enabled service} : v\'erifier activation au boot
+    \item \texttt{systemctl daemon-reload} : recharger configuration
+    \item \texttt{journalctl -u service -f} : logs en temps r\'eel
+\end{itemize}
+
+\subsection{D\'epannage et journalisation}
+\begin{itemize}
+    \item \texttt{journalctl} : afficher tous les logs
+    \item \texttt{journalctl -f} : suivre les nouveaux logs
+    \item \texttt{journalctl -b} : logs du d\'emarrage actuel
+    \item \texttt{journalctl -b -1} : logs du d\'emarrage pr\'ec\'edent
+    \item \texttt{journalctl -u service} : logs d'un service
+    \item \texttt{journalctl -p err} : logs d'erreur et sup\'erieurs
+    \item \texttt{journalctl --since "1 hour ago"} : logs depuis 1 heure
+\end{itemize}
+
+\section{Gestion des Paquetages}
+
+\subsection{Notion de paquetage}
+Un paquet est un fichier archive contenant le logiciel \`a installer et des r\`egles d'installation :
+\begin{itemize}
+    \item Gestion des d\'ependances
+    \item Pr\'e-installation et post-installation
+    \item Informations compl\'ementaires (nom, version, description)
+\end{itemize}
+
+\subsection{Formats de paquetages}
+\begin{itemize}
+    \item \textbf{tar} : format ancien, sources et binaires
+    \item \textbf{rpm} : RedHat Package Manager (RedHat, SUSE, Fedora)
+    \item \textbf{deb} : Debian Package (Debian, Ubuntu, Mint)
+\end{itemize}
+
+\subsection{Paquetage RPM}
+\begin{itemize}
+    \item Outil RPM : Redhat Package Manager
+    \item Base de donn\'ees : /var/lib/rpm/
+    \item Commandes principales :
+    \begin{itemize}
+        \item \texttt{rpm -i fichier\_paquetage} : installer
+        \item \texttt{rpm -e nom\_du\_paquetage} : d\'esinstaller
+        \item \texttt{rpm -U fichier\_paquetage} : mettre \`a jour
+        \item \texttt{rpm -qa} : lister tous les packages install\'es
+        \item \texttt{rpm -q package} : version install\'ee
+        \item \texttt{rpm -qi package} : informations sur un package
+        \item \texttt{rpm -ql package} : liste des fichiers install\'es
+        \item \texttt{rpm -qf nom\_du\_fichier} : package auquel appartient un fichier
+        \item \texttt{rpm -V package} : v\'erification
+        \item \texttt{rpm -K package.rpm} : v\'erifier signature
+    \end{itemize}
+\end{itemize}
+
+\subsection{Gestionnaire de paquets YUM}
+Yellowdog Updater Modifier - surcouche de RPM g\'erant t\'el\'echargements et d\'ependances.
+
+Commandes principales :
+\begin{itemize}
+    \item \texttt{yum list all} : lister tous les paquetages disponibles
+    \item \texttt{yum list installed} : lister les paquetages install\'es
+    \item \texttt{yum info package} : informations sur un paquetage
+    \item \texttt{yum search mot\_cl\'e} : rechercher des paquetages
+    \item \texttt{yum install package} : installer
+    \item \texttt{yum check-update} : mises \`a jour disponibles
+    \item \texttt{yum update [package]} : mettre \`a jour
+    \item \texttt{yum remove package} : d\'esinstaller
+    \item \texttt{yum provides fichier} : chercher un paquet contenant un fichier
+    \item \texttt{yum clean all} : vider le cache
+    \item \texttt{yum makecache} : mettre \`a jour la liste des packages
+    \item \texttt{yum grouplist} : lister les groupes de packages
+    \item \texttt{yum groupinstall "nom\_groupe"} : installer un groupe
+    \item \texttt{yum history} : historique des transactions
+\end{itemize}
+
+\subsection{Gestionnaire de paquets DNF}
+Dandified Yum - successeur de YUM, plus performant.
+
+Commandes similaires \`a YUM :
+\begin{itemize}
+    \item \texttt{dnf install/remove/update} : gestion des paquets
+    \item \texttt{dnf search/info/provides} : recherche et informations
+    \item \texttt{dnf list [available/installed/updates]} : listes
+    \item \texttt{dnf groupinstall/groupremove} : gestion des groupes
+    \item \texttt{dnf history} : historique
+\end{itemize}
+
+\subsection{D\'ep\^ots de paquetages}
+\begin{itemize}
+    \item Fichiers .repo dans /etc/yum.repos.d/
+    \item \texttt{yum repolist all} : lister tous les d\'ep\^ots
+    \item \texttt{yum repolist} : lister les d\'ep\^ots actifs
+    \item \texttt{yum-config-manager --enable nom\_du\_d\'ep\^ot} : activer un d\'ep\^ot
+\end{itemize}
+
+\section{Gestion des Utilisateurs}
+
+\subsection{Types de comptes utilisateurs}
+\begin{itemize}
+    \item \textbf{Super-utilisateur (root)} : UID = 0, tous les privil\`eges
+    \item \textbf{Comptes syst\`emes} : UID $<$ 1000, services du syst\`eme
+    \item \textbf{Comptes ordinaires} : UID $\geq$ 1000, utilisateurs normaux
+\end{itemize}
+
+\subsection{Fichiers d'enregistrement}
+\begin{itemize}
+    \item \textbf{/etc/passwd} : liste des utilisateurs avec descriptions
+    \item \textbf{/etc/shadow} : mots de passe crypt\'es + dur\'ees de validit\'e
+    \item \textbf{/etc/group} : d\'efinitions des groupes
+    \item \textbf{/etc/gshadow} : mots de passe des groupes (rarement utilis\'e)
+\end{itemize}
+
+\subsection{Structure de /etc/passwd}
+Format : \texttt{login:passwd:uid:gid:comment:home:shell}
+\begin{itemize}
+    \item login : nom de connexion
+    \item passwd : x (indique pr\'esence de /etc/shadow)
+    \item uid : num\'ero unique de l'utilisateur
+    \item gid : num\'ero de groupe primaire
+    \item comment : nom complet
+    \item home : r\'epertoire personnel
+    \item shell : interpr\'eteur de commandes
+\end{itemize}
+
+\subsection{Structure de /etc/shadow}
+Format : \texttt{login:passwd:last:may:must:warn:inactif:disable}
+\begin{itemize}
+    \item passwd : mot de passe encod\'e
+    \item last : jours depuis modification (depuis 1/1/1970)
+    \item may : jours minimum avant changement
+    \item must : jours maximum avant expiration
+    \item warn : jours d'avertissement avant expiration
+    \item inactif : p\'eriode d'inactivit\'e maximale
+    \item disable : date de fermeture du compte
+\end{itemize}
+
+\subsection{Commandes de gestion des utilisateurs}
+
+\subsubsection{Cr\'eation}
+\begin{itemize}
+    \item \texttt{useradd [options] nom\_utilisateur}
+    \begin{itemize}
+        \item \texttt{-u} : sp\'ecifier UID
+        \item \texttt{-c} : commentaire (nom complet)
+        \item \texttt{-d} : r\'epertoire personnel
+        \item \texttt{-e} : date d'expiration (AAAA-MM-JJ)
+        \item \texttt{-g} : groupe primaire
+        \item \texttt{-G} : groupes secondaires
+        \item \texttt{-m} : cr\'eer le r\'epertoire personnel
+        \item \texttt{-s} : shell
+        \item \texttt{-r} : cr\'eer un compte syst\`eme
+    \end{itemize}
+    \item \texttt{passwd utilisateur} : d\'efinir le mot de passe
+\end{itemize}
+
+\subsubsection{Modification}
+\begin{itemize}
+    \item \texttt{usermod [options] utilisateur}
+    \begin{itemize}
+        \item \texttt{-s} : changer le shell
+        \item \texttt{-c} : modifier le commentaire
+        \item \texttt{-aG} : ajouter \`a des groupes (sans \'ecraser)
+        \item \texttt{-d -m} : d\'eplacer le home
+        \item \texttt{-L} : verrouiller le compte
+        \item \texttt{-U} : d\'everrouiller
+        \item \texttt{-e} : expirer le compte
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Suppression}
+\begin{itemize}
+    \item \texttt{userdel utilisateur} : supprimer (garde le home)
+    \item \texttt{userdel -r utilisateur} : supprimer avec le home
+    \item \texttt{userdel -rf utilisateur} : forcer m\^eme si connect\'e
+\end{itemize}
+
+\subsubsection{Gestion des mots de passe}
+\begin{itemize}
+    \item \texttt{passwd [options] utilisateur}
+    \begin{itemize}
+        \item \texttt{-d} : supprimer le mot de passe
+        \item \texttt{-l} : verrouiller
+        \item \texttt{-u} : d\'everrouiller
+        \item \texttt{-e} : faire expirer
+        \item \texttt{-n jours} : jours minimum avant changement
+        \item \texttt{-x jours} : jours maximum avant expiration
+        \item \texttt{-w jours} : d\'elai d'avertissement
+        \item \texttt{-i jours} : d\'elai avant d\'esactivation
+    \end{itemize}
+    \item \texttt{chage [options] utilisateur} : modifier validit\'e du mot de passe
+\end{itemize}
+
+\subsection{Gestion des groupes}
+
+\subsubsection{Cr\'eation et modification}
+\begin{itemize}
+    \item \texttt{groupadd [options] nom\_groupe}
+    \begin{itemize}
+        \item \texttt{-g GID} : sp\'ecifier GID
+        \item \texttt{-r} : cr\'eer un groupe syst\`eme
+    \end{itemize}
+    \item \texttt{groupmod [options] nom\_groupe}
+    \begin{itemize}
+        \item \texttt{-g GID} : changer GID
+        \item \texttt{-n nouveau\_nom} : renommer
+    \end{itemize}
+    \item \texttt{groupdel nom\_groupe} : supprimer
+\end{itemize}
+
+\subsubsection{Gestion des membres}
+\begin{itemize}
+    \item \texttt{gpasswd -a utilisateur groupe} : ajouter un membre
+    \item \texttt{gpasswd -d utilisateur groupe} : retirer un membre
+    \item \texttt{gpasswd -M utilisateur1,utilisateur2 groupe} : d\'efinir liste de membres
+\end{itemize}
+
+\subsection{Droits d'acc\`es}
+
+\subsubsection{Permissions traditionnelles}
+Trois cat\'egories : propri\'etaire (u), groupe (g), autres (o)
+\begin{itemize}
+    \item \textbf{r} (read) : lecture
+    \item \textbf{w} (write) : \'ecriture
+    \item \textbf{x} (execute) : ex\'ecution
+\end{itemize}
+
+\subsubsection{Modification des permissions}
+\begin{itemize}
+    \item \texttt{chmod [mode] fichier}
+    \begin{itemize}
+        \item Mode symbolique : \texttt{u+x}, \texttt{g-rw}, \texttt{o=r}, \texttt{a+r}
+        \item Mode absolu : \texttt{755}, \texttt{644}, \texttt{600}, \texttt{777}
+    \end{itemize}
+    \item \texttt{chmod -R mode r\'epertoire} : r\'ecursif
+\end{itemize}
+
+\subsubsection{Changement de propri\'etaire}
+\begin{itemize}
+    \item \texttt{chown utilisateur[:groupe] fichier} : changer propri\'etaire
+    \item \texttt{chgrp groupe fichier} : changer groupe
+    \item \texttt{chown -R utilisateur:groupe r\'epertoire} : r\'ecursif
+\end{itemize}
+
+\subsection{Gestion des privil\`eges : sudo}
+\begin{itemize}
+    \item Fichier de configuration : /etc/sudoers
+    \item \texttt{visudo} : \'editer de fa\c{c}on s\'ecuris\'ee
+    \item Format : \texttt{utilisateur h\^ote=(utilisateur\_cible) commandes}
+    \item Exemples :
+    \begin{itemize}
+        \item \texttt{jean ALL=(ALL:ALL) ALL} : tout faire
+        \item \texttt{\%wheel ALL=(ALL) ALL} : groupe wheel
+        \item \texttt{marie ALL=(root) NOPASSWD:/usr/sbin/reboot} : sans mot de passe
+    \end{itemize}
+\end{itemize}
+
+\section{Gestion des Disques et Syst\`emes de Fichiers}
+
+\subsection{Types de disques}
+\begin{itemize}
+    \item \textbf{HDD} : Disque dur m\'ecanique, \'economique, lent
+    \item \textbf{SSD} : Disque \'electronique, rapide, silencieux
+    \item \textbf{NVMe} : Tr\`es haute performance
+\end{itemize}
+
+\subsection{Partitionnement}
+
+\subsubsection{MBR vs GPT}
+\begin{itemize}
+    \item \textbf{MBR} : Master Boot Record
+    \begin{itemize}
+        \item Limite : 4 partitions primaires maximum
+        \item Taille max : 2.2 To par partition
+        \item Compatible BIOS
+    \end{itemize}
+    \item \textbf{GPT} : GUID Partition Table
+    \begin{itemize}
+        \item Jusqu'\`a 128 partitions
+        \item Taille tr\`es grande (jusqu'\`a 9.4 Zo)
+        \item Compatible UEFI et BIOS
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Organisation des disques sous Linux}
+\begin{itemize}
+    \item Format : /dev/sdXY ou /dev/nvme0n1pX
+    \item Types de bus : hd (IDE), sd (SATA/SCSI/SSD), nvme (NVMe)
+    \item UUID : identifiant unique universel
+\end{itemize}
+
+\subsubsection{Commandes d'information}
+\begin{itemize}
+    \item \texttt{lsblk} : afficher informations sur disques et partitions
+    \item \texttt{blkid} : obtenir UUID
+    \item \texttt{df -h} : taux de remplissage
+    \item \texttt{du -h [chemin]} : espace occup\'e par une arborescence
+\end{itemize}
+
+\subsubsection{Cr\'eation de partitions}
+\begin{itemize}
+    \item \texttt{fdisk /dev/sdX} : manipuler table de partitions (interactif)
+    \item \texttt{gdisk /dev/sdX} : pour GPT
+    \item \texttt{parted} : mode interactif, script ou mixte
+    \item Commandes fdisk : n (nouvelle), d (supprimer), t (type), w (sauvegarder), g (GPT)
+\end{itemize}
+
+\subsection{Syst\`emes de fichiers}
+
+\subsubsection{D\'efinition}
+Un syst\`eme de fichiers d\'efinit l'organisation d'un volume physique ou logique, permettant de stocker et organiser les informations dans des fichiers.
+
+\subsubsection{Syst\`emes de fichiers GNU/Linux}
+\begin{itemize}
+    \item \textbf{ext2} : stable et robuste
+    \item \textbf{ext3} : + journalisation
+    \item \textbf{ext4} : volumes $>$ 1To, timestamps nanosec
+    \item \textbf{XFS} : performance fichiers volumineux
+    \item \textbf{Btrfs} : snapshots et compression
+    \item \textbf{ZFS} : int\'egration stockage avanc\'ee
+\end{itemize}
+
+\subsubsection{Initialisation (formatage)}
+\begin{itemize}
+    \item \texttt{mkfs -t type partition}
+    \item \texttt{mkfs.ext4 /dev/sda1}
+    \item \texttt{lsblk -f} : v\'erifier le type
+\end{itemize}
+
+\subsection{Repr\'esentation des fichiers sur disque}
+
+\subsubsection{Concepts}
+\begin{itemize}
+    \item \textbf{Bloc} : unit\'e de transfert entre disque et m\'emoire (souvent 4096 octets)
+    \item \textbf{Inode} : descripteur d'un fichier contenant les m\'etadonn\'ees
+\end{itemize}
+
+\subsubsection{Inode}
+Contient :
+\begin{itemize}
+    \item Type de l'inode (fichier, r\'epertoire)
+    \item Propri\'etaire (UID, GID)
+    \item Droits d'acc\`es
+    \item Dates (atime, mtime, ctime)
+    \item Taille
+    \item Adresse : pointeurs sur les blocs du disque
+\end{itemize}
+\textbf{Important} : Les inodes ne contiennent pas les noms des fichiers.
+
+\subsubsection{Liens}
+\begin{itemize}
+    \item \textbf{Lien physique} : \texttt{ln fichier lien}
+    \begin{itemize}
+        \item Partage le m\^eme inode
+        \item Reste valide si fichier d\'eplac\'e
+        \item Doit rester dans la m\^eme partition
+    \end{itemize}
+    \item \textbf{Lien symbolique} : \texttt{ln -s fichier lien}
+    \begin{itemize}
+        \item Pointe vers le nom du fichier
+        \item Peut traverser les partitions
+        \item Ressemble aux raccourcis
+    \end{itemize}
+\end{itemize}
+
+\subsection{Montage d'une partition}
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{mount partition point\_de\_montage} : monter
+    \item \texttt{mount -t type partition point} : sp\'ecifier type
+    \item \texttt{mount -a} : monter tous les SF de /etc/fstab
+    \item \texttt{umount point\_de\_montage} : d\'emonter
+\end{itemize}
+
+\subsubsection{Fichier /etc/fstab}
+Configuration statique des montages. Structure :
+\begin{verbatim}
+périphérique  point_montage  type  options  dump  fsck
+\end{verbatim}
+\begin{itemize}
+    \item dump : activer sauvegarde (1 ou 0)
+    \item fsck : ordre de v\'erification (0, 1, 2, 3)
+\end{itemize}
+
+\subsection{Gestion de l'espace Swap}
+
+\subsubsection{D\'efinition}
+Zone de swap utilis\'ee lorsque la m\'emoire physique (RAM) est remplie. Les pages m\'emoire inactives sont d\'eplac\'ees dans la zone de swap.
+
+\subsubsection{Configuration}
+\begin{enumerate}
+    \item Cr\'eer un fichier swap : \texttt{fallocate -l 1G /swapfile} ou \texttt{dd if=/dev/zero of=/swapfile bs=1M count=1024}
+    \item Verrouiller permissions : \texttt{chmod 600 /swapfile}
+    \item Marquer comme swap : \texttt{mkswap /swapfile}
+    \item Activer : \texttt{swapon /swapfile}
+    \item Rendre permanent : ajouter dans /etc/fstab
+\end{enumerate}
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{swapon --show} : afficher swaps actifs
+    \item \texttt{free -h} : \'etat m\'emoire et swap
+    \item \texttt{swapoff /swapfile} : d\'esactiver
+\end{itemize}
+
+\section{S\'ecurit\'e sous Linux}
+
+\subsection{ACLs : Liste de Contr\^ole d'Acc\`es}
+
+\subsubsection{D\'efinition}
+Les ACLs permettent d'\'etendre le nombre d'utilisateurs et de groupes ayant des droits sur un m\^eme fichier, au-del\`a des permissions traditionnelles.
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{getfacl fichier} : consulter les ACLs
+    \item \texttt{setfacl -m u:utilisateur:rw fichier} : modifier ACLs
+    \item \texttt{setfacl -m g:groupe:r fichier} : droits pour un groupe
+    \item \texttt{setfacl -m o::- fichier} : refuser aux autres
+    \item \texttt{setfacl -R -m u:utilisateur:rw r\'epertoire} : r\'ecursif
+    \item \texttt{setfacl -b fichier} : supprimer toutes les ACLs
+    \item \texttt{setfacl -x u:utilisateur fichier} : retirer permissions
+\end{itemize}
+
+\subsubsection{ACLs par d\'efaut}
+\begin{itemize}
+    \item \texttt{setfacl -m d:o::- r\'epertoire} : ACLs par d\'efaut
+    \item S'appliquent aux nouveaux fichiers/r\'epertoires cr\'e\'es
+    \item \texttt{setfacl -k r\'epertoire} : annuler ACLs par d\'efaut
+\end{itemize}
+
+\subsubsection{Masque}
+Le masque limite les autorisations effectives pour les groupes et entr\'ees sp\'ecifiques.
+\begin{itemize}
+    \item \texttt{setfacl -m m::rwx fichier} : d\'efinir un masque
+\end{itemize}
+
+\subsection{Droits sp\'eciaux}
+
+\subsubsection{Setuid}
+Permet \`a un utilisateur non-root d'ex\'ecuter un programme avec les droits du propri\'etaire du programme.
+\begin{itemize}
+    \item \texttt{chmod u+s programme} : activer
+    \item \texttt{chmod 4xxx programme} : mode absolu
+    \item Affichage : 's' \`a la place de 'x' pour user
+    \item 'S' si pas de droit x
+\end{itemize}
+
+\subsubsection{Setgid}
+\begin{itemize}
+    \item \textbf{Sur fichiers} : s'ex\'ecute avec les privil\`eges du groupe propri\'etaire
+    \item \textbf{Sur r\'epertoires} : fichiers cr\'e\'es h\'eritent du groupe du r\'epertoire
+    \item \texttt{chmod g+s r\'epertoire} : activer
+    \item \texttt{chmod 2xxx r\'epertoire} : mode absolu
+    \item Affichage : 's' \`a la place de 'x' pour groupe
+\end{itemize}
+
+\subsubsection{Sticky Bit}
+Sur les r\'epertoires, emp\^eche les utilisateurs non-root de supprimer ou modifier les fichiers dont ils ne sont pas propri\'etaires.
+\begin{itemize}
+    \item \texttt{chmod +t r\'epertoire} : activer
+    \item \texttt{chmod 1xxx r\'epertoire} : mode absolu
+    \item Affichage : 't' \`a la place de 'x' pour other
+    \item 'T' si pas de droit x
+\end{itemize}
+
+\subsection{SELinux : Security-Enhanced Linux}
+
+\subsubsection{Introduction}
+SELinux est une architecture de s\'ecurit\'e pour syst\`emes Linux permettant aux administrateurs de mieux contr\^oler les acc\`es au syst\`eme. C'est une couche suppl\'ementaire de s\'ecurit\'e.
+
+\subsubsection{DAC vs MAC}
+\begin{itemize}
+    \item \textbf{DAC} (Discretionary Access Control) : contr\^ole d'acc\`es discr\'etionnaire
+    \begin{itemize}
+        \item Permissions classiques (r, w, x)
+        \item Droits sp\'eciaux (setuid, setgid, sticky bit)
+        \item ACLs
+    \end{itemize}
+    \item \textbf{MAC} (Mandatory Access Control) : contr\^ole d'acc\`es obligatoire
+    \begin{itemize}
+        \item Politique de s\'ecurit\'e \`a laquelle m\^eme root doit se soumettre
+        \item Impl\'ementation : SELinux avec mod\`ele TE (Type Enforcement)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Concepts SELinux}
+\begin{itemize}
+    \item \textbf{Sujet} : entit\'e effectuant une action (processus, service, utilisateur)
+    \item \textbf{Objet} : ressource sur laquelle une action est r\'ealis\'ee (fichier, r\'epertoire, socket, port)
+    \item \textbf{R\`egles} : ensembles de r\`egles contr\^olant quelles actions un sujet peut effectuer sur un objet
+    \item \textbf{Labeling} : chaque ressource poss\`ede une \'etiquette (contexte SELinux)
+\end{itemize}
+
+\subsubsection{Contexte SELinux}
+Format : \texttt{user:role:type:level}
+\begin{itemize}
+    \item \textbf{user} : utilisateur SELinux (system\_u, unconfined\_u)
+    \item \textbf{role} : r\^ole (object\_r pour objets)
+    \item \textbf{type} : le plus important, d\'etermine les permissions
+    \begin{itemize}
+        \item httpd\_t : processus serveur web
+        \item httpd\_sys\_content\_t : fichiers accessibles par Apache
+        \item shadow\_t : fichier des mots de passe
+    \end{itemize}
+    \item \textbf{level} : niveau de sensibilit\'e (s0)
+\end{itemize}
+
+\subsubsection{Modes de fonctionnement}
+\begin{itemize}
+    \item \textbf{Enforcing} : mode strict, acc\`es restreints, refus des acc\`es non autoris\'es
+    \item \textbf{Permissive} : mode d\'ebogage, r\`egles v\'erifi\'ees, erreurs enregistr\'ees mais acc\`es non bloqu\'e
+    \item \textbf{Disabled} : d\'esactiv\'e, aucune restriction
+\end{itemize}
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{getenforce} : mode actuel
+    \item \texttt{setenforce enforcing} : passer en enforcing
+    \item \texttt{setenforce permissive} : passer en permissif
+    \item \texttt{sestatus} : \'etat g\'en\'eral
+    \item \texttt{ls -Z fichier} : contexte d'un fichier
+    \item \texttt{ps -Z} : contexte des processus
+    \item \texttt{chcon -t type fichier} : changer contexte
+    \item \texttt{restorecon fichier} : restaurer contexte par d\'efaut
+    \item \texttt{semanage fcontext -l} : lister contextes par d\'efaut
+\end{itemize}
+
+\subsubsection{Configuration}
+Fichier /etc/selinux/config :
+\begin{verbatim}
+SELINUX=enforcing|permissive|disabled
+SELINUXTYPE=targeted
+\end{verbatim}
+
+\subsubsection{Exemples de types SELinux}
+\begin{itemize}
+    \item \texttt{httpd\_sys\_content\_t} : contenu accessible par Apache
+    \item \texttt{device\_t} : fichiers associ\'es aux p\'eriph\'eriques
+    \item \texttt{home\_dir\_t} : r\'epertoires personnels
+    \item \texttt{var\_log\_t} : fichiers de journaux
+    \item \texttt{shadow\_t} : fichiers de mots de passe
+\end{itemize}
+
+\section*{Conclusion}
+
+Ce r\'esum\'e couvre les aspects essentiels de l'administration Unix/Linux, en excluant les parties sp\'ecifi\'ees (int\'egration r\'eseaux, LVM, RAID, sauvegarde/restauration, quotas). Les concepts pr\'esent\'es sont fondamentaux pour la gestion d'un syst\`eme Linux en environnement professionnel.
+
+\end{document}
+
