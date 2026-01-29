@@ -1,0 +1,725 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+% Configuration de la table des matières
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Explications Théoriques - Administration Unix}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{}
+
+\title{\textbf{Explications Théoriques - Administration Unix/Linux}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section*{Introduction}
+Ce document présente les explications théoriques et conceptuelles de l'administration Unix/Linux. Contrairement au résumé pratique, ce document se concentre sur la compréhension des mécanismes internes, des principes architecturaux et des concepts fondamentaux qui sous-tendent le fonctionnement des systèmes Unix/Linux.
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION 1 : ARCHITECTURE ET PRINCIPES FONDAMENTAUX
+% ============================================================
+
+\section{Architecture et Principes Fondamentaux}
+
+\subsection{Philosophie Unix}
+
+La philosophie Unix repose sur plusieurs principes fondamentaux qui ont façonné le design des systèmes Unix et Linux :
+
+\begin{itemize}
+    \item \textbf{Simplicité} : Chaque programme doit faire une seule chose et la faire bien. Cette approche modulaire facilite la maintenance et la compréhension du système.
+    
+    \item \textbf{Composition} : Les programmes simples peuvent être combinés via des pipes et des redirections pour créer des solutions complexes. Cette approche favorise la réutilisabilité.
+    
+    \item \textbf{Textualité} : Les fichiers de configuration et les interfaces sont basés sur du texte, ce qui permet une manipulation facile avec des outils standards et une traçabilité claire.
+    
+    \item \textbf{Transparence} : Le système expose ses mécanismes internes de manière accessible, permettant aux administrateurs de comprendre et de diagnostiquer les problèmes.
+    
+    \item \textbf{Portabilité} : L'écriture en C et l'abstraction des détails matériels permettent une portabilité entre différentes architectures.
+\end{itemize}
+
+\subsection{Architecture en Couches}
+
+Le système Unix/Linux est organisé en couches distinctes, chacune ayant des responsabilités spécifiques :
+
+\subsubsection{Couche Matérielle}
+La couche matérielle comprend tous les composants physiques : processeurs, mémoire (RAM), disques de stockage, cartes réseau, et autres périphériques. Cette couche est gérée directement par le noyau via des pilotes de périphériques (drivers).
+
+\subsubsection{Couche Noyau (Kernel)}
+Le noyau est le cœur du système d'exploitation. Il agit comme un intermédiaire entre le matériel et les logiciels applicatifs. Ses responsabilités principales incluent :
+
+\begin{itemize}
+    \item \textbf{Gestion de la mémoire} : Allocation et libération de la mémoire pour les processus, gestion de la mémoire virtuelle, pagination et swapping.
+    
+    \item \textbf{Gestion des processus} : Création, planification, synchronisation et terminaison des processus. Le noyau maintient une table des processus et gère le partage du temps CPU.
+    
+    \item \textbf{Gestion des fichiers} : Abstraction des systèmes de fichiers, gestion des inodes, cache des fichiers, et interface avec les périphériques de stockage.
+    
+    \item \textbf{Gestion des périphériques} : Communication avec le matériel via des pilotes, gestion des interruptions matérielles, et abstraction des périphériques en fichiers spéciaux.
+    
+    \item \textbf{Sécurité} : Contrôle d'accès basé sur les permissions, gestion des utilisateurs et groupes, et implémentation de mécanismes de sécurité avancés comme SELinux.
+\end{itemize}
+
+\subsubsection{Couche Système}
+Cette couche comprend les bibliothèques système (comme la bibliothèque C standard, libc) et les services système qui fournissent des fonctionnalités communes aux applications. Les appels système (system calls) permettent aux applications d'interagir avec le noyau de manière contrôlée.
+
+\subsubsection{Couche Utilisateur}
+La couche utilisateur contient les applications, les shells, et les outils utilisateur. Cette couche s'exécute en mode utilisateur, avec des privilèges limités, et doit passer par le noyau pour accéder aux ressources système.
+
+\subsection{Mode Noyau vs Mode Utilisateur}
+
+Une distinction fondamentale dans l'architecture Unix/Linux est la séparation entre le mode noyau (kernel mode) et le mode utilisateur (user mode) :
+
+\begin{itemize}
+    \item \textbf{Mode Noyau} : Le noyau s'exécute avec des privilèges complets, peut accéder directement au matériel, et peut modifier les structures de données critiques du système. Toute erreur dans le noyau peut provoquer un crash système.
+    
+    \item \textbf{Mode Utilisateur} : Les applications s'exécutent avec des privilèges limités. Elles ne peuvent pas accéder directement au matériel et doivent utiliser les appels système pour demander des services au noyau. Cette séparation protège le système contre les erreurs des applications.
+    
+    \item \textbf{Transition} : Le passage du mode utilisateur au mode noyau se fait via des interruptions matérielles, des exceptions, ou des appels système explicites. Cette transition est coûteuse en performance, ce qui explique pourquoi le noyau essaie de minimiser ces transitions.
+\end{itemize}
+
+% ============================================================
+% SECTION 2 : GESTION DE LA MÉMOIRE
+% ============================================================
+
+\section{Gestion de la Mémoire}
+
+\subsection{Architecture de la Mémoire Virtuelle}
+
+La mémoire virtuelle est un mécanisme fondamental qui permet au système de donner à chaque processus l'illusion d'avoir accès à un espace d'adressage linéaire complet, indépendamment de la quantité de mémoire physique disponible.
+
+\subsubsection{Pages et Pagination}
+
+La mémoire est divisée en pages de taille fixe (généralement 4 Ko sur les systèmes x86-64). Le système de pagination permet de :
+
+\begin{itemize}
+    \item \textbf{Virtualiser la mémoire} : Chaque processus voit un espace d'adressage virtuel continu, même si la mémoire physique est fragmentée.
+    
+    \item \textbf{Protéger les processus} : Les pages peuvent avoir des permissions (lecture, écriture, exécution) qui empêchent un processus d'accéder à la mémoire d'un autre processus.
+    
+    \item \textbf{Optimiser l'utilisation} : Les pages non utilisées peuvent être stockées sur disque (swap), libérant la RAM pour d'autres processus.
+\end{itemize}
+
+\subsubsection{Translation d'Adresses}
+
+L'Unité de Gestion Mémoire (MMU) du processeur traduit les adresses virtuelles en adresses physiques. Cette traduction utilise des tables de pages maintenues par le noyau. Le processus de traduction comprend :
+
+\begin{enumerate}
+    \item Le processeur génère une adresse virtuelle lors d'un accès mémoire.
+    \item La MMU consulte la table des pages pour trouver la page physique correspondante.
+    \item Si la page est en RAM, l'accès se fait directement.
+    \item Si la page est sur disque (page fault), le noyau la charge en RAM et met à jour la table des pages.
+\end{enumerate}
+
+\subsection{Swap et Mémoire Virtuelle}
+
+Le swap est un mécanisme qui étend la mémoire RAM disponible en utilisant l'espace disque. Voici comment cela fonctionne :
+
+\begin{itemize}
+    \item \textbf{Pages inactives} : Le noyau identifie les pages de mémoire qui n'ont pas été utilisées récemment.
+    
+    \item \textbf{Écriture sur disque} : Ces pages sont écrites dans l'espace swap sur le disque.
+    
+    \item \textbf{Libération de RAM} : Les pages physiques sont libérées pour être utilisées par d'autres processus.
+    
+    \item \textbf{Page fault} : Lorsqu'un processus tente d'accéder à une page qui a été swapée, une interruption (page fault) se produit.
+    
+    \item \textbf{Chargement} : Le noyau charge la page depuis le swap vers la RAM, éventuellement en swapant une autre page si la RAM est pleine.
+\end{itemize}
+
+Cette mécanique permet au système d'exécuter plus de processus que la RAM physique ne le permettrait, au prix d'une performance réduite lorsque le swapping est fréquent (thrashing).
+
+\subsection{Gestion de la Mémoire par Processus}
+
+Chaque processus a son propre espace d'adressage virtuel, organisé en plusieurs segments :
+
+\begin{itemize}
+    \item \textbf{Segment texte} : Contient le code exécutable du programme. Il est en lecture seule et peut être partagé entre plusieurs instances du même programme.
+    
+    \item \textbf{Segment données} : Contient les variables globales et statiques initialisées.
+    
+    \item \textbf{Segment BSS} : Contient les variables globales non initialisées (Block Started by Symbol).
+    
+    \item \textbf{Heap (tas)} : Zone de mémoire dynamique allouée par malloc() et libérée par free(). Le heap grandit vers les adresses hautes.
+    
+    \item \textbf{Stack (pile)} : Zone de mémoire pour les variables locales et les appels de fonction. Le stack grandit vers les adresses basses. Chaque thread a son propre stack.
+\end{itemize}
+
+% ============================================================
+% SECTION 3 : GESTION DES PROCESSUS
+% ============================================================
+
+\section{Gestion des Processus}
+
+\subsection{Concept de Processus}
+
+Un processus est une instance d'un programme en cours d'exécution. Il représente l'unité fondamentale d'exécution dans un système Unix/Linux. Chaque processus possède :
+
+\begin{itemize}
+    \item \textbf{Un espace d'adressage mémoire} : Isolé des autres processus pour la sécurité.
+    
+    \item \textbf{Des ressources système} : Descripteurs de fichiers ouverts, variables d'environnement, signaux en attente.
+    
+    \item \textbf{Un contexte d'exécution} : Registres CPU, compteur de programme, état de la pile.
+    
+    \item \textbf{Des métadonnées} : PID (Process ID), PPID (Parent Process ID), UID, GID, priorité.
+\end{itemize}
+
+\subsection{Cycle de Vie d'un Processus}
+
+Le cycle de vie d'un processus suit plusieurs étapes :
+
+\subsubsection{Création (Fork)}
+La création d'un processus se fait via l'appel système \texttt{fork()}. Ce mécanisme crée une copie exacte du processus appelant :
+
+\begin{itemize}
+    \item Le processus parent et l'enfant partagent initialement le même espace mémoire (copy-on-write).
+    \item L'enfant hérite des descripteurs de fichiers ouverts du parent.
+    \item L'enfant reçoit un nouveau PID unique.
+    \item Le retour de fork() est différent dans le parent (PID de l'enfant) et l'enfant (0).
+\end{itemize}
+
+\subsubsection{Exécution (Exec)}
+L'appel système \texttt{exec()} remplace l'image mémoire du processus par un nouveau programme :
+
+\begin{itemize}
+    \item Le code et les données du processus sont remplacés.
+    \item Les descripteurs de fichiers ouverts sont préservés (sauf ceux marqués close-on-exec).
+    \item Le PID et les relations parent-enfant restent inchangés.
+    \item Les variables d'environnement peuvent être modifiées selon la variante d'exec utilisée.
+\end{itemize}
+
+\subsubsection{États d'un Processus}
+
+Un processus peut être dans plusieurs états :
+
+\begin{itemize}
+    \item \textbf{Running (R)} : Le processus est en cours d'exécution ou prêt à s'exécuter. Il attend son tour sur le CPU.
+    
+    \item \textbf{Sleeping (S)} : Le processus attend un événement (entrée/sortie, signal, verrou). Il est interruptible et peut être réveillé.
+    
+    \item \textbf{Disk Sleep (D)} : Le processus attend une opération disque critique. Il est non-interruptible pour éviter la corruption des données.
+    
+    \item \textbf{Stopped (T)} : Le processus a été suspendu par un signal (SIGSTOP, SIGTSTP). Il peut être repris avec SIGCONT.
+    
+    \item \textbf{Zombie (Z)} : Le processus est terminé mais son parent n'a pas encore récupéré son statut de sortie. Les ressources sont libérées sauf l'entrée dans la table des processus.
+\end{itemize}
+
+\subsection{Planification des Processus}
+
+Le planificateur (scheduler) du noyau décide quel processus doit s'exécuter à un moment donné. Cette décision est basée sur plusieurs facteurs :
+
+\subsubsection{Priorités et Nice}
+Chaque processus a une priorité qui influence son temps CPU :
+
+\begin{itemize}
+    \item La valeur \textbf{nice} va de -20 (priorité maximale) à +19 (priorité minimale).
+    \item Les processus avec une nice négative ont plus de chances d'être exécutés.
+    \item Seul root peut utiliser des valeurs nice négatives.
+    \item Le planificateur combine la valeur nice avec d'autres facteurs (temps d'attente, type de processus) pour déterminer la priorité dynamique.
+\end{itemize}
+
+\subsubsection{Algorithmes de Planification}
+Linux utilise le Completely Fair Scheduler (CFS) qui :
+
+\begin{itemize}
+    \item Assure une distribution équitable du temps CPU entre tous les processus.
+    \item Utilise une red-black tree pour maintenir les processus triés par temps CPU virtuel.
+    \item Ajuste dynamiquement les quanta de temps selon la charge système.
+    \item Donne la priorité aux processus interactifs pour améliorer la réactivité.
+\end{itemize}
+
+\subsection{Communication Inter-Processus}
+
+Les processus peuvent communiquer de plusieurs manières :
+
+\subsubsection{Signaux}
+Les signaux sont des notifications asynchrones envoyées à un processus :
+
+\begin{itemize}
+    \item \textbf{Asynchrone} : Le signal peut arriver à tout moment pendant l'exécution.
+    \item \textbf{Pré-défini} : Chaque signal a un numéro et une action par défaut.
+    \item \textbf{Handler} : Les processus peuvent définir des handlers personnalisés pour intercepter les signaux.
+    \item \textbf{Blocage} : Certains signaux peuvent être bloqués temporairement.
+\end{itemize}
+
+\subsubsection{Pipes}
+Les pipes permettent la communication unidirectionnelle entre processus :
+
+\begin{itemize}
+    \item \textbf{Pipe anonyme} : Créé avec pipe(), permet la communication entre processus parent-enfant.
+    \item \textbf{Pipe nommé (FIFO)} : Créé avec mkfifo(), permet la communication entre processus non liés.
+    \item \textbf{Buffer limité} : Les pipes ont une taille de buffer limitée, ce qui peut bloquer l'écriture si le buffer est plein.
+\end{itemize}
+
+\subsubsection{Shared Memory}
+La mémoire partagée permet à plusieurs processus d'accéder à la même région mémoire :
+
+\begin{itemize}
+    \item \textbf{Performance} : Plus rapide que les pipes car pas de copie de données.
+    \item \textbf{Synchronisation} : Nécessite des mécanismes de synchronisation (sémaphores, mutex) pour éviter les conditions de course.
+    \item \textbf{IPC System V} : Utilise shmget(), shmat() pour créer et attacher la mémoire partagée.
+\end{itemize}
+
+% ============================================================
+% SECTION 4 : SYSTÈMES DE FICHIERS
+% ============================================================
+
+\section{Systèmes de Fichiers}
+
+\subsection{Concept de Système de Fichiers}
+
+Un système de fichiers est une méthode d'organisation et de stockage des données sur un support de stockage. Il fournit une abstraction qui permet de manipuler les données comme une hiérarchie de fichiers et de répertoires, indépendamment des détails physiques du stockage.
+
+\subsection{Structure des Systèmes de Fichiers}
+
+\subsubsection{Inodes}
+
+L'inode (index node) est une structure de données fondamentale qui contient toutes les métadonnées d'un fichier :
+
+\begin{itemize}
+    \item \textbf{Type} : Fichier régulier, répertoire, lien symbolique, périphérique, etc.
+    \item \textbf{Permissions} : Droits d'accès pour propriétaire, groupe, et autres.
+    \item \textbf{Propriétaire} : UID et GID du propriétaire.
+    \item \textbf{Taille} : Taille du fichier en octets.
+    \item \textbf{Dates} : atime (dernier accès), mtime (dernière modification), ctime (dernier changement de métadonnées).
+    \item \textbf{Pointeurs vers les blocs} : Adresses des blocs de données sur le disque.
+    \item \textbf{Compteur de références} : Nombre de liens physiques pointant vers cet inode.
+\end{itemize}
+
+\textbf{Important} : Le nom du fichier n'est PAS stocké dans l'inode. Il est stocké dans le répertoire parent, qui associe un nom à un numéro d'inode.
+
+\subsubsection{Blocs}
+
+Les données des fichiers sont stockées en blocs de taille fixe (généralement 4 Ko). Le système de fichiers gère l'allocation des blocs :
+
+\begin{itemize}
+    \item \textbf{Allocation} : Le système de fichiers maintient une bitmap ou une liste de blocs libres.
+    \item \textbf{Fragmentation} : Les fichiers peuvent être fragmentés (blocs non contigus), ce qui peut affecter les performances.
+    \item \textbf{Blocs indirects} : Pour les gros fichiers, les inodes utilisent des pointeurs indirects, doublement indirects, et triplement indirects pour référencer les blocs de données.
+\end{itemize}
+
+\subsubsection{Répertoires}
+
+Un répertoire est un fichier spécial qui contient une liste d'associations nom-inode :
+
+\begin{itemize}
+    \item Chaque entrée associe un nom de fichier à un numéro d'inode.
+    \item Les répertoires "." et ".." sont des liens spéciaux vers le répertoire courant et le parent.
+    \item La recherche dans un répertoire nécessite de parcourir les entrées jusqu'à trouver le nom correspondant.
+\end{itemize}
+
+\subsection{Liens}
+
+\subsubsection{Liens Physiques (Hard Links)}
+
+Un lien physique est une entrée de répertoire qui pointe vers le même inode qu'un autre nom :
+
+\begin{itemize}
+    \item \textbf{Partage d'inode} : Plusieurs noms peuvent pointer vers le même inode.
+    \item \textbf{Compteur de références} : L'inode maintient un compteur du nombre de liens.
+    \item \textbf{Suppression} : Un fichier n'est réellement supprimé que lorsque le dernier lien est supprimé (compteur = 0).
+    \item \textbf{Limitation} : Les liens physiques ne peuvent exister que dans le même système de fichiers.
+\end{itemize}
+
+\subsubsection{Liens Symboliques (Soft Links)}
+
+Un lien symbolique est un fichier spécial qui contient le chemin vers un autre fichier :
+
+\begin{itemize}
+    \item \textbf{Inode séparé} : Le lien symbolique a son propre inode.
+    \item \textbf{Contenu} : Le contenu du lien est le chemin (absolu ou relatif) vers le fichier cible.
+    \item \textbf{Transversal} : Peut pointer vers des fichiers dans d'autres systèmes de fichiers.
+    \item \textbf{Orphelin} : Si le fichier cible est supprimé, le lien devient "cassé" (dangling link).
+\end{itemize}
+
+\subsection{Types de Systèmes de Fichiers}
+
+\subsubsection{ext2/ext3/ext4}
+
+La famille ext (Extended File System) est la plus commune sur Linux :
+
+\begin{itemize}
+    \item \textbf{ext2} : Système de fichiers classique sans journalisation. Robuste mais nécessite fsck après un crash.
+    
+    \item \textbf{ext3} : Ajout de la journalisation à ext2. La journalisation enregistre les modifications avant de les appliquer, permettant une récupération rapide après un crash.
+    
+    \item \textbf{ext4} : Amélioration de ext3 avec support de volumes > 16 To, timestamps nanoseconde, allocation retardée (delayed allocation), et extents pour réduire la fragmentation.
+\end{itemize}
+
+\subsubsection{XFS}
+
+XFS est un système de fichiers haute performance conçu pour les gros fichiers :
+
+\begin{itemize}
+    \item \textbf{Journalisation} : Journalisation métadonnées pour récupération rapide.
+    \item \textbf{Extents} : Allocation par extents (plages contiguës) plutôt que par blocs individuels.
+    \item \textbf{Quotas} : Support natif des quotas utilisateur et groupe.
+    \item \textbf{Snapshots} : Support des snapshots pour sauvegardes cohérentes.
+\end{itemize}
+
+\subsection{Montage et Points de Montage}
+
+Le montage est le processus qui attache un système de fichiers à un point dans l'arborescence des répertoires :
+
+\begin{itemize}
+    \item \textbf{Point de montage} : Répertoire où le système de fichiers est attaché.
+    \item \textbf{Racine} : Le système de fichiers racine (/) est monté au démarrage.
+    \item \textbf{Propagation} : Les systèmes de fichiers montés masquent le contenu du répertoire de montage.
+    \item \textbf{Options} : Les options de montage (ro, rw, noexec, nosuid) contrôlent le comportement du système de fichiers monté.
+\end{itemize}
+
+% ============================================================
+% SECTION 5 : SÉCURITÉ ET PERMISSIONS
+% ============================================================
+
+\section{Sécurité et Permissions}
+
+\subsection{Modèle de Permissions Unix}
+
+Le modèle de sécurité Unix repose sur trois concepts fondamentaux :
+
+\subsubsection{Utilisateurs et Groupes}
+
+\begin{itemize}
+    \item \textbf{Utilisateur} : Chaque utilisateur a un identifiant unique (UID). L'utilisateur root (UID 0) a des privilèges complets.
+    
+    \item \textbf{Groupe} : Les utilisateurs appartiennent à un ou plusieurs groupes. Chaque groupe a un identifiant (GID).
+    
+    \item \textbf{Groupe primaire} : Chaque utilisateur a un groupe primaire, défini dans /etc/passwd.
+    
+    \item \textbf{Groupes secondaires} : Les utilisateurs peuvent appartenir à plusieurs groupes supplémentaires, définis dans /etc/group.
+\end{itemize}
+
+\subsubsection{Permissions Discrétionnaires (DAC)}
+
+Le Discretionary Access Control est le modèle de permissions classique :
+
+\begin{itemize}
+    \item \textbf{Propriétaire} : Le créateur du fichier en est le propriétaire.
+    
+    \item \textbf{Trois catégories} : Permissions pour le propriétaire (u), le groupe (g), et les autres (o).
+    
+    \item \textbf{Trois droits} : Lecture (r), écriture (w), exécution (x).
+    
+    \item \textbf{Discrétionnaire} : Le propriétaire peut modifier les permissions à sa discrétion.
+\end{itemize}
+
+\subsubsection{Droits Spéciaux}
+
+Trois bits spéciaux étendent le modèle de base :
+
+\begin{itemize}
+    \item \textbf{Setuid} : Permet à un processus d'hériter des privilèges du propriétaire du fichier exécutable, même s'il est lancé par un autre utilisateur. Risque de sécurité si mal utilisé.
+    
+    \item \textbf{Setgid} : Sur un fichier, permet l'exécution avec les privilèges du groupe. Sur un répertoire, force les nouveaux fichiers à appartenir au groupe du répertoire.
+    
+    \item \textbf{Sticky bit} : Sur un répertoire, empêche les utilisateurs non-propriétaires de supprimer ou renommer des fichiers dont ils ne sont pas propriétaires. Essentiel pour /tmp.
+\end{itemize}
+
+\subsection{ACLs (Access Control Lists)}
+
+Les ACLs étendent le modèle de permissions classique :
+
+\begin{itemize}
+    \item \textbf{Limitation du modèle classique} : Le modèle u/g/o ne permet qu'une seule entrée par catégorie.
+    
+    \item \textbf{ACLs} : Permettent de définir des permissions spécifiques pour plusieurs utilisateurs et groupes sur le même fichier.
+    
+    \item \textbf{Masque} : Le masque ACL limite les permissions effectives pour les groupes et les ACLs utilisateur, garantissant que les permissions ne dépassent pas le masque.
+    
+    \item \textbf{ACLs par défaut} : Sur les répertoires, les ACLs par défaut sont héritées par les nouveaux fichiers créés dans ce répertoire.
+\end{itemize}
+
+\subsection{SELinux : Contrôle d'Accès Obligatoire}
+
+SELinux implémente un modèle de sécurité plus strict que le DAC :
+
+\subsubsection{Principe MAC (Mandatory Access Control)}
+
+\begin{itemize}
+    \item \textbf{Obligatoire} : Les politiques de sécurité sont définies par l'administrateur système et ne peuvent pas être contournées par les utilisateurs, même root.
+    
+    \item \textbf{Type Enforcement} : Chaque processus et ressource a un type (ou contexte). Les règles définissent quels types de processus peuvent accéder à quels types de ressources.
+    
+    \item \textbf{Isolation} : Même si un processus est compromis, SELinux limite les dommages en restreignant les ressources accessibles selon le type du processus.
+\end{itemize}
+
+\subsubsection{Contexte SELinux}
+
+Chaque ressource (fichier, processus, port réseau) a un contexte SELinux de la forme :
+
+\texttt{user:role:type:level}
+
+\begin{itemize}
+    \item \textbf{User} : Identité SELinux (system\_u, user\_u, etc.)
+    
+    \item \textbf{Role} : Rôle dans la politique (object\_r pour les objets, system\_r pour les processus système)
+    
+    \item \textbf{Type} : Le composant le plus important. Détermine les permissions. Exemples :
+    \begin{itemize}
+        \item \texttt{httpd\_t} : Type pour les processus Apache
+        \item \texttt{httpd\_sys\_content\_t} : Type pour les fichiers web accessibles par Apache
+        \item \texttt{shadow\_t} : Type pour les fichiers de mots de passe
+    \end{itemize}
+    
+    \item \textbf{Level} : Niveau de sensibilité (pour Multi-Level Security)
+\end{itemize}
+
+\subsubsection{Modes SELinux}
+
+\begin{itemize}
+    \item \textbf{Enforcing} : Mode strict où les violations sont bloquées et enregistrées. Utilisé en production.
+    
+    \item \textbf{Permissive} : Mode de débogage où les violations sont enregistrées mais pas bloquées. Permet d'identifier les problèmes sans interrompre le fonctionnement.
+    
+    \item \textbf{Disabled} : SELinux est complètement désactivé. Nécessite un redémarrage pour être réactivé.
+\end{itemize}
+
+% ============================================================
+% SECTION 6 : DÉMARRAGE DU SYSTÈME
+% ============================================================
+
+\section{Démarrage du Système}
+
+\subsection{Séquence de Démarrage}
+
+Le processus de démarrage d'un système Linux suit une séquence précise :
+
+\subsubsection{Phase 1 : Matériel et Firmware}
+
+\begin{enumerate}
+    \item \textbf{Power-on} : Alimentation du système.
+    
+    \item \textbf{POST} : Power-On Self-Test. Le BIOS/UEFI vérifie le matériel de base.
+    
+    \item \textbf{Initialisation matérielle} : Détection et initialisation des composants matériels (CPU, RAM, disques, etc.)
+\end{enumerate}
+
+\subsubsection{Phase 2 : Bootloader}
+
+\begin{enumerate}
+    \item \textbf{Chargement du bootloader} : Le firmware charge le bootloader depuis le MBR (BIOS) ou la partition EFI (UEFI).
+    
+    \item \textbf{GRUB} : GRUB (GRand Unified Bootloader) affiche un menu permettant de choisir le système d'exploitation ou le noyau à charger.
+    
+    \item \textbf{Chargement du noyau} : GRUB charge le noyau Linux et l'initramfs en mémoire.
+    
+    \item \textbf{Passage au noyau} : GRUB transfère le contrôle au noyau avec les paramètres de démarrage.
+\end{enumerate}
+
+\subsubsection{Phase 3 : Noyau}
+
+\begin{enumerate}
+    \item \textbf{Initialisation du noyau} : Le noyau initialise ses structures de données internes.
+    
+    \item \textbf{Détection matérielle} : Le noyau détecte et initialise le matériel (processeurs, mémoire, périphériques).
+    
+    \item \textbf{Chargement des modules} : Les modules du noyau nécessaires sont chargés depuis l'initramfs ou depuis le système de fichiers.
+    
+    \item \textbf{Montage de la racine} : Le système de fichiers racine est monté. Si le disque racine est sur LVM, RAID, ou crypté, les modules nécessaires doivent être dans l'initramfs.
+    
+    \item \textbf{Libération de l'initramfs} : Une fois la racine montée, l'initramfs peut être libéré de la mémoire.
+\end{enumerate}
+
+\subsubsection{Phase 4 : Espace Utilisateur}
+
+\begin{enumerate}
+    \item \textbf{Processus init} : Le noyau lance le processus init (PID 1), qui est le premier processus utilisateur.
+    
+    \item \textbf{Systemd} : Sur les systèmes modernes, systemd remplace init et gère tous les services système.
+    
+    \item \textbf{Initialisation des services} : Les services système sont démarrés selon leurs dépendances et leur configuration.
+    
+    \item \textbf{Targets} : Systemd active les targets (équivalents des runlevels) pour mettre le système dans l'état désiré (multi-user, graphical, etc.)
+\end{enumerate}
+
+\subsection{Initramfs (Initial RAM Filesystem)}
+
+L'initramfs est un système de fichiers temporaire chargé en mémoire avant le montage de la racine :
+
+\begin{itemize}
+    \item \textbf{Objectif} : Fournir les outils et modules nécessaires pour accéder au système de fichiers racine.
+    
+    \item \textbf{Contenu} : Scripts d'initialisation, modules du noyau (pilotes), outils système (mkfs, fsck, etc.)
+    
+    \item \textbf{Nécessité} : Essentiel si la racine est sur LVM, RAID, système de fichiers crypté, ou réseau (NFS).
+    
+    \item \textbf{Exécution} : L'initramfs exécute des scripts qui montent la racine, puis passe le contrôle au système réel.
+\end{itemize}
+
+\subsection{Systemd : Gestionnaire de Services Moderne}
+
+Systemd est le remplaçant moderne de SysVinit :
+
+\subsubsection{Concepts Fondamentaux}
+
+\begin{itemize}
+    \item \textbf{Unités} : Systemd gère différents types d'unités : services, targets, mounts, sockets, timers, etc.
+    
+    \item \textbf{Dépendances} : Les unités peuvent avoir des dépendances (requires, wants, after) qui déterminent l'ordre de démarrage.
+    
+    \item \textbf{Parallélisation} : Systemd démarre les services en parallèle quand c'est possible, accélérant le boot.
+    
+    \item \textbf{Journalisation} : Journal intégré (journald) qui remplace syslog pour une meilleure intégration.
+\end{itemize}
+
+\subsubsection{Targets vs Runlevels}
+
+Les targets systemd remplacent les runlevels traditionnels :
+
+\begin{itemize}
+    \item \textbf{poweroff.target} : Équivalent du runlevel 0 (arrêt).
+    
+    \item \textbf{rescue.target} : Équivalent du runlevel 1 (mode maintenance).
+    
+    \item \textbf{multi-user.target} : Équivalent du runlevel 3 (multi-utilisateurs texte).
+    
+    \item \textbf{graphical.target} : Équivalent du runlevel 5 (multi-utilisateurs graphique).
+    
+    \item \textbf{reboot.target} : Équivalent du runlevel 6 (redémarrage).
+\end{itemize}
+
+% ============================================================
+% SECTION 7 : GESTION DES PAQUETS
+% ============================================================
+
+\section{Gestion des Paquets}
+
+\subsection{Concept de Paquetage}
+
+Un paquetage est une archive contenant un logiciel et ses métadonnées :
+
+\begin{itemize}
+    \item \textbf{Contenu} : Fichiers binaires, bibliothèques, fichiers de configuration, documentation.
+    
+    \item \textbf{Métadonnées} : Nom, version, description, dépendances, scripts d'installation.
+    
+    \item \textbf{Avantages} : Simplifie l'installation, la mise à jour, et la désinstallation. Gère automatiquement les dépendances.
+\end{itemize}
+
+\subsection{Gestion des Dépendances}
+
+Les dépendances sont une caractéristique clé des systèmes de paquets :
+
+\begin{itemize}
+    \item \textbf{Dépendances} : Un paquet peut nécessiter d'autres paquets pour fonctionner (bibliothèques, outils, etc.)
+    
+    \item \textbf{Résolution automatique} : Les gestionnaires de paquets (YUM, DNF, apt) résolvent automatiquement les dépendances.
+    
+    \item \textbf{Conflits} : Certains paquets peuvent être incompatibles entre eux. Le gestionnaire détecte et résout ces conflits.
+    
+    \item \textbf{Base de données} : Les métadonnées des paquets installés sont stockées dans une base de données (/var/lib/rpm/ pour RPM).
+\end{itemize}
+
+\subsection{Formats de Paquets}
+
+\subsubsection{RPM (RedHat Package Manager)}
+
+\begin{itemize}
+    \item \textbf{Format} : Format binaire utilisé par RedHat, Fedora, SUSE, CentOS.
+    
+    \item \textbf{Structure} : Archive cpio compressée avec en-tête contenant les métadonnées.
+    
+    \item \textbf{Outils} : rpm (bas niveau), yum/dnf (haut niveau avec résolution de dépendances).
+    
+    \item \textbf{Dépôts} : Les paquets sont stockés dans des dépôts (repositories) accessibles via HTTP, FTP, ou localement.
+\end{itemize}
+
+\subsubsection{DEB (Debian Package)}
+
+\begin{itemize}
+    \item \textbf{Format} : Format utilisé par Debian, Ubuntu, Mint.
+    
+    \item \textbf{Structure} : Archive ar contenant les fichiers de contrôle et les données.
+    
+    \item \textbf{Outils} : dpkg (bas niveau), apt/aptitude (haut niveau).
+    
+    \item \textbf{Dépôts} : Repositories organisés par distribution et composants (main, contrib, non-free).
+\end{itemize}
+
+% ============================================================
+% SECTION 8 : RÉSEAUX ET COMMUNICATION
+% ============================================================
+
+\section{Réseaux et Communication}
+
+\subsection{Modèle TCP/IP}
+
+Linux implémente complètement la pile de protocoles TCP/IP :
+
+\begin{itemize}
+    \item \textbf{Couche Application} : Services réseau (HTTP, SSH, FTP, etc.)
+    
+    \item \textbf{Couche Transport} : TCP (connexion fiable) et UDP (sans connexion, rapide).
+    
+    \item \textbf{Couche Réseau} : IP (Internet Protocol) pour le routage des paquets.
+    
+    \item \textbf{Couche Lien} : Interfaces réseau (Ethernet, Wi-Fi, etc.)
+\end{itemize}
+
+\subsection{Sockets}
+
+Les sockets sont l'interface de programmation pour la communication réseau :
+
+\begin{itemize}
+    \item \textbf{Abstraction} : Les sockets permettent aux applications de communiquer via le réseau de la même manière qu'avec des fichiers.
+    
+    \item \textbf{Types} : Sockets TCP (stream), UDP (datagram), Unix domain sockets (communication locale).
+    
+    \item \textbf{Adressage} : Les sockets utilisent des adresses IP et des ports pour identifier les points de communication.
+\end{itemize}
+
+\subsection{Interfaces Réseau}
+
+\begin{itemize}
+    \item \textbf{Configuration} : Les interfaces réseau sont configurées avec des adresses IP, masques de sous-réseau, et routes.
+    
+    \item \textbf{Activation} : Les interfaces peuvent être activées/désactivées dynamiquement.
+    
+    \item \textbf{Routage} : Le noyau maintient une table de routage pour déterminer comment acheminer les paquets.
+\end{itemize}
+
+% ============================================================
+% CONCLUSION
+% ============================================================
+
+\section*{Conclusion}
+
+Ce document a présenté les concepts théoriques fondamentaux qui sous-tendent le fonctionnement des systèmes Unix/Linux. Comprendre ces mécanismes internes est essentiel pour :
+
+\begin{itemize}
+    \item Diagnostiquer efficacement les problèmes système.
+    \item Optimiser les performances.
+    \item Sécuriser correctement le système.
+    \item Prendre des décisions éclairées lors de l'administration.
+\end{itemize}
+
+La maîtrise de ces concepts théoriques, combinée à la pratique des commandes et outils, forme la base d'une administration système compétente.
+
+\end{document}
+

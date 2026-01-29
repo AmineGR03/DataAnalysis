@@ -1,0 +1,33 @@
+# Fichiers temporaires LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# Fichiers de compilation
+*.bbl
+*.blg
+*.idx
+*.ilg
+*.ind
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*~
+
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environnements virtuels
+venv/
+env/
+ENV/
+

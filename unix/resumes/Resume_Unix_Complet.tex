@@ -11,6 +11,10 @@
 \usepackage{graphicx}
 \usepackage{enumitem}
 
+% Configuration de la table des matières : afficher jusqu'aux sous-sections
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
 \geometry{margin=2.5cm}
 \setlength{\headheight}{14.5pt}
 
@@ -56,7 +60,21 @@ Les parties suivantes sont exclues de ce r\'esum\'e :
 \tableofcontents
 \newpage
 
+% ============================================================
+% SECTION 1 : INTRODUCTION ET GÉNÉRALITÉS
+% ============================================================
+% Cette section présente l'historique et les concepts fondamentaux
+% d'Unix/Linux. Essentiel pour comprendre l'évolution et l'architecture
+% des systèmes Unix modernes.
+
 \section{Introduction et G\'en\'eralit\'es}
+
+% ------------------------------------------------------------
+% Sous-section : Histoire d'Unix
+% ------------------------------------------------------------
+% Comprendre l'historique permet de saisir l'évolution des systèmes
+% Unix et leur importance dans l'informatique moderne. Les dates clés
+% sont importantes pour l'examen.
 
 \subsection{Histoire d'Unix}
 \begin{itemize}
@@ -68,85 +86,199 @@ Les parties suivantes sont exclues de ce r\'esum\'e :
     \item \textbf{1991} : Cr\'eation du noyau Linux par Linus Torvalds
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Linux - Définition
+% ------------------------------------------------------------
+% IMPORTANT : Distinction entre le noyau Linux et le système d'exploitation
+% complet. Le noyau seul ne suffit pas, il faut les outils GNU pour
+% former un système complet (d'où GNU/Linux).
+
 \subsection{Linux : D\'efinition}
+% Le noyau Linux est le cœur du système, gérant les ressources matérielles
+% et les processus. Le système complet inclut également les outils utilisateur.
 Linux est le noyau d'un OS de type Unix, initi\'e par Linus Torvalds en 1991. Il d\'esigne un OS comparable \`a Windows ou Mac OS compos\'e de nombreux logiciels libres.
 
+% ------------------------------------------------------------
+% Sous-section : Caractéristiques de Linux
+% ------------------------------------------------------------
+% Ces caractéristiques expliquent pourquoi Linux est utilisé dans
+% de nombreux environnements (serveurs, supercalculateurs, embarqué).
+
 \subsection{Caract\'eristiques de Linux}
+% GPL (General Public License) : licence libre permettant modification
+% et redistribution. POSIX : standard garantissant compatibilité entre
+% systèmes Unix. SMP : Symmetric Multi-Processing, plusieurs processeurs
+% partageant la même mémoire.
 \begin{itemize}
-    \item Code source disponible (licence GPL)
-    \item Syst\`eme multit\^ache et multi-utilisateur
-    \item Multi-plateforme (Intel x86, Sun Sparc, etc.)
-    \item Gestion du multiprocesseur (SMP)
-    \item Compatible POSIX
-    \item Gestion des consoles virtuelles
-    \item Impl\'ementation compl\`ete de la pile TCP/IP
-    \item Interface graphique X-Window
+    \item Code source disponible (licence GPL) % Permet audit et modification
+    \item Syst\`eme multit\^ache et multi-utilisateur % Plusieurs tâches et utilisateurs simultanés
+    \item Multi-plateforme (Intel x86, Sun Sparc, etc.) % Portabilité importante
+    \item Gestion du multiprocesseur (SMP) % Performance sur serveurs
+    \item Compatible POSIX % Standard Unix garantissant compatibilité
+    \item Gestion des consoles virtuelles % Plusieurs sessions texte simultanées (Ctrl+Alt+F1-F6)
+    \item Impl\'ementation compl\`ete de la pile TCP/IP % Réseau natif
+    \item Interface graphique X-Window % Système de fenêtrage
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Architecture d'un système Linux
+% ------------------------------------------------------------
+% Architecture en couches : chaque couche communique avec les couches
+% adjacentes. Le kernel fait le lien entre matériel et logiciel.
+
 \subsection{Architecture d'un syst\`eme Linux}
+% Modèle en couches : séparation des responsabilités
+% 1. Matériel : disques, RAM, CPU, périphériques
+% 2. Kernel : gestion des ressources, processus, mémoire, fichiers
+% 3. Interface : outils utilisateur, shell, applications
 Trois couches :
 \begin{enumerate}
-    \item \textbf{Couche physique} : p\'eriph\'eriques + BIOS
-    \item \textbf{Couche syst\`eme} : kernel et processus
-    \item \textbf{Couche interface} : shell + X-Window
+    \item \textbf{Couche physique} : p\'eriph\'eriques + BIOS % Matériel et firmware
+    \item \textbf{Couche syst\`eme} : kernel et processus % Noyau gérant ressources
+    \item \textbf{Couche interface} : shell + X-Window % Interaction utilisateur
 \end{enumerate}
 
+% ------------------------------------------------------------
+% Sous-section : Le Shell
+% ------------------------------------------------------------
+% Le shell est l'interface en ligne de commande. Bash est le plus
+% répandu aujourd'hui. Chaque shell a sa syntaxe et ses fonctionnalités.
+
 \subsection{Le Shell}
+% Shell = interpréteur de commandes. Transforme commandes texte en
+% appels système. Bash (Bourne Again Shell) est le standard Linux.
+% Différents shells : syntaxe et fonctionnalités varient.
 Le Shell est l'interpr\'eteur de commande, interface entre l'utilisateur et l'OS. Types de shell disponibles : bash (sh), csh, ksh, zsh, etc.
+
+% ============================================================
+% SECTION 2 : STANDARD DE HIÉRARCHIE DES SYSTÈMES DE FICHIERS (FHS)
+% ============================================================
+% Le FHS standardise l'organisation des répertoires sous Linux/Unix.
+% Connaître cette structure est essentiel pour l'administration système.
+% Chaque répertoire a un rôle précis et des conventions à respecter.
 
 \section{Standard de Hi\'erarchie des Syst\`emes de Fichiers (FHS)}
 
+% ------------------------------------------------------------
+% Sous-section : Définition du FHS
+% ------------------------------------------------------------
+% Standard maintenu par Linux Foundation. Garantit cohérence entre
+% distributions et facilite administration et portabilité.
+
 \subsection{D\'efinition}
+% Le FHS définit où placer quels fichiers. Important pour :
+% - Trouver rapidement fichiers de configuration
+% - Comprendre structure système
+% - Respecter conventions lors installation logiciels
 Le FHS (Filesystem Hierarchy Standard) d\'efinit l'arborescence et le contenu des principaux r\'epertoires des syst\`emes de fichiers Linux/Unix.
 
 \subsection{R\'epertoires principaux}
 
+% ------------------------------------------------------------
+% Sous-sous-section : /bin, /sbin, /lib
+% ------------------------------------------------------------
+% Distinction importante : /bin et /sbin sont dans la partition racine
+% (nécessaires au démarrage minimal). /usr/bin et /usr/sbin peuvent
+% être sur partition séparée.
+
 \subsubsection{/bin, /sbin, /lib}
+% /bin : commandes essentielles disponibles même en mode single-user
+% /sbin : commandes système nécessitant privilèges root
+% /lib : bibliothèques partagées (.so) utilisées par programmes
 \begin{itemize}
-    \item \textbf{/bin} : ex\'ecutables pour tous les utilisateurs (ls, cp, mv, vi, bash)
-    \item \textbf{/sbin} : ex\'ecutables pour administration (shutdown, ifconfig, fsck)
-    \item \textbf{/lib} : biblioth\`eques partag\'ees (shared libraries)
+    \item \textbf{/bin} : ex\'ecutables pour tous les utilisateurs (ls, cp, mv, vi, bash) % Commandes de base
+    \item \textbf{/sbin} : ex\'ecutables pour administration (shutdown, ifconfig, fsck) % Nécessitent root
+    \item \textbf{/lib} : biblioth\`eques partag\'ees (shared libraries) % .so files, partagées entre programmes
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-sous-section : /dev
+% ------------------------------------------------------------
+% Les fichiers dans /dev sont des interfaces vers périphériques.
+% Lecture/écriture sur ces fichiers = communication avec matériel.
+% /dev/null : "poubelle", ignore tout. /dev/zero : source de zéros.
 
 \subsubsection{/dev}
+% Fichiers spéciaux : interface entre logiciel et matériel
+% Block devices : accès par blocs (disques) - /dev/sda, /dev/sdb
+% Character devices : accès caractère par caractère (terminaux) - /dev/tty
 Contient des fichiers sp\'eciaux (device files) correspondant aux p\'eriph\'eriques.
 \begin{itemize}
-    \item Block device files (disques)
-    \item Character device files (terminaux)
-    \item Commande : \texttt{mknod} pour cr\'eer des fichiers sp\'eciaux
+    \item Block device files (disques) % Accès par blocs, ex: /dev/sda1
+    \item Character device files (terminaux) % Accès séquentiel, ex: /dev/tty1
+    \item Commande : \texttt{mknod} pour cr\'eer des fichiers sp\'eciaux % Rarement utilisé directement
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-sous-section : /etc
+% ------------------------------------------------------------
+% Répertoire de configuration système. Modifications nécessitent souvent
+% root. Sauvegarder avant modifications importantes.
 
 \subsubsection{/etc}
+% Configuration système : fichiers texte modifiables par admin
+% /etc/passwd, /etc/shadow, /etc/group : gestion utilisateurs
+% /etc/fstab : montage automatique partitions
+% /etc/hosts : résolution noms locaux
 Contient les fichiers et scripts de configuration des diff\'erents services :
 \begin{itemize}
-    \item /etc/X11 : configuration X-window
-    \item /etc/rc.d : scripts de d\'emarrage
-    \item /etc/cron : t\^aches p\'eriodiques
-    \item /etc/skel : fichiers \`a recopier pour nouveaux utilisateurs
-    \item /etc/sysconfig : configuration des p\'eriph\'eriques
+    \item /etc/X11 : configuration X-window % Système graphique
+    \item /etc/rc.d : scripts de d\'emarrage % Scripts init (SysV)
+    \item /etc/cron : t\^aches p\'eriodiques % Cron jobs (crontab)
+    \item /etc/skel : fichiers \`a recopier pour nouveaux utilisateurs % Template home directory
+    \item /etc/sysconfig : configuration des p\'eriph\'eriques % Variables système
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-sous-section : /usr
+% ------------------------------------------------------------
+% /usr peut être monté en lecture seule ou sur partition séparée.
+% Contient programmes non essentiels au démarrage minimal.
 
 \subsubsection{/usr}
+% Unix System Resources : programmes utilisateur (non essentiels au boot)
+% Peut être sur partition séparée (montage après /)
+% /usr/local : installations locales (priorité sur /usr)
 Unix System Resources - programmes et utilitaires non indispensables :
 \begin{itemize}
-    \item /usr/bin, /usr/sbin, /usr/lib : \'equivalents de /bin, /sbin, /lib
-    \item /usr/etc : fichiers de configuration (rarement utilis\'e)
-    \item /usr/include : fichiers .h pour le compilateur C
-    \item /usr/local : arborescence propre \`a la machine
-    \item /usr/share : fichiers ind\'ependants de l'architecture
-    \item /usr/src : sources
+    \item /usr/bin, /usr/sbin, /usr/lib : \'equivalents de /bin, /sbin, /lib % Programmes additionnels
+    \item /usr/etc : fichiers de configuration (rarement utilis\'e) % Peu utilisé
+    \item /usr/include : fichiers .h pour le compilateur C % Headers compilation
+    \item /usr/local : arborescence propre \`a la machine % Installations locales, priorité
+    \item /usr/share : fichiers ind\'ependants de l'architecture % Docs, man, données
+    \item /usr/src : sources % Code source (optionnel)
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-sous-section : /var
+% ------------------------------------------------------------
+% Données variables : taille change pendant fonctionnement système.
+% Surveiller espace disque, surtout /var/log.
 
 \subsubsection{/var}
+% Variable data : fichiers qui changent pendant fonctionnement
+% Surveiller espace : /var/log peut grandir rapidement
+% /var/tmp : fichiers temporaires persistants (contrairement à /tmp)
 Fichiers dont la taille peut cro\^itre :
 \begin{itemize}
-    \item /var/lock : fichiers de verrouillage
-    \item /var/log : journaux du syst\`eme
-    \item /var/spool : files d'attentes (cron, lpd, mail)
-    \item /var/run : fichiers contenant les PID des services
+    \item /var/lock : fichiers de verrouillage % Évite accès concurrents
+    \item /var/log : journaux du syst\`eme % Logs système et applications
+    \item /var/spool : files d'attentes (cron, lpd, mail) % Files d'attente
+    \item /var/run : fichiers contenant les PID des services % PID files, sockets
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : /proc
+% ------------------------------------------------------------
+% Interface vers kernel. Fichiers virtuels = pas sur disque.
+% Permet consulter/modifier paramètres kernel sans redémarrer.
+
 \subsubsection{/proc}
+% Pseudo-filesystem : interface kernel en temps réel
+% /proc/cpuinfo : infos CPU
+% /proc/meminfo : infos mémoire
+% /proc/PID/ : informations sur processus spécifique
+% Modifications possibles : /proc/sys/ (sysctl)
 Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de donn\'ees du noyau. Fichiers virtuels cr\'e\'es dynamiquement en m\'emoire.
 
 \subsubsection{Autres r\'epertoires}
@@ -160,9 +292,25 @@ Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de do
     \item \textbf{/lost+found} : fichiers perdus et r\'ecup\'er\'es par fsck
 \end{itemize}
 
+% ============================================================
+% SECTION 3 : DÉMARRAGE ET ARRÊT DU SYSTÈME LINUX
+% ============================================================
+% Comprendre le processus de démarrage est crucial pour le dépannage.
+% Chaque étape peut être source de problèmes. Connaître les outils
+% de diagnostic (journalctl, systemctl) est essentiel.
+
 \section{D\'emarrage et Arr\^et du Syst\`eme Linux}
 
+% ------------------------------------------------------------
+% Sous-section : Processus de démarrage
+% ------------------------------------------------------------
+% Séquence critique : chaque étape doit réussir pour passer à la suivante.
+% Problèmes fréquents : GRUB corrompu, fichiers système manquants,
+% services défaillants.
+
 \subsection{Processus de d\'emarrage}
+% Séquence de boot : hardware -> firmware -> bootloader -> kernel -> init
+% Chaque étape peut échouer : diagnostic par étape
 \begin{enumerate}
     \item Power on
     \item BIOS/UEFI
@@ -172,39 +320,78 @@ Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de do
     \item System Ready
 \end{enumerate}
 
+% ------------------------------------------------------------
+% Sous-section : BIOS vs UEFI
+% ------------------------------------------------------------
+% UEFI est le successeur du BIOS. Plus moderne, plus de fonctionnalités.
+% GPT nécessaire pour disques > 2TB, supporté nativement par UEFI.
+
 \subsection{BIOS vs UEFI}
+% BIOS : ancien standard, limitations (MBR, 2TB max)
+% UEFI : moderne, Secure Boot, GPT natif, interface graphique
 \begin{itemize}
-    \item \textbf{BIOS} : Basic Input Output System, situ\'e sur la ROM de la carte m\`ere
-    \item \textbf{UEFI} : Unified Extensible Firmware Interface, remplace le BIOS
+    \item \textbf{BIOS} : Basic Input Output System, situ\'e sur la ROM de la carte m\`ere % Legacy, limité
+    \item \textbf{UEFI} : Unified Extensible Firmware Interface, remplace le BIOS % Moderne, extensible
     \begin{itemize}
-        \item Interface graphique \`a fen\^etre
-        \item Acc\`es \`a Internet
-        \item Support GPT (partitions $>$ 2TB)
-        \item Architecture modulaire
+        \item Interface graphique \`a fen\^etre % Plus convivial
+        \item Acc\`es \`a Internet % Mises à jour firmware
+        \item Support GPT (partitions $>$ 2TB) % Nécessaire pour gros disques
+        \item Architecture modulaire % Extensible par modules
     \end{itemize}
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Chargeur de démarrage (BootLoader)
+% ------------------------------------------------------------
+% GRUB2 est le bootloader standard Linux. Permet choisir OS/kernel au démarrage.
+% Ne jamais éditer grub.cfg directement : régénéré automatiquement.
 
 \subsection{Chargeur de d\'emarrage (BootLoader)}
+% GRUB2 : charge kernel et initramfs en mémoire
+% Menu au démarrage : choix OS/kernel, options de boot
+% Configuration : modifier /etc/default/grub puis grub2-mkconfig
 \begin{itemize}
-    \item \textbf{GRUB} : GRand Unified Bootloader (version 2)
+    \item \textbf{GRUB} : GRand Unified Bootloader (version 2) % Standard Linux
     \item Fichiers GRUB2 :
     \begin{itemize}
-        \item /etc/default/grub : param\`etres du menu
-        \item /etc/grub.d/ : scripts de cr\'eation du menu
-        \item /boot/grub2/grub.cfg : fichier de configuration final (g\'en\'er\'e automatiquement)
+        \item /etc/default/grub : param\`etres du menu % Timeout, options kernel
+        \item /etc/grub.d/ : scripts de cr\'eation du menu % Scripts génération menu
+        \item /boot/grub2/grub.cfg : fichier de configuration final (g\'en\'er\'e automatiquement) % Ne pas éditer !
     \end{itemize}
-    \item Commande : \texttt{grub2-mkconfig} pour r\'eg\'en\'erer grub.cfg
+    \item Commande : \texttt{grub2-mkconfig} pour r\'eg\'en\'erer grub.cfg % Après modification /etc/default/grub
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : InitRamFs (Initial RAM Disk)
+% ------------------------------------------------------------
+% Initramfs contient modules kernel nécessaires pour accéder au disque
+% racine. Si disque racine sur LVM/RAID/encrypté, modules dans initramfs.
 
 \subsection{InitRamFs (Initial RAM Disk)}
+% Initramfs : système de fichiers temporaire en RAM
+% Contient modules kernel pour accéder disque racine
+% Nécessaire si racine sur LVM, RAID, ou système de fichiers spécial
+% Après montage racine, initramfs peut être libéré
 \begin{itemize}
-    \item Syst\`eme de fichiers racine temporaire
-    \item Contient les pilotes n\'ecessaires pour acc\'eder au syst\`eme de fichiers racine
-    \item Charg\'e en m\'emoire par le bootloader
-    \item Permet de monter le "vrai" syst\`eme de fichiers racine
+    \item Syst\`eme de fichiers racine temporaire % En RAM, pas sur disque
+    \item Contient les pilotes n\'ecessaires pour acc\'eder au syst\`eme de fichiers racine % Modules kernel
+    \item Charg\'e en m\'emoire par le bootloader % GRUB charge initramfs
+    \item Permet de monter le "vrai" syst\`eme de fichiers racine % Transition vers système réel
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Gestionnaires de services
+% ------------------------------------------------------------
+% Deux systèmes principaux : SysVinit (ancien) et systemd (moderne).
+% systemd est maintenant standard sur la plupart des distributions.
+
 \subsection{Gestionnaires de services}
+
+% ------------------------------------------------------------
+% Sous-sous-section : SysVinit
+% ------------------------------------------------------------
+% Ancien système, encore présent sur certaines distributions.
+% Runlevels : différents modes de fonctionnement système.
 
 \subsubsection{SysVinit}
 \begin{itemize}
@@ -221,29 +408,39 @@ Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de do
     \item R\'epertoires /etc/rc.d/rcX.d : scripts par niveau
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Systemd
+% ------------------------------------------------------------
+% Systemd est le gestionnaire moderne, standard sur RHEL 7+, Ubuntu 15.04+.
+% Gère services, montages, sockets, timers. Plus rapide que SysVinit.
+
 \subsubsection{Systemd}
+% Systemd : gestionnaire système moderne
+% Unités : services, targets, mounts, sockets, timers
+% Dépendances : démarrage ordonné selon dépendances
+% Journal : logs intégrés (journalctl)
 \begin{itemize}
-    \item Remplace /sbin/init
-    \item Notion d'unit\'e (service, target, mount, socket)
+    \item Remplace /sbin/init % Processus PID 1
+    \item Notion d'unit\'e (service, target, mount, socket) % Types d'unités
     \item R\'epertoires :
     \begin{itemize}
-        \item /usr/lib/systemd/system : unit\'es syst\`eme par d\'efaut
-        \item /etc/systemd/system : unit\'es personnalis\'ees
+        \item /usr/lib/systemd/system : unit\'es syst\`eme par d\'efaut % Fournies par packages
+        \item /etc/systemd/system : unit\'es personnalis\'ees % Priorité, surcharge
     \end{itemize}
     \item Commandes principales :
     \begin{itemize}
-        \item \texttt{systemctl status service} : \'etat d'un service
-        \item \texttt{systemctl start/stop/restart service} : contr\^ole
-        \item \texttt{systemctl enable/disable service} : activation au boot
-        \item \texttt{systemctl mask/unmask service} : bloquer/d\'ebloquer
+        \item \texttt{systemctl status service} : \'etat d'un service % État détaillé
+        \item \texttt{systemctl start/stop/restart service} : contr\^ole % Contrôle service
+        \item \texttt{systemctl enable/disable service} : activation au boot % Démarrage automatique
+        \item \texttt{systemctl mask/unmask service} : bloquer/d\'ebloquer % Empêcher démarrage
     \end{itemize}
     \item Cibles (targets) remplacent les runlevels :
     \begin{itemize}
-        \item poweroff.target (runlevel 0)
-        \item rescue.target (runlevel 1)
-        \item multi-user.target (runlevel 3)
-        \item graphical.target (runlevel 5)
-        \item reboot.target (runlevel 6)
+        \item poweroff.target (runlevel 0) % Arrêt système
+        \item rescue.target (runlevel 1) % Mode maintenance
+        \item multi-user.target (runlevel 3) % Multi-utilisateurs texte
+        \item graphical.target (runlevel 5) % Multi-utilisateurs graphique
+        \item reboot.target (runlevel 6) % Redémarrage
     \end{itemize}
 \end{itemize}
 
@@ -277,7 +474,20 @@ Pseudo-syst\`eme de fichiers utilis\'e comme interface avec les structures de do
     \item \texttt{journalctl --since "1 hour ago"} : logs depuis 1 heure
 \end{itemize}
 
+% ============================================================
+% SECTION 4 : GESTION DES PAQUETAGES
+% ============================================================
+% La gestion des paquets est fondamentale pour l'administration.
+% RPM et YUM/DNF sont les outils standards sur RedHat/Fedora.
+% Comprendre dépendances et dépôts est essentiel.
+
 \section{Gestion des Paquetages}
+
+% ------------------------------------------------------------
+% Sous-section : Notion de paquetage
+% ------------------------------------------------------------
+% Paquet = archive + métadonnées + scripts installation.
+% Gestion automatique des dépendances évite problèmes manuels.
 
 \subsection{Notion de paquetage}
 Un paquet est un fichier archive contenant le logiciel \`a installer et des r\`egles d'installation :
@@ -294,28 +504,47 @@ Un paquet est un fichier archive contenant le logiciel \`a installer et des r\`e
     \item \textbf{deb} : Debian Package (Debian, Ubuntu, Mint)
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Paquetage RPM
+% ------------------------------------------------------------
+% RPM : format binaire RedHat. Outil de bas niveau.
+% YUM/DNF gèrent dépendances automatiquement, RPM non.
+
 \subsection{Paquetage RPM}
+% RPM : outil bas niveau, gestion manuelle dépendances
+% Base de données : métadonnées packages installés
+% Options : -i (install), -e (erase), -U (upgrade), -q (query), -V (verify)
 \begin{itemize}
-    \item Outil RPM : Redhat Package Manager
-    \item Base de donn\'ees : /var/lib/rpm/
+    \item Outil RPM : Redhat Package Manager % Format RedHat/Fedora/SUSE
+    \item Base de donn\'ees : /var/lib/rpm/ % Métadonnées packages installés
     \item Commandes principales :
     \begin{itemize}
-        \item \texttt{rpm -i fichier\_paquetage} : installer
-        \item \texttt{rpm -e nom\_du\_paquetage} : d\'esinstaller
-        \item \texttt{rpm -U fichier\_paquetage} : mettre \`a jour
-        \item \texttt{rpm -qa} : lister tous les packages install\'es
-        \item \texttt{rpm -q package} : version install\'ee
-        \item \texttt{rpm -qi package} : informations sur un package
-        \item \texttt{rpm -ql package} : liste des fichiers install\'es
-        \item \texttt{rpm -qf nom\_du\_fichier} : package auquel appartient un fichier
-        \item \texttt{rpm -V package} : v\'erification
-        \item \texttt{rpm -K package.rpm} : v\'erifier signature
+        \item \texttt{rpm -i fichier\_paquetage} : installer % Install package
+        \item \texttt{rpm -e nom\_du\_paquetage} : d\'esinstaller % Erase/remove
+        \item \texttt{rpm -U fichier\_paquetage} : mettre \`a jour % Upgrade
+        \item \texttt{rpm -qa} : lister tous les packages install\'es % Query all
+        \item \texttt{rpm -q package} : version install\'ee % Query version
+        \item \texttt{rpm -qi package} : informations sur un package % Query info
+        \item \texttt{rpm -ql package} : liste des fichiers install\'es % Query list
+        \item \texttt{rpm -qf nom\_du\_fichier} : package auquel appartient un fichier % Query file
+        \item \texttt{rpm -V package} : v\'erification % Verify integrity
+        \item \texttt{rpm -K package.rpm} : v\'erifier signature % Check signature
     \end{itemize}
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Gestionnaire de paquets YUM
+% ------------------------------------------------------------
+% YUM résout automatiquement dépendances. Plus simple que RPM direct.
+% Utilise dépôts configurés dans /etc/yum.repos.d/
+
 \subsection{Gestionnaire de paquets YUM}
+% YUM : résolution automatique dépendances
+% Dépôts : sources packages (local, réseau)
+% Cache : /var/cache/yum/ (peut être nettoyé)
 Yellowdog Updater Modifier - surcouche de RPM g\'erant t\'el\'echargements et d\'ependances.
 
+% Commandes YUM essentielles pour examen :
 Commandes principales :
 \begin{itemize}
     \item \texttt{yum list all} : lister tous les paquetages disponibles
@@ -334,9 +563,19 @@ Commandes principales :
     \item \texttt{yum history} : historique des transactions
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Gestionnaire de paquets DNF
+% ------------------------------------------------------------
+% DNF remplace YUM sur Fedora 22+, RHEL 8+. Syntaxe similaire,
+% performances améliorées, meilleure résolution dépendances.
+
 \subsection{Gestionnaire de paquets DNF}
+% DNF : successeur YUM, plus rapide
+% Syntaxe identique YUM (remplacement transparent)
+% Meilleure gestion dépendances
 Dandified Yum - successeur de YUM, plus performant.
 
+% Commandes DNF : mêmes que YUM, remplacement direct
 Commandes similaires \`a YUM :
 \begin{itemize}
     \item \texttt{dnf install/remove/update} : gestion des paquets
@@ -354,7 +593,20 @@ Commandes similaires \`a YUM :
     \item \texttt{yum-config-manager --enable nom\_du\_d\'ep\^ot} : activer un d\'ep\^ot
 \end{itemize}
 
+% ============================================================
+% SECTION 5 : GESTION DES UTILISATEURS
+% ============================================================
+% Gestion utilisateurs est une tâche administrative courante.
+% Comprendre fichiers /etc/passwd, /etc/shadow, /etc/group est essentiel.
+% Permissions et sudo sont cruciaux pour sécurité.
+
 \section{Gestion des Utilisateurs}
+
+% ------------------------------------------------------------
+% Sous-section : Types de comptes utilisateurs
+% ------------------------------------------------------------
+% UID 0 = root (super-utilisateur). UID < 1000 = comptes système.
+% UID >= 1000 = utilisateurs normaux.
 
 \subsection{Types de comptes utilisateurs}
 \begin{itemize}
@@ -371,28 +623,45 @@ Commandes similaires \`a YUM :
     \item \textbf{/etc/gshadow} : mots de passe des groupes (rarement utilis\'e)
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Structure de /etc/passwd
+% ------------------------------------------------------------
+% Fichier texte lisible par tous. Mots de passe dans /etc/shadow (sécurité).
+% Format : 7 champs séparés par ':'
+
 \subsection{Structure de /etc/passwd}
+% Format : 7 champs séparés par ':'
+% Lecture publique (permissions 644), mais mots de passe dans shadow
 Format : \texttt{login:passwd:uid:gid:comment:home:shell}
 \begin{itemize}
-    \item login : nom de connexion
-    \item passwd : x (indique pr\'esence de /etc/shadow)
-    \item uid : num\'ero unique de l'utilisateur
-    \item gid : num\'ero de groupe primaire
-    \item comment : nom complet
-    \item home : r\'epertoire personnel
-    \item shell : interpr\'eteur de commandes
+    \item login : nom de connexion % Identifiant utilisateur
+    \item passwd : x (indique pr\'esence de /etc/shadow) % 'x' = password dans shadow
+    \item uid : num\'ero unique de l'utilisateur % User ID, 0 = root
+    \item gid : num\'ero de groupe primaire % Group ID primaire
+    \item comment : nom complet % GECOS field, nom réel
+    \item home : r\'epertoire personnel % Home directory
+    \item shell : interpr\'eteur de commandes % Shell par défaut (/bin/bash, /sbin/nologin)
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Structure de /etc/shadow
+% ------------------------------------------------------------
+% Fichier sécurisé : lecture root uniquement (permissions 000 ou 400).
+% Contient mots de passe hashés et politiques d'expiration.
+
 \subsection{Structure de /etc/shadow}
+% Format : 9 champs séparés par ':'
+% Sécurité : permissions 000 ou 400, root uniquement
+% Hash : algorithmes (MD5, SHA-256, SHA-512, bcrypt)
 Format : \texttt{login:passwd:last:may:must:warn:inactif:disable}
 \begin{itemize}
-    \item passwd : mot de passe encod\'e
-    \item last : jours depuis modification (depuis 1/1/1970)
-    \item may : jours minimum avant changement
-    \item must : jours maximum avant expiration
-    \item warn : jours d'avertissement avant expiration
-    \item inactif : p\'eriode d'inactivit\'e maximale
-    \item disable : date de fermeture du compte
+    \item passwd : mot de passe encod\'e % Hash cryptographique
+    \item last : jours depuis modification (depuis 1/1/1970) % Epoch days
+    \item may : jours minimum avant changement % Minimum days
+    \item must : jours maximum avant expiration % Maximum days
+    \item warn : jours d'avertissement avant expiration % Warning period
+    \item inactif : p\'eriode d'inactivit\'e maximale % Inactive days
+    \item disable : date de fermeture du compte % Account expiration
 \end{itemize}
 
 \subsection{Commandes de gestion des utilisateurs}
@@ -475,7 +744,20 @@ Format : \texttt{login:passwd:last:may:must:warn:inactif:disable}
     \item \texttt{gpasswd -M utilisateur1,utilisateur2 groupe} : d\'efinir liste de membres
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Droits d'accès
+% ------------------------------------------------------------
+% Permissions Unix : base de la sécurité. Trois catégories (u, g, o)
+% et trois droits (r, w, x). Calcul octal : r=4, w=2, x=1.
+
 \subsection{Droits d'acc\`es}
+
+% ------------------------------------------------------------
+% Sous-sous-section : Permissions traditionnelles
+% ------------------------------------------------------------
+% Permissions : propriétaire (u), groupe (g), autres (o)
+% Droits : lecture (r=4), écriture (w=2), exécution (x=1)
+% Mode octal : somme des droits (ex: 755 = rwxr-xr-x)
 
 \subsubsection{Permissions traditionnelles}
 Trois cat\'egories : propri\'etaire (u), groupe (g), autres (o)
@@ -502,20 +784,43 @@ Trois cat\'egories : propri\'etaire (u), groupe (g), autres (o)
     \item \texttt{chown -R utilisateur:groupe r\'epertoire} : r\'ecursif
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-section : Gestion des privilèges : sudo
+% ------------------------------------------------------------
+% Sudo permet exécuter commandes avec privilèges élevés sans être root.
+% Configuration dans /etc/sudoers. Toujours utiliser visudo (vérification syntaxe).
+
 \subsection{Gestion des privil\`eges : sudo}
+% Sudo : "substitute user do" ou "super user do"
+% Permet élévation privilèges temporaire
+% visudo : éditeur sécurisé (vérifie syntaxe avant sauvegarde)
+% Format : qui où=(qui_cible) quoi
 \begin{itemize}
-    \item Fichier de configuration : /etc/sudoers
-    \item \texttt{visudo} : \'editer de fa\c{c}on s\'ecuris\'ee
-    \item Format : \texttt{utilisateur h\^ote=(utilisateur\_cible) commandes}
+    \item Fichier de configuration : /etc/sudoers % Configuration sudo
+    \item \texttt{visudo} : \'editer de fa\c{c}on s\'ecuris\'ee % Toujours utiliser visudo !
+    \item Format : \texttt{utilisateur h\^ote=(utilisateur\_cible) commandes} % Syntaxe sudoers
     \item Exemples :
     \begin{itemize}
-        \item \texttt{jean ALL=(ALL:ALL) ALL} : tout faire
-        \item \texttt{\%wheel ALL=(ALL) ALL} : groupe wheel
-        \item \texttt{marie ALL=(root) NOPASSWD:/usr/sbin/reboot} : sans mot de passe
+        \item \texttt{jean ALL=(ALL:ALL) ALL} : tout faire % Privilèges complets
+        \item \texttt{\%wheel ALL=(ALL) ALL} : groupe wheel % Groupe avec privilèges
+        \item \texttt{marie ALL=(root) NOPASSWD:/usr/sbin/reboot} : sans mot de passe % Commande spécifique sans password
     \end{itemize}
 \end{itemize}
 
+% ============================================================
+% SECTION 6 : GESTION DES DISQUES ET SYSTÈMES DE FICHIERS
+% ============================================================
+% Gestion disques : partitionnement, formatage, montage.
+% Comprendre MBR vs GPT, types de systèmes de fichiers, inodes.
+% Montage automatique via /etc/fstab.
+
 \section{Gestion des Disques et Syst\`emes de Fichiers}
+
+% ------------------------------------------------------------
+% Sous-section : Types de disques
+% ------------------------------------------------------------
+% Différents types de stockage : HDD (mécanique), SSD (flash), NVMe (PCIe).
+% Performances et coûts varient.
 
 \subsection{Types de disques}
 \begin{itemize}
@@ -526,19 +831,28 @@ Trois cat\'egories : propri\'etaire (u), groupe (g), autres (o)
 
 \subsection{Partitionnement}
 
+% ------------------------------------------------------------
+% Sous-sous-section : MBR vs GPT
+% ------------------------------------------------------------
+% MBR : ancien standard, limitations. GPT : moderne, plus flexible.
+% GPT recommandé pour disques > 2TB et systèmes UEFI.
+
 \subsubsection{MBR vs GPT}
+% MBR : Master Boot Record, secteur 0 du disque
+% GPT : GUID Partition Table, plus moderne, redondance
+% Conversion possible : gdisk peut convertir MBR->GPT
 \begin{itemize}
     \item \textbf{MBR} : Master Boot Record
     \begin{itemize}
-        \item Limite : 4 partitions primaires maximum
-        \item Taille max : 2.2 To par partition
-        \item Compatible BIOS
+        \item Limite : 4 partitions primaires maximum % Ou 3 primaires + 1 étendue
+        \item Taille max : 2.2 To par partition % Limitation 32 bits
+        \item Compatible BIOS % Legacy
     \end{itemize}
     \item \textbf{GPT} : GUID Partition Table
     \begin{itemize}
-        \item Jusqu'\`a 128 partitions
-        \item Taille tr\`es grande (jusqu'\`a 9.4 Zo)
-        \item Compatible UEFI et BIOS
+        \item Jusqu'\`a 128 partitions % Standard, peut être plus
+        \item Taille tr\`es grande (jusqu'\`a 9.4 Zo) % 64 bits, énorme
+        \item Compatible UEFI et BIOS % Moderne, rétrocompatible
     \end{itemize}
 \end{itemize}
 
@@ -595,31 +909,50 @@ Un syst\`eme de fichiers d\'efinit l'organisation d'un volume physique ou logiqu
     \item \textbf{Inode} : descripteur d'un fichier contenant les m\'etadonn\'ees
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Inode
+% ------------------------------------------------------------
+% Inode = métadonnées fichier. Nom fichier dans répertoire parent.
+% Limite inodes par partition : vérifier avec df -i.
+
 \subsubsection{Inode}
+% Inode : index node, descripteur fichier
+% Chaque fichier a un inode unique dans le système de fichiers
+% Nom fichier : stocké dans répertoire parent, pointe vers inode
+% Limite : nombre max inodes défini à la création du système de fichiers
 Contient :
 \begin{itemize}
-    \item Type de l'inode (fichier, r\'epertoire)
-    \item Propri\'etaire (UID, GID)
-    \item Droits d'acc\`es
-    \item Dates (atime, mtime, ctime)
-    \item Taille
-    \item Adresse : pointeurs sur les blocs du disque
+    \item Type de l'inode (fichier, r\'epertoire) % Type : fichier, répertoire, lien, device
+    \item Propri\'etaire (UID, GID) % Propriétaire et groupe
+    \item Droits d'acc\`es % Permissions (rwx)
+    \item Dates (atime, mtime, ctime) % Access, modify, change time
+    \item Taille % Taille en octets
+    \item Adresse : pointeurs sur les blocs du disque % Pointeurs vers blocs données
 \end{itemize}
-\textbf{Important} : Les inodes ne contiennent pas les noms des fichiers.
+\textbf{Important} : Les inodes ne contiennent pas les noms des fichiers. % Nom dans répertoire parent
+
+% ------------------------------------------------------------
+% Sous-sous-section : Liens
+% ------------------------------------------------------------
+% Deux types : liens physiques (hard links) et symboliques (soft links).
+% Liens physiques : même inode, même fichier. Symboliques : pointeur.
 
 \subsubsection{Liens}
+% Hard link : même inode, compteur de références
+% Soft link : fichier séparé pointant vers nom de fichier
+% Suppression : hard link décrémente compteur, soft link devient orphelin
 \begin{itemize}
     \item \textbf{Lien physique} : \texttt{ln fichier lien}
     \begin{itemize}
-        \item Partage le m\^eme inode
-        \item Reste valide si fichier d\'eplac\'e
-        \item Doit rester dans la m\^eme partition
+        \item Partage le m\^eme inode % Même inode = même fichier
+        \item Reste valide si fichier d\'eplac\'e % Tant que inode existe
+        \item Doit rester dans la m\^eme partition % Limitation système de fichiers
     \end{itemize}
     \item \textbf{Lien symbolique} : \texttt{ln -s fichier lien}
     \begin{itemize}
-        \item Pointe vers le nom du fichier
-        \item Peut traverser les partitions
-        \item Ressemble aux raccourcis
+        \item Pointe vers le nom du fichier % Contient chemin, pas inode
+        \item Peut traverser les partitions % Pas de limitation
+        \item Ressemble aux raccourcis % Peut pointer vers inexistant
     \end{itemize}
 \end{itemize}
 
@@ -633,19 +966,38 @@ Contient :
     \item \texttt{umount point\_de\_montage} : d\'emonter
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Fichier /etc/fstab
+% ------------------------------------------------------------
+% /etc/fstab : montage automatique au démarrage.
+% UUID recommandé plutôt que /dev/sdX (plus stable).
+
 \subsubsection{Fichier /etc/fstab}
+% fstab : File System Table
+% Montage automatique au boot (mount -a)
+% UUID : identifiant unique, plus fiable que /dev/sdX
+% Options : defaults, noauto, user, etc.
 Configuration statique des montages. Structure :
 \begin{verbatim}
 périphérique  point_montage  type  options  dump  fsck
 \end{verbatim}
 \begin{itemize}
-    \item dump : activer sauvegarde (1 ou 0)
-    \item fsck : ordre de v\'erification (0, 1, 2, 3)
+    \item dump : activer sauvegarde (1 ou 0) % Utilisé par dump (backup)
+    \item fsck : ordre de v\'erification (0, 1, 2, 3) % 0=pas de vérif, 1=racine, 2+=autres
 \end{itemize}
 
 \subsection{Gestion de l'espace Swap}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Définition du Swap
+% ------------------------------------------------------------
+% Swap : extension mémoire sur disque. Plus lent que RAM.
+% Taille recommandée : 1-2x RAM pour systèmes avec peu de RAM.
+
 \subsubsection{D\'efinition}
+% Swap : espace disque utilisé comme mémoire virtuelle
+% Utilisé quand RAM saturée : pages inactives déplacées
+% Performance : beaucoup plus lent que RAM (disque vs mémoire)
 Zone de swap utilis\'ee lorsque la m\'emoire physique (RAM) est remplie. Les pages m\'emoire inactives sont d\'eplac\'ees dans la zone de swap.
 
 \subsubsection{Configuration}
@@ -664,11 +1016,33 @@ Zone de swap utilis\'ee lorsque la m\'emoire physique (RAM) est remplie. Les pag
     \item \texttt{swapoff /swapfile} : d\'esactiver
 \end{itemize}
 
+% ============================================================
+% SECTION 7 : SÉCURITÉ SOUS LINUX
+% ============================================================
+% Sécurité : ACLs, droits spéciaux (setuid, setgid, sticky),
+% SELinux. Comprendre ces mécanismes est crucial pour l'examen.
+
 \section{S\'ecurit\'e sous Linux}
+
+% ------------------------------------------------------------
+% Sous-section : ACLs (Liste de Contrôle d'Accès)
+% ------------------------------------------------------------
+% ACLs : permissions avancées au-delà des 3 catégories standard.
+% Permet permissions spécifiques par utilisateur/groupe.
 
 \subsection{ACLs : Liste de Contr\^ole d'Acc\`es}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Définition des ACLs
+% ------------------------------------------------------------
+% ACLs : permissions granulaire. Plusieurs utilisateurs/groups
+% peuvent avoir permissions différentes sur même fichier.
+
 \subsubsection{D\'efinition}
+% ACLs : Access Control Lists
+% Extension permissions Unix classiques (u, g, o)
+% Permet permissions spécifiques par utilisateur/groupe
+% Nécessite système de fichiers avec support ACL (ext4, XFS)
 Les ACLs permettent d'\'etendre le nombre d'utilisateurs et de groupes ayant des droits sur un m\^eme fichier, au-del\`a des permissions traditionnelles.
 
 \subsubsection{Commandes}
@@ -697,50 +1071,104 @@ Le masque limite les autorisations effectives pour les groupes et entr\'ees sp\'
 
 \subsection{Droits sp\'eciaux}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Setuid
+% ------------------------------------------------------------
+% Setuid : exécution avec droits propriétaire. Risque sécurité
+% si mal utilisé. Exemple : /usr/bin/passwd (modifie /etc/shadow).
+
 \subsubsection{Setuid}
+% Setuid : Set User ID
+% Permet élévation privilèges temporaire
+% Risque sécurité : programme compromis = compromission système
+% Exemples : passwd, su, sudo
 Permet \`a un utilisateur non-root d'ex\'ecuter un programme avec les droits du propri\'etaire du programme.
 \begin{itemize}
-    \item \texttt{chmod u+s programme} : activer
-    \item \texttt{chmod 4xxx programme} : mode absolu
-    \item Affichage : 's' \`a la place de 'x' pour user
-    \item 'S' si pas de droit x
+    \item \texttt{chmod u+s programme} : activer % Setuid bit
+    \item \texttt{chmod 4xxx programme} : mode absolu % 4xxx = setuid activé
+    \item Affichage : 's' \`a la place de 'x' pour user % 's' = setuid + execute
+    \item 'S' si pas de droit x % 'S' = setuid sans execute
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-sous-section : Setgid
+% ------------------------------------------------------------
+% Setgid : sur fichiers = exécution avec droits groupe.
+% Sur répertoires = héritage groupe (utile pour collaboration).
 
 \subsubsection{Setgid}
+% Setgid : Set Group ID
+% Sur fichiers : exécution avec privilèges groupe propriétaire
+% Sur répertoires : héritage groupe pour nouveaux fichiers
+% Utile : collaboration équipe, fichiers créés appartiennent au groupe
 \begin{itemize}
-    \item \textbf{Sur fichiers} : s'ex\'ecute avec les privil\`eges du groupe propri\'etaire
-    \item \textbf{Sur r\'epertoires} : fichiers cr\'e\'es h\'eritent du groupe du r\'epertoire
-    \item \texttt{chmod g+s r\'epertoire} : activer
-    \item \texttt{chmod 2xxx r\'epertoire} : mode absolu
-    \item Affichage : 's' \`a la place de 'x' pour groupe
+    \item \textbf{Sur fichiers} : s'ex\'ecute avec les privil\`eges du groupe propri\'etaire % Exécution groupe
+    \item \textbf{Sur r\'epertoires} : fichiers cr\'e\'es h\'eritent du groupe du r\'epertoire % Héritage groupe
+    \item \texttt{chmod g+s r\'epertoire} : activer % Setgid bit
+    \item \texttt{chmod 2xxx r\'epertoire} : mode absolu % 2xxx = setgid activé
+    \item Affichage : 's' \`a la place de 'x' pour groupe % 's' = setgid + execute
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Sticky Bit
+% ------------------------------------------------------------
+% Sticky bit : sur répertoires partagés (ex: /tmp).
+% Empêche suppression fichiers d'autres utilisateurs.
+
 \subsubsection{Sticky Bit}
+% Sticky bit : sur répertoires uniquement
+% Empêche suppression fichiers par non-propriétaires
+% Exemple classique : /tmp (tous peuvent créer, seul propriétaire peut supprimer)
+% Historique : sur fichiers exécutables, gardait en mémoire (obsolète)
 Sur les r\'epertoires, emp\^eche les utilisateurs non-root de supprimer ou modifier les fichiers dont ils ne sont pas propri\'etaires.
 \begin{itemize}
-    \item \texttt{chmod +t r\'epertoire} : activer
-    \item \texttt{chmod 1xxx r\'epertoire} : mode absolu
-    \item Affichage : 't' \`a la place de 'x' pour other
-    \item 'T' si pas de droit x
+    \item \texttt{chmod +t r\'epertoire} : activer % Sticky bit
+    \item \texttt{chmod 1xxx r\'epertoire} : mode absolu % 1xxx = sticky activé
+    \item Affichage : 't' \`a la place de 'x' pour other % 't' = sticky + execute
+    \item 'T' si pas de droit x % 'T' = sticky sans execute
 \end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : SELinux (Security-Enhanced Linux)
+% ------------------------------------------------------------
+% SELinux : sécurité renforcée, contrôle d'accès obligatoire (MAC).
+% Même root doit respecter politiques. Mode enforcing/permissive/disabled.
 
 \subsection{SELinux : Security-Enhanced Linux}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Introduction à SELinux
+% ------------------------------------------------------------
+% SELinux : couche sécurité supplémentaire au-dessus permissions Unix.
+% Contrôle d'accès obligatoire (MAC) vs discrétionnaire (DAC).
+
 \subsubsection{Introduction}
+% SELinux : développé par NSA, intégré dans noyau Linux
+% Couche supplémentaire : même si permissions Unix OK, SELinux peut bloquer
+% Politique : règles définissant qui peut faire quoi
 SELinux est une architecture de s\'ecurit\'e pour syst\`emes Linux permettant aux administrateurs de mieux contr\^oler les acc\`es au syst\`eme. C'est une couche suppl\'ementaire de s\'ecurit\'e.
 
+% ------------------------------------------------------------
+% Sous-sous-section : DAC vs MAC
+% ------------------------------------------------------------
+% DAC : permissions classiques Unix (propriétaire décide).
+% MAC : politique système obligatoire (même root respecte règles).
+
 \subsubsection{DAC vs MAC}
+% DAC : Discretionary = discrétionnaire, propriétaire contrôle
+% MAC : Mandatory = obligatoire, politique système
+% SELinux = implémentation MAC avec Type Enforcement
 \begin{itemize}
     \item \textbf{DAC} (Discretionary Access Control) : contr\^ole d'acc\`es discr\'etionnaire
     \begin{itemize}
-        \item Permissions classiques (r, w, x)
-        \item Droits sp\'eciaux (setuid, setgid, sticky bit)
-        \item ACLs
+        \item Permissions classiques (r, w, x) % Propriétaire décide
+        \item Droits sp\'eciaux (setuid, setgid, sticky bit) % Extensions permissions
+        \item ACLs % Permissions avancées
     \end{itemize}
     \item \textbf{MAC} (Mandatory Access Control) : contr\^ole d'acc\`es obligatoire
     \begin{itemize}
-        \item Politique de s\'ecurit\'e \`a laquelle m\^eme root doit se soumettre
-        \item Impl\'ementation : SELinux avec mod\`ele TE (Type Enforcement)
+        \item Politique de s\'ecurit\'e \`a laquelle m\^eme root doit se soumettre % Même root limité
+        \item Impl\'ementation : SELinux avec mod\`ele TE (Type Enforcement) % Types et règles
     \end{itemize}
 \end{itemize}
 
@@ -752,25 +1180,43 @@ SELinux est une architecture de s\'ecurit\'e pour syst\`emes Linux permettant au
     \item \textbf{Labeling} : chaque ressource poss\`ede une \'etiquette (contexte SELinux)
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Contexte SELinux
+% ------------------------------------------------------------
+% Contexte = étiquette SELinux sur chaque ressource.
+% Format : user:role:type:level. Type est le plus important.
+
 \subsubsection{Contexte SELinux}
+% Contexte : étiquette SELinux sur fichiers, processus, ports
+% Format : 4 composants séparés par ':'
+% Type : composant principal, détermine permissions
 Format : \texttt{user:role:type:level}
 \begin{itemize}
-    \item \textbf{user} : utilisateur SELinux (system\_u, unconfined\_u)
-    \item \textbf{role} : r\^ole (object\_r pour objets)
-    \item \textbf{type} : le plus important, d\'etermine les permissions
+    \item \textbf{user} : utilisateur SELinux (system\_u, unconfined\_u) % Identité SELinux
+    \item \textbf{role} : r\^ole (object\_r pour objets) % Rôle dans politique
+    \item \textbf{type} : le plus important, d\'etermine les permissions % Type = permissions
     \begin{itemize}
-        \item httpd\_t : processus serveur web
-        \item httpd\_sys\_content\_t : fichiers accessibles par Apache
-        \item shadow\_t : fichier des mots de passe
+        \item httpd\_t : processus serveur web % Type processus Apache
+        \item httpd\_sys\_content\_t : fichiers accessibles par Apache % Type fichiers web
+        \item shadow\_t : fichier des mots de passe % Type fichiers sensibles
     \end{itemize}
-    \item \textbf{level} : niveau de sensibilit\'e (s0)
+    \item \textbf{level} : niveau de sensibilit\'e (s0) % Multi-Level Security (MLS)
 \end{itemize}
 
+% ------------------------------------------------------------
+% Sous-sous-section : Modes de fonctionnement SELinux
+% ------------------------------------------------------------
+% Trois modes : enforcing (production), permissive (débogage), disabled.
+% Changer mode nécessite souvent redémarrage.
+
 \subsubsection{Modes de fonctionnement}
+% Enforcing : production, sécurité maximale
+% Permissive : développement, logs sans blocage
+% Disabled : désactivé (nécessite redémarrage pour réactiver)
 \begin{itemize}
-    \item \textbf{Enforcing} : mode strict, acc\`es restreints, refus des acc\`es non autoris\'es
-    \item \textbf{Permissive} : mode d\'ebogage, r\`egles v\'erifi\'ees, erreurs enregistr\'ees mais acc\`es non bloqu\'e
-    \item \textbf{Disabled} : d\'esactiv\'e, aucune restriction
+    \item \textbf{Enforcing} : mode strict, acc\`es restreints, refus des acc\`es non autoris\'es % Production
+    \item \textbf{Permissive} : mode d\'ebogage, r\`egles v\'erifi\'ees, erreurs enregistr\'ees mais acc\`es non bloqu\'e % Débogage
+    \item \textbf{Disabled} : d\'esactiv\'e, aucune restriction % Désactivé
 \end{itemize}
 
 \subsubsection{Commandes}
@@ -802,8 +1248,524 @@ SELINUXTYPE=targeted
     \item \texttt{shadow\_t} : fichiers de mots de passe
 \end{itemize}
 
+% ============================================================
+% SECTION 8 : GESTION DES PROCESSUS
+% ============================================================
+% La gestion des processus est fondamentale en administration Unix.
+% Comprendre le cycle de vie des processus, les signaux, et les outils
+% de monitoring est essentiel pour le dépannage et l'optimisation.
+
+\section{Gestion des Processus}
+
+% ------------------------------------------------------------
+% Sous-section : Notions de base
+% ------------------------------------------------------------
+% Processus = instance d'un programme en cours d'exécution.
+% Chaque processus a un PID unique. Processus parent/enfant.
+
+\subsection{Notions de base}
+\begin{itemize}
+    \item \textbf{Processus} : instance d'un programme en cours d'ex\'ecution % Programme en mémoire
+    \item \textbf{PID} : Process ID, identifiant unique du processus % Unique, réutilisé après terminaison
+    \item \textbf{PPID} : Parent Process ID, PID du processus parent % Hiérarchie processus
+    \item \textbf{Processus parent/enfant} : relation hi\'erarchique % Fork/exec modèle
+    \item \textbf{Processus zombie} : processus termin\'e mais non r\'ecup\'er\'e par parent % Ressources non libérées
+    \item \textbf{Processus orphelin} : processus dont le parent est mort, adopt\'e par init (PID 1) % Init devient parent
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : États d'un processus
+% ------------------------------------------------------------
+% États : Running, Sleeping, Stopped, Zombie.
+% Transition entre états selon événements système.
+
+\subsection{\'Etats d'un processus}
+\begin{itemize}
+    \item \textbf{R (Running)} : en cours d'ex\'ecution ou pr\^et \`a s'ex\'ecuter % Actif ou prêt
+    \item \textbf{S (Sleeping)} : en attente d'un \'ev\'enement (interruptible) % Attente I/O, signal
+    \item \textbf{D (Disk sleep)} : en attente d'un \'ev\'enement (non interruptible) % Attente disque, critique
+    \item \textbf{T (Stopped)} : arr\^et\'e par un signal (SIGSTOP, SIGTSTP) % Suspendu, Ctrl+Z
+    \item \textbf{Z (Zombie)} : termin\'e mais non r\'ecup\'er\'e par le parent % Ressources non libérées
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Commandes de visualisation
+% ------------------------------------------------------------
+% ps : instantané. top/htop : temps réel. pstree : arborescence.
+
+\subsection{Commandes de visualisation}
+
+\subsubsection{ps (Process Status)}
+% ps : affiche instantané des processus
+% Options : -e (tous), -f (format complet), -u (par utilisateur), -aux (BSD style)
+\begin{itemize}
+    \item \texttt{ps} : processus de la session courante % Session actuelle
+    \item \texttt{ps -e} : tous les processus % Tous les processus
+    \item \texttt{ps -f} : format complet (UID, PID, PPID, CMD) % Format détaillé
+    \item \texttt{ps -u utilisateur} : processus d'un utilisateur % Filtre utilisateur
+    \item \texttt{ps aux} : tous les processus (format BSD) % Style BSD, très utilisé
+    \item \texttt{ps -ef} : format étendu, tous processus % Format étendu
+    \item \texttt{ps -o pid,ppid,cmd} : colonnes personnalisées % Colonnes spécifiques
+\end{itemize}
+
+\subsubsection{top et htop}
+% top : monitoring temps réel, interactif
+% htop : version améliorée, plus conviviale
+\begin{itemize}
+    \item \texttt{top} : affichage dynamique des processus % Temps réel, interactif
+    \begin{itemize}
+        \item Tri : P (CPU), M (m\'emoire), T (temps) % Trier par colonne
+        \item Actions : k (tuer), r (renice), q (quitter) % Actions interactives
+    \end{itemize}
+    \item \texttt{htop} : version am\'elior\'ee de top % Interface améliorée
+    \item \texttt{top -u utilisateur} : filtrer par utilisateur % Filtre utilisateur
+    \item \texttt{top -p PID} : suivre processus sp\'ecifique % Processus spécifique
+\end{itemize}
+
+\subsubsection{pstree}
+% pstree : arborescence des processus
+% Montre relations parent/enfant visuellement
+\begin{itemize}
+    \item \texttt{pstree} : arborescence des processus % Hiérarchie visuelle
+    \item \texttt{pstree -p} : afficher les PIDs % Avec PIDs
+    \item \texttt{pstree -u} : afficher les utilisateurs % Avec utilisateurs
+    \item \texttt{pstree utilisateur} : processus d'un utilisateur % Filtre utilisateur
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Exécution de processus
+% ------------------------------------------------------------
+% Exécution foreground/background. Jobs. nohup pour processus persistants.
+
+\subsection{Ex\'ecution de processus}
+
+\subsubsection{Foreground et Background}
+% Foreground : processus bloquant terminal
+% Background : processus en arrière-plan, terminal libre
+\begin{itemize}
+    \item \textbf{Foreground} : processus au premier plan, bloque le terminal % Bloquant
+    \item \textbf{Background} : processus en arri\`ere-plan, terminal libre % Non bloquant
+    \item \texttt{commande \&} : lancer en arri\`ere-plan % & à la fin
+    \item \texttt{Ctrl+Z} : suspendre processus foreground (SIGTSTP) % Suspendre
+    \item \texttt{bg} : reprendre en arri\`ere-plan % Background
+    \item \texttt{fg} : ramener au premier plan % Foreground
+    \item \texttt{fg \%1} : ramener job num\'ero 1 % Job spécifique
+\end{itemize}
+
+\subsubsection{Gestion des jobs}
+% Jobs : processus lancés depuis shell actuel
+% jobs : liste des jobs de la session
+\begin{itemize}
+    \item \texttt{jobs} : lister les jobs de la session % Jobs actifs
+    \item \texttt{jobs -l} : avec PIDs % Avec PIDs
+    \item \texttt{kill \%1} : tuer job num\'ero 1 % Tuer job
+    \item \texttt{nohup commande \&} : processus persistant apr\`es d\'econnexion % Survit à déconnexion
+    \item \texttt{disown} : d\'etacher job du shell % Détacher du shell
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Signaux
+% ------------------------------------------------------------
+% Signaux : communication inter-processus. SIGTERM, SIGKILL, SIGSTOP, etc.
+% kill : envoyer signal. killall : par nom.
+
+\subsection{Signaux}
+
+\subsubsection{D\'efinition}
+% Signaux : mécanisme de communication inter-processus
+% Permet contrôler processus (arrêt, reprise, redémarrage)
+Les signaux sont des m\'ecanismes de communication inter-processus permettant de contr\^oler l'ex\'ecution des processus.
+
+\subsubsection{Signaux courants}
+\begin{itemize}
+    \item \textbf{SIGHUP (1)} : hang up, red\'emarrer processus % Terminaison gracieuse, rechargement config
+    \item \textbf{SIGINT (2)} : interruption (Ctrl+C) % Interruption utilisateur
+    \item \textbf{SIGQUIT (3)} : quitter avec core dump (Ctrl+\textbackslash) % Core dump
+    \item \textbf{SIGTERM (15)} : terminaison gracieuse (d\'efaut kill) % Arrêt propre
+    \item \textbf{SIGKILL (9)} : terminaison forc\'ee (non interceptable) % Force brute, non ignorable
+    \item \textbf{SIGSTOP (19)} : arr\^et temporaire (non interceptable) % Suspendre
+    \item \textbf{SIGCONT (18)} : continuer processus arr\^et\'e % Reprendre
+    \item \textbf{SIGTSTP (20)} : arr\^et depuis terminal (Ctrl+Z) % Suspendre depuis terminal
+\end{itemize}
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{kill PID} : envoyer SIGTERM (terminaison gracieuse) % Par défaut SIGTERM
+    \item \texttt{kill -9 PID} : envoyer SIGKILL (terminaison forc\'ee) % Force brute
+    \item \texttt{kill -HUP PID} : envoyer SIGHUP (red\'emarrage) % Rechargement
+    \item \texttt{kill -STOP PID} : suspendre processus % Suspendre
+    \item \texttt{kill -CONT PID} : reprendre processus % Reprendre
+    \item \texttt{killall nom\_processus} : tuer tous processus par nom % Par nom
+    \item \texttt{pkill nom\_processus} : tuer processus par nom (pattern) % Pattern matching
+    \item \texttt{killall -9 firefox} : forcer arr\^et Firefox % Exemple pratique
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Priorités et nice
+% ------------------------------------------------------------
+% Nice : priorité d'exécution. Valeurs -20 (priorité max) à +19 (priorité min).
+% renice : modifier priorité processus existant.
+
+\subsection{Priorit\'es et nice}
+% Nice : valeur de priorité d'exécution
+% Plus nice élevé = moins prioritaire
+% Root peut utiliser nice négatif (priorité élevée)
+\begin{itemize}
+    \item \textbf{Nice} : valeur de priorit\'e d'ex\'ecution % Priorité CPU
+    \item Plage : -20 (priorit\'e maximale) \`a +19 (priorit\'e minimale) % Valeurs possibles
+    \item Par d\'efaut : nice = 0 % Priorité normale
+    \item \texttt{nice -n 10 commande} : lancer avec nice = 10 % Lancer avec priorité
+    \item \texttt{renice +10 PID} : modifier priorit\'e processus existant % Modifier priorité
+    \item \texttt{renice -5 -u utilisateur} : modifier pour tous processus utilisateur % Par utilisateur
+    \item Seul root peut utiliser nice n\'egatif % Privilège root nécessaire
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Monitoring système
+% ------------------------------------------------------------
+% Outils de monitoring : vmstat, iostat, sar, free, df, du.
+
+\subsection{Monitoring syst\`eme}
+
+\subsubsection{M\'emoire}
+\begin{itemize}
+    \item \texttt{free -h} : \'etat m\'emoire (RAM et swap) % Mémoire disponible
+    \item \texttt{free -m} : en m\'egaoctets % En MB
+    \item \texttt{vmstat 2 5} : statistiques toutes les 2 secondes, 5 fois % Statistiques mémoire
+    \item \texttt{cat /proc/meminfo} : informations d\'etaill\'ees % Détails mémoire
+\end{itemize}
+
+\subsubsection{CPU et I/O}
+\begin{itemize}
+    \item \texttt{uptime} : temps de fonctionnement et charge moyenne % Charge système
+    \item \texttt{vmstat} : statistiques CPU, m\'emoire, I/O % Vue d'ensemble
+    \item \texttt{iostat} : statistiques disques et I/O % Statistiques disques
+    \item \texttt{sar} : collecte et rapports d'activit\'e syst\`eme % System Activity Reporter
+    \item \texttt{mpstat} : statistiques par processeur % Par CPU
+\end{itemize}
+
+\subsubsection{Processus et ressources}
+\begin{itemize}
+    \item \texttt{pgrep processus} : trouver PID par nom % Recherche PID
+    \item \texttt{pidof processus} : PID d'un processus % PID simple
+    \item \texttt{lsof} : fichiers ouverts par processus % List Open Files
+    \item \texttt{lsof -p PID} : fichiers ouverts par processus % Par PID
+    \item \texttt{lsof -u utilisateur} : fichiers ouverts par utilisateur % Par utilisateur
+    \item \texttt{fuser fichier} : processus utilisant un fichier % Processus utilisant fichier
+    \item \texttt{strace commande} : tracer appels syst\`eme % System calls tracing
+\end{itemize}
+
+% ============================================================
+% SECTION 9 : TÂCHES PLANIFIÉES
+% ============================================================
+% Automatisation des tâches : cron pour tâches périodiques,
+% at pour tâches ponctuelles. systemd timers alternative moderne.
+
+\section{T\^aches Planifi\'ees}
+
+% ------------------------------------------------------------
+% Sous-section : Cron
+% ------------------------------------------------------------
+% Cron : tâches périodiques. Format : minute heure jour mois jour-semaine.
+% Crontab : fichier de configuration. /etc/cron.d/ pour scripts système.
+
+\subsection{Cron}
+
+\subsubsection{D\'efinition}
+% Cron : démon pour tâches périodiques
+% Crontab : fichier de configuration des tâches
+Cron est un d\'emon permettant d'ex\'ecuter des commandes \`a intervalles r\'eguliers.
+
+\subsubsection{Format crontab}
+% Format : 5 champs + commande
+% Minute (0-59), Heure (0-23), Jour (1-31), Mois (1-12), Jour semaine (0-7, 0 et 7 = dimanche)
+Format : \texttt{minute heure jour mois jour\_semaine commande}
+\begin{itemize}
+    \item \textbf{minute} : 0-59 % Minutes
+    \item \textbf{heure} : 0-23 % Heures
+    \item \textbf{jour} : 1-31 % Jour du mois
+    \item \textbf{mois} : 1-12 ou jan-dec % Mois
+    \item \textbf{jour\_semaine} : 0-7 (0 et 7 = dimanche) ou sun-sat % Jour semaine
+    \item Caract\`eres sp\'eciaux :
+    \begin{itemize}
+        \item \texttt{*} : toutes les valeurs % Toutes valeurs
+        \item \texttt{,} : liste de valeurs (ex: 1,3,5) % Liste
+        \item \texttt{-} : plage (ex: 1-5) % Plage
+        \item \texttt{/} : intervalle (ex: */5 = toutes les 5 minutes) % Intervalle
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Exemples crontab}
+\begin{itemize}
+    \item \texttt{0 * * * *} : toutes les heures \`a la minute 0 % Chaque heure
+    \item \texttt{0 0 * * *} : tous les jours \`a minuit % Quotidien
+    \item \texttt{0 0 * * 0} : tous les dimanches \`a minuit % Hebdomadaire
+    \item \texttt{*/5 * * * *} : toutes les 5 minutes % Toutes les 5 minutes
+    \item \texttt{0 9-17 * * 1-5} : chaque heure de 9h \`a 17h, jours ouvrables % Heures ouvrables
+    \item \texttt{0 0 1 * *} : premier jour de chaque mois % Mensuel
+\end{itemize}
+
+\subsubsection{Commandes crontab}
+\begin{itemize}
+    \item \texttt{crontab -e} : \'editer crontab utilisateur % Éditer
+    \item \texttt{crontab -l} : lister crontab utilisateur % Lister
+    \item \texttt{crontab -r} : supprimer crontab utilisateur % Supprimer
+    \item \texttt{crontab -u utilisateur -e} : \'editer crontab d'un utilisateur (root) % Par utilisateur
+    \item \texttt{crontab fichier} : installer crontab depuis fichier % Depuis fichier
+\end{itemize}
+
+\subsubsection{Fichiers et r\'epertoires}
+\begin{itemize}
+    \item \texttt{/var/spool/cron/} : crontabs utilisateurs % Crontabs utilisateurs
+    \item \texttt{/etc/crontab} : crontab syst\`eme (format avec utilisateur) % Crontab système
+    \item \texttt{/etc/cron.d/} : scripts cron additionnels % Scripts additionnels
+    \item \texttt{/etc/cron.hourly/} : scripts horaires % Scripts horaires
+    \item \texttt{/etc/cron.daily/} : scripts quotidiens % Scripts quotidiens
+    \item \texttt{/etc/cron.weekly/} : scripts hebdomadaires % Scripts hebdomadaires
+    \item \texttt{/etc/cron.monthly/} : scripts mensuels % Scripts mensuels
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : at
+% ------------------------------------------------------------
+% at : tâches ponctuelles à exécuter une fois à une date/heure.
+% atd : démon nécessaire.
+
+\subsection{at : t\^aches ponctuelles}
+% at : exécution unique à date/heure spécifiée
+% atd : démon nécessaire (service atd)
+\begin{itemize}
+    \item \texttt{at 14:30} : ex\'ecuter \`a 14h30 aujourd'hui % Heure aujourd'hui
+    \item \texttt{at now + 1 hour} : dans 1 heure % Dans 1 heure
+    \item \texttt{at 3pm tomorrow} : demain \`a 15h % Demain
+    \item \texttt{at 10:00 2024-12-25} : date sp\'ecifique % Date spécifique
+    \item \texttt{atq} : lister t\^aches planifi\'ees % Lister tâches
+    \item \texttt{atrm num\'ero} : supprimer t\^ache % Supprimer tâche
+    \item \texttt{at -l} : \'equivalent de atq % Lister
+    \item \texttt{at -d num\'ero} : \'equivalent de atrm % Supprimer
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : systemd timers
+% ------------------------------------------------------------
+% Alternative moderne à cron. Unités .timer et .service.
+% Plus de fonctionnalités : dépendances, logs intégrés.
+
+\subsection{systemd timers}
+% systemd timers : alternative moderne à cron
+% Plus de fonctionnalités : dépendances, logs, activation conditionnelle
+\begin{itemize}
+    \item Alternative moderne \`a cron % Remplacement cron
+    \item Unit\'es : \texttt{.timer} (planification) et \texttt{.service} (t\^ache) % Deux unités
+    \item \texttt{systemctl list-timers} : lister timers actifs % Lister timers
+    \item \texttt{systemctl start timer.timer} : activer timer % Activer
+    \item \texttt{systemctl enable timer.timer} : activer au boot % Au démarrage
+    \item Avantages : d\'ependances, logs int\'egr\'es, activation conditionnelle % Avantages
+\end{itemize}
+
+% ============================================================
+% SECTION 10 : VARIABLES D'ENVIRONNEMENT ET SHELL
+% ============================================================
+% Variables d'environnement : configuration système et utilisateur.
+% Shell : configuration, alias, fonctions, redirections.
+
+\section{Variables d'Environnement et Shell}
+
+% ------------------------------------------------------------
+% Sous-section : Variables d'environnement
+% ------------------------------------------------------------
+% Variables système et utilisateur. PATH, HOME, USER, etc.
+% export : rendre variable disponible aux processus enfants.
+
+\subsection{Variables d'environnement}
+
+\subsubsection{D\'efinition}
+% Variables d'environnement : configuration accessible aux processus
+% Héritées par processus enfants
+Les variables d'environnement sont des valeurs stock\'ees et accessibles par tous les processus.
+
+\subsubsection{Variables importantes}
+\begin{itemize}
+    \item \texttt{PATH} : chemins de recherche des ex\'ecutables % Chemins exécutables
+    \item \texttt{HOME} : r\'epertoire personnel % Home directory
+    \item \texttt{USER} : nom d'utilisateur actuel % Utilisateur
+    \item \texttt{UID} : identifiant utilisateur % User ID
+    \item \texttt{SHELL} : shell par d\'efaut % Shell par défaut
+    \item \texttt{PWD} : r\'epertoire courant % Current directory
+    \item \texttt{PS1} : prompt principal % Prompt shell
+    \item \texttt{PS2} : prompt secondaire (continuation) % Prompt continuation
+    \item \texttt{LANG} : langue et encodage % Locale
+    \item \texttt{EDITOR} : \'editeur par d\'efaut % Éditeur
+\end{itemize}
+
+\subsubsection{Commandes}
+\begin{itemize}
+    \item \texttt{echo \$VARIABLE} : afficher variable % Afficher
+    \item \texttt{export VARIABLE=valeur} : d\'efinir et exporter % Définir et exporter
+    \item \texttt{VARIABLE=valeur commande} : variable pour commande uniquement % Variable locale
+    \item \texttt{env} : lister toutes les variables % Lister toutes
+    \item \texttt{set} : lister variables shell et environnement % Variables shell
+    \item \texttt{unset VARIABLE} : supprimer variable % Supprimer
+\end{itemize}
+
+\subsubsection{Fichiers de configuration}
+\begin{itemize}
+    \item \texttt{/etc/profile} : configuration globale (tous shells) % Global, tous shells
+    \item \texttt{/etc/bashrc} : configuration bash globale % Bash global
+    \item \texttt{\textasciitilde/.bashrc} : configuration bash utilisateur (non-login) % Bash utilisateur
+    \item \texttt{\textasciitilde/.bash\_profile} : configuration bash login % Bash login
+    \item \texttt{\textasciitilde/.profile} : configuration shell login % Shell login
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Redirections et pipes
+% ------------------------------------------------------------
+% Redirections : >, >>, <, 2>, &>, |.
+% Pipes : chaînage de commandes.
+
+\subsection{Redirections et pipes}
+
+\subsubsection{Redirections}
+\begin{itemize}
+    \item \texttt{commande > fichier} : rediriger sortie standard (\'ecrase) % Écraser fichier
+    \item \texttt{commande >> fichier} : rediriger sortie standard (ajoute) % Ajouter
+    \item \texttt{commande < fichier} : rediriger entr\'ee standard % Entrée depuis fichier
+    \item \texttt{commande 2> fichier} : rediriger erreurs % Erreurs
+    \item \texttt{commande > fichier 2>\&1} : rediriger sortie et erreurs % Sortie et erreurs
+    \item \texttt{commande \&> fichier} : rediriger sortie et erreurs (bash) % Toutes sorties
+    \item \texttt{commande 2>/dev/null} : ignorer erreurs % Ignorer erreurs
+    \item \texttt{commande > fichier 2>\&1} : sortie et erreurs dans fichier % Redirection combinée
+\end{itemize}
+
+\subsubsection{Pipes}
+\begin{itemize}
+    \item \texttt{commande1 | commande2} : sortie commande1 vers entr\'ee commande2 % Pipe standard
+    \item \texttt{commande1 | tee fichier | commande2} : sauvegarder et continuer % Tee : sauvegarder
+    \item \texttt{commande | grep pattern} : filtrer sortie % Filtrer
+    \item \texttt{commande | sort} : trier sortie % Trier
+    \item \texttt{commande | head -n 10} : 10 premi\`eres lignes % Premières lignes
+    \item \texttt{commande | tail -n 10} : 10 derni\`eres lignes % Dernières lignes
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : Alias et fonctions shell
+% ------------------------------------------------------------
+% Alias : raccourcis commandes. Fonctions : scripts inline.
+
+\subsection{Alias et fonctions shell}
+
+\subsubsection{Alias}
+\begin{itemize}
+    \item \texttt{alias ll='ls -l'} : cr\'eer alias % Créer alias
+    \item \texttt{alias} : lister tous les alias % Lister
+    \item \texttt{unalias ll} : supprimer alias % Supprimer
+    \item Alias permanents : ajouter dans \texttt{\textasciitilde/.bashrc} % Persistance
+\end{itemize}
+
+\subsubsection{Fonctions shell}
+\begin{itemize}
+    \item Fonctions : scripts inline dans shell % Scripts inline
+    \item Syntaxe : \texttt{nom() \{ commandes; \}} % Syntaxe fonction
+    \item Fonctions permanentes : ajouter dans \texttt{\textasciitilde/.bashrc} % Persistance
+\end{itemize}
+
+% ============================================================
+% SECTION 11 : RECHERCHE DE FICHIERS
+% ============================================================
+% Recherche efficace : find (puissant), locate (rapide), which, whereis.
+
+\section{Recherche de Fichiers}
+
+% ------------------------------------------------------------
+% Sous-section : find
+% ------------------------------------------------------------
+% find : recherche puissante et flexible. Critères multiples.
+% Exécution de commandes sur résultats.
+
+\subsection{find : recherche avanc\'ee}
+
+\subsubsection{Syntaxe de base}
+% find : recherche récursive puissante
+% Syntaxe : find [chemin] [critères] [actions]
+\texttt{find [chemin] [crit\`eres] [actions]}
+
+\subsubsection{Crit\`eres de recherche}
+\begin{itemize}
+    \item \texttt{find . -name "*.txt"} : par nom (sensible \`a la casse) % Par nom
+    \item \texttt{find . -iname "*.txt"} : par nom (insensible \`a la casse) % Insensible casse
+    \item \texttt{find / -type f} : fichiers uniquement % Fichiers
+    \item \texttt{find / -type d} : r\'epertoires uniquement % Répertoires
+    \item \texttt{find . -size +100M} : taille sup\'erieure \`a 100 Mo % Par taille
+    \item \texttt{find . -size -1k} : taille inf\'erieure \`a 1 Ko % Taille petite
+    \item \texttt{find . -mtime -7} : modifi\'e dans les 7 derniers jours % Par date modification
+    \item \texttt{find . -mtime +30} : modifi\'e il y a plus de 30 jours % Ancien
+    \item \texttt{find . -user utilisateur} : appartenant \`a utilisateur % Par propriétaire
+    \item \texttt{find . -group groupe} : appartenant \`a groupe % Par groupe
+    \item \texttt{find . -perm 644} : permissions exactes % Par permissions
+    \item \texttt{find . -perm -u+x} : avec setuid % Permissions spéciales
+\end{itemize}
+
+\subsubsection{Actions}
+\begin{itemize}
+    \item \texttt{find . -name "*.log" -delete} : supprimer fichiers trouv\'es % Supprimer
+    \item \texttt{find . -name "*.txt" -exec ls -l \{\} \textbackslash;} : ex\'ecuter commande % Exécuter commande
+    \item \texttt{find . -name "*.txt" -ok rm \{\} \textbackslash;} : confirmation avant action % Avec confirmation
+    \item \texttt{find . -name "*.txt" -print0 | xargs -0 rm} : passer \`a xargs % Avec xargs
+\end{itemize}
+
+\subsubsection{Exemples pratiques}
+\begin{itemize}
+    \item \texttt{find /var/log -name "*.log" -mtime +30 -delete} : nettoyer vieux logs % Nettoyage logs
+    \item \texttt{find /home -type f -size +100M} : gros fichiers % Gros fichiers
+    \item \texttt{find . -name "core" -type f} : fichiers core % Fichiers core
+    \item \texttt{find /etc -name "*.conf" -exec grep -l "pattern" \{\} \textbackslash;} : chercher pattern % Recherche dans fichiers
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : locate
+% ------------------------------------------------------------
+% locate : recherche rapide via base de données. updatedb : mettre à jour.
+
+\subsection{locate : recherche rapide}
+% locate : recherche via base de données pré-indexée
+% Plus rapide que find, mais base doit être à jour
+\begin{itemize}
+    \item \texttt{locate fichier} : rechercher fichier % Recherche simple
+    \item \texttt{locate -i fichier} : insensible \`a la casse % Insensible casse
+    \item \texttt{locate -r "pattern"} : expression r\'eguli\`ere % Regex
+    \item \texttt{updatedb} : mettre \`a jour base de donn\'ees (root) % Mettre à jour base
+    \item Avantage : tr\`es rapide % Performance
+    \item Inconv\'enient : base peut \^etre obsol\`ete % Base peut être obsolète
+\end{itemize}
+
+% ------------------------------------------------------------
+% Sous-section : which, whereis, type
+% ------------------------------------------------------------
+% which : chemin exécutable. whereis : binaire, source, man. type : type de commande.
+
+\subsection{which, whereis, type}
+\begin{itemize}
+    \item \texttt{which commande} : chemin de l'ex\'ecutable % Chemin exécutable
+    \item \texttt{whereis commande} : binaire, source, man % Toutes occurrences
+    \item \texttt{type commande} : type de commande (builtin, alias, fonction) % Type commande
+    \item \texttt{type -a commande} : toutes occurrences % Toutes occurrences
+\end{itemize}
+
+% ============================================================
+% CONCLUSION
+% ============================================================
+% Ce résumé couvre les concepts fondamentaux d'administration Unix/Linux.
+% Pour l'examen, maîtriser les commandes essentielles et comprendre
+% les concepts théoriques (inodes, permissions, processus de démarrage).
+
 \section*{Conclusion}
 
+% Points clés pour l'examen :
+% - Commandes système : systemctl, journalctl, mount, chmod, chown
+% - Fichiers configuration : /etc/passwd, /etc/shadow, /etc/fstab, /etc/sudoers
+% - Concepts : inodes, permissions (rwx, setuid, setgid, sticky), ACLs, SELinux
+% - Processus démarrage : BIOS/UEFI -> GRUB -> Kernel -> systemd
+% - Gestion paquets : rpm, yum, dnf
 Ce r\'esum\'e couvre les aspects essentiels de l'administration Unix/Linux, en excluant les parties sp\'ecifi\'ees (int\'egration r\'eseaux, LVM, RAID, sauvegarde/restauration, quotas). Les concepts pr\'esent\'es sont fondamentaux pour la gestion d'un syst\`eme Linux en environnement professionnel.
 
 \end{document}
