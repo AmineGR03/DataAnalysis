@@ -1,0 +1,1103 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{booktabs}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Android}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{}
+{0em}
+{}
+
+% Configuration du code
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Métadonnées
+\title{Résumé Complet - Développement Android\\
+\large Interface Utilisateur, Persistance, Communication, API}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Chapitre 3 : Interface Utilisateur sous Android}
+
+\subsection{Introduction aux Vues et Contrôles}
+
+\subsubsection{Concepts fondamentaux}
+
+\textbf{Vue (View)} : Chaque élément visible et interactif sur l'écran d'une application Android est une instance de la classe \texttt{View} ou d'une de ses sous-classes. Que ce soit un bouton, un champ de texte ou une image, tout est une "Vue".
+
+\textbf{ViewGroup} : Permet de regrouper des éléments graphiques. Des ViewGroup particuliers sont prédéfinis : ce sont des gabarits (layout) qui proposent une prédisposition des objets graphiques.
+
+\textbf{Déclaration XML} : Les déclarations se font principalement en XML, ce qui évite de passer par les instanciations Java.
+
+\subsubsection{Contrôles basiques}
+
+\begin{itemize}
+    \item \textbf{TextView} : Le contrôle le plus simple pour afficher du texte statique. Il est non éditable par l'utilisateur.
+    \begin{itemize}
+        \item \texttt{android:text} : Le contenu textuel
+        \item \texttt{android:textSize} : La taille du texte
+    \end{itemize}
+    
+    \item \textbf{EditText} : Permet aux utilisateurs de saisir du texte, essentiel pour les formulaires et les champs de recherche.
+    \begin{itemize}
+        \item \texttt{android:hint} : Texte d'indication affiché si le champ est vide
+        \item \texttt{android:inputType} : Spécifie le type de données attendu (ex: texte, nombre)
+    \end{itemize}
+    
+    \item \textbf{Button} : Contrôle interactif qui déclenche une action lorsqu'il est pressé.
+    \begin{itemize}
+        \item \texttt{android:text} : Le texte affiché sur le bouton
+        \item \texttt{android:onClick} : Permet de lier l'action à une méthode dans le code
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Contrôles de sélection}
+
+\begin{itemize}
+    \item \textbf{CheckBox} : Choix multiples. Permet à l'utilisateur de sélectionner ou de désélectionner une ou plusieurs options indépendamment.
+    
+    \item \textbf{RadioGroup + RadioButton} : Choix unique. Le RadioGroup regroupe des RadioButton pour assurer un choix exclusif parmi un ensemble d'options. Les RadioButton doivent être contenus dans un RadioGroup.
+\end{itemize}
+
+\subsection{Positionnement et Layouts}
+
+\subsubsection{Types de Layouts}
+
+\begin{itemize}
+    \item \textbf{LinearLayout} : Organisation simple des vues en ligne (horizontale ou verticale). Idéal pour les listes et les arrangements linéaires simples.
+    
+    \item \textbf{ConstraintLayout} : Positionnement flexible basé sur des contraintes relatives. Recommandé pour toutes les interfaces complexes et performantes.
+    
+    \item \textbf{FrameLayout} : Utilisé pour afficher un seul élément ou superposer plusieurs vues. Idéal pour les fragments ou les superpositions d'éléments.
+    
+    \item \textbf{TableLayout} : Organisation des vues en lignes et colonnes, similaire à une table HTML. Convient pour l'affichage de données tabulaires.
+    
+    \item \textbf{RelativeLayout} : Positionnement relatif. Permet de positionner chaque élément enfant par rapport aux bords de son conteneur parent ou par rapport à d'autres vues.
+\end{itemize}
+
+\subsubsection{Attributs des Layouts}
+
+\begin{itemize}
+    \item \texttt{android:layout\_width} et \texttt{android:layout\_height} :
+    \begin{itemize}
+        \item \texttt{"match\_parent"} : L'élément remplit tout l'espace disponible de son parent
+        \item \texttt{"wrap\_content"} : L'élément prend la taille minimale nécessaire pour contenir son contenu
+    \end{itemize}
+    
+    \item \texttt{android:orientation} : Spécifie la direction d'empilement des vues enfants pour les layouts linéaires (LinearLayout).
+    \begin{itemize}
+        \item \texttt{"vertical"} : Les éléments sont empilés de haut en bas
+        \item \texttt{"horizontal"} : Les éléments sont placés côte à côte de gauche à droite
+    \end{itemize}
+    
+    \item \texttt{android:gravity} : Contrôle l'alignement du contenu ou des vues enfants au sein du Layout.
+\end{itemize}
+
+\subsubsection{Exemple LinearLayout}
+
+\begin{lstlisting}
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:id="@+id/accueilid">
+    <!-- Vos contrôles ici -->
+</LinearLayout>
+\end{lstlisting}
+
+\subsubsection{Identificateurs (ID) Android}
+
+\begin{itemize}
+    \item \texttt{android:id="@+id/idElement"} : Utilisation lors de la déclaration d'un nouvel élément dans le XML
+    \item \texttt{@id/idElement} : Référence à un élément existant pour le positionnement ou la manipulation
+\end{itemize}
+
+\subsection{Élasticité et Adaptabilité des UI}
+
+\subsubsection{Unités de mesure}
+
+\begin{itemize}
+    \item \textbf{dp (density-independent pixel)} : Le dp est une unité virtuelle qui s'adapte automatiquement à la densité de l'écran. Il est l'unité préférée pour spécifier les tailles des éléments, les marges et le padding afin d'assurer une apparence uniforme sur différents appareils.
+    
+    \item \textbf{sp (scale-independent pixel)} : Similaire au dp, le sp s'ajuste non seulement à la densité de l'écran mais aussi aux préférences de taille de texte de l'utilisateur (paramètres d'accessibilité). Il est donc essentiel pour les tailles de texte.
+    
+    \item \textbf{px (pixel)} : Le px représente un pixel réel de l'écran. Sa taille physique varie énormément selon la densité de l'appareil, rendant les mises en page incohérentes. Il est fortement déconseillé pour la conception d'interfaces utilisateur adaptatives.
+\end{itemize}
+
+\subsubsection{Bonnes pratiques UI adaptatives}
+
+\begin{itemize}
+    \item Toujours utiliser \texttt{dp} et \texttt{sp}
+    \item Éviter les tailles fixes en pixels (px)
+    \item Utiliser \texttt{ConstraintLayout} pour s'adapter aux écrans
+    \item Créer des ressources alternatives (\texttt{/layout-sw600dp/} pour les tablettes)
+    \item Tester avec l'émulateur sur différentes résolutions
+\end{itemize}
+
+\subsection{ConstraintLayout}
+
+Le \texttt{ConstraintLayout} est un gabarit de mise en page moderne et flexible qui permet de créer des interfaces utilisateur responsives et fluides. Il utilise un système de contraintes pour positionner et dimensionner les vues.
+
+\subsubsection{Types de Contraintes}
+
+\begin{itemize}
+    \item \textbf{Contraintes Relatives} : Positionnent une vue par rapport aux bords ou aux lignes de base d'une autre vue
+    \begin{itemize}
+        \item \texttt{layout\_constraintStart\_toStartOf}
+        \item \texttt{layout\_constraintTop\_toTopOf}
+        \item \texttt{layout\_constraintBaseline\_toBaselineOf}
+    \end{itemize}
+    
+    \item \textbf{Contraintes Avancées} :
+    \begin{itemize}
+        \item \textbf{Contraintes Circulaires} : \texttt{layout\_constraintCircle}, \texttt{layout\_constraintCircleRadius}, \texttt{layout\_constraintCircleAngle}
+        \item \textbf{Chaînes (Chains)} : \texttt{layout\_constraintHorizontal\_chainStyle} (spread, spread\_inside, packed)
+        \item \textbf{Barrières (Barriers)} : Créent une ligne de référence virtuelle basée sur plusieurs vues
+        \item \textbf{Guidelines} : Lignes de référence invisibles pour l'alignement
+    \end{itemize}
+\end{itemize}
+
+\subsection{Listes et Adaptateurs}
+
+\subsubsection{Définition}
+
+Les \textbf{Adaptateurs} font le lien entre une source de données et une vue (liste, grille, etc.), permettant d'afficher des données complexes de manière efficace dans des composants d'interface utilisateur.
+
+\subsubsection{Principe du pattern Adapter}
+
+Permet à des interfaces incompatibles de collaborer. Il s'interpose entre les données brutes et le composant UI, adaptant les données pour l'affichage.
+
+\subsubsection{Types courants}
+
+\begin{itemize}
+    \item \textbf{ArrayAdapter} : Pour les données simples comme des chaînes de caractères
+    \item \textbf{BaseAdapter} : Pour les vues personnalisées
+    \item \textbf{RecyclerView.Adapter} : Pour des listes plus performantes et flexibles
+\end{itemize}
+
+\subsubsection{Exemple avec ListView}
+
+\begin{lstlisting}
+ListView listView = findViewById(R.id.listView);
+String[] villes = {"Rabat", "Agadir", "Safi"};
+ArrayAdapter<String> adapter = new ArrayAdapter<>(
+    this, 
+    android.R.layout.simple_list_item_1, 
+    villes
+);
+listView.setAdapter(adapter);
+\end{lstlisting}
+
+\subsubsection{RecyclerView}
+
+Le \texttt{RecyclerView} est la version moderne et plus performante que \texttt{ListView} pour l'affichage de grandes collections de données. Il offre une meilleure gestion de la mémoire et une fluidité accrue grâce à son architecture modulaire.
+
+\textbf{Composants du RecyclerView} :
+\begin{itemize}
+    \item \textbf{Adapter} : Définit la structure des éléments et assure la liaison entre les données et les vues
+    \item \textbf{ViewHolder} : Réutilise les vues existantes pour un élément de liste, optimisant ainsi les performances de défilement
+    \item \textbf{LayoutManager} : Définit la manière dont les éléments sont disposés (liste linéaire, grille ou cascade)
+\end{itemize}
+
+\subsubsection{Exemple RecyclerView}
+
+\begin{lstlisting}
+// Dans MainActivity.java
+RecyclerView recyclerView = findViewById(R.id.my_recycler_view);
+recyclerView.setLayoutManager(new LinearLayoutManager(this));
+recyclerView.setAdapter(new MonAdapter(vosDonnees));
+\end{lstlisting}
+
+\subsubsection{Adapter personnalisé}
+
+\begin{lstlisting}
+public class MonAdapter extends RecyclerView.Adapter<MonAdapter.MonViewHolder> {
+    private String[] donnees;
+    
+    public MonAdapter(String[] donnees) { 
+        this.donnees = donnees; 
+    }
+    
+    @Override
+    public MonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.item_layout, parent, false);
+        return new MonViewHolder(view);
+    }
+    
+    @Override
+    public void onBindViewHolder(@NonNull MonViewHolder holder, int position) {
+        holder.textView.setText(donnees[position]);
+    }
+    
+    @Override
+    public int getItemCount() { 
+        return donnees.length; 
+    }
+    
+    public static class MonViewHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        
+        public MonViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(R.id.item_text_view);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Navigation entre Activités}
+
+\subsubsection{Intent}
+
+Un \textbf{Intent} est un message abstrait qui permet de démarrer une autre activité, un service, ou de diffuser un événement. Il agit comme un messager entre les composants de l'application ou même entre différentes applications. Il peut transporter des données entre les activités.
+
+\subsubsection{Navigation simple}
+
+\begin{lstlisting}
+Intent i = new Intent(this, SecondActivity.class);
+startActivity(i);
+\end{lstlisting}
+
+\subsubsection{Transfert de données}
+
+\begin{lstlisting}
+// Envoi
+Intent i = new Intent(this, SecondActivity.class);
+i.putExtra("nom", "Ali");
+startActivity(i);
+
+// Récupération
+String nom = getIntent().getStringExtra("nom");
+\end{lstlisting}
+
+\subsection{Gestion des Événements}
+
+\subsubsection{OnClickListener}
+
+Le gestionnaire d'événements le plus fondamental en Android est l'\texttt{OnClickListener}, utilisé pour détecter les clics des utilisateurs sur divers composants d'interface utilisateur.
+
+\begin{lstlisting}
+Button monBouton = findViewById(R.id.mon_bouton);
+monBouton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Toast.makeText(MonActivite.this, "Bouton cliqué !", 
+            Toast.LENGTH_SHORT).show();
+    }
+});
+\end{lstlisting}
+
+\subsubsection{OnFocusChangeListener}
+
+Les événements de focus sont essentiels pour gérer l'interaction des utilisateurs avec des champs de saisie de texte.
+
+\begin{lstlisting}
+EditText monChampTexte = findViewById(R.id.mon_champ_texte);
+monChampTexte.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+            // Le composant a gagné le focus
+        } else {
+            // Le composant a perdu le focus
+            // Validation possible ici
+        }
+    }
+});
+\end{lstlisting}
+
+\subsubsection{TextWatcher}
+
+Pour détecter et réagir aux changements dans un champ de saisie de texte (\texttt{EditText}).
+
+\begin{lstlisting}
+EditText monEditText = findViewById(R.id.mon_edit_text);
+monEditText.addTextChangedListener(new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+    
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Log.d("TextWatcher", "Pendant modification: " + s.toString());
+    }
+    
+    @Override
+    public void afterTextChanged(Editable s) { }
+});
+\end{lstlisting}
+
+\subsection{Les Menus}
+
+\subsubsection{Menus d'options}
+
+Les menus d'options sont définis dans des fichiers XML stockés dans le dossier \texttt{/res/menu/}.
+
+\begin{lstlisting}[language=xml]
+<!-- res/menu/main_menu.xml -->
+<menu>
+    <item android:id="@+id/action_settings"
+          android:title="Paramètres" />
+</menu>
+\end{lstlisting}
+
+\begin{lstlisting}
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main_menu, menu);
+    return true;
+}
+\end{lstlisting}
+
+\subsubsection{Menus contextuels}
+
+Les menus contextuels apparaissent lorsque l'utilisateur effectue un clic long sur un élément de l'interface.
+
+\begin{lstlisting}
+TextView myTextView = findViewById(R.id.my_text_view);
+registerForContextMenu(myTextView);
+
+@Override
+public void onCreateContextMenu(ContextMenu menu, View v, 
+        ContextMenu.ContextMenuInfo menuInfo) {
+    super.onCreateContextMenu(menu, v, menuInfo);
+    if (v.getId() == R.id.my_text_view) {
+        getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+}
+
+@Override
+public boolean onContextItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+        case R.id.action_edit:
+            Toast.makeText(this, "Action Modifier", 
+                Toast.LENGTH_SHORT).show();
+            return true;
+        case R.id.action_delete:
+            Toast.makeText(this, "Action Supprimer", 
+                Toast.LENGTH_SHORT).show();
+            return true;
+        default:
+            return super.onContextItemSelected(item);
+    }
+}
+\end{lstlisting}
+
+\subsection{Dialogue avec l'Utilisateur}
+
+\subsubsection{Toast}
+
+Le Toast est le moyen le plus simple d'afficher un message bref à l'utilisateur.
+
+\begin{lstlisting}
+Toast.makeText(this, "This is a Toast Message", 
+    Toast.LENGTH_SHORT).show();
+\end{lstlisting}
+
+\subsubsection{AlertDialog}
+
+L'AlertDialog est un composant puissant pour créer des boîtes de dialogue modales.
+
+\begin{lstlisting}
+new AlertDialog.Builder(this)
+    .setTitle("Confirmation")
+    .setMessage("Voulez-vous quitter ?")
+    .setPositiveButton("Oui", (d, i) -> finish())
+    .setNegativeButton("Non", null)
+    .show();
+\end{lstlisting}
+
+\subsubsection{Snackbar}
+
+Les Snackbars sont la solution moderne recommandée par Google pour afficher des messages temporaires.
+
+\begin{lstlisting}
+Snackbar.make(findViewById(R.id.main), "Données enregistrées", 
+    Snackbar.LENGTH_SHORT).show();
+\end{lstlisting}
+
+\section{Chapitre 4 : Persistance des Données}
+
+\subsection{Introduction}
+
+Comprendre comment une application Android peut conserver ses données au-delà d'une seule exécution, garantissant la disponibilité et l'intégrité des informations même après la fermeture de l'application ou le redémarrage de l'appareil.
+
+\subsection{Accès aux Fichiers}
+
+\subsubsection{Types de stockage}
+
+\begin{itemize}
+    \item \textbf{Stockage Interne} : Cet espace est propre à l'application, ce qui signifie que les données y sont isolées et non accessibles par d'autres applications. Il est fortement recommandé pour le stockage des informations confidentielles ou des données essentielles au fonctionnement exclusif de votre application.
+    
+    \item \textbf{Stockage Externe} : Ce stockage est partagé avec d'autres applications et est donc adapté aux fichiers volumineux ou aux contenus que l'utilisateur souhaite partager (photos, documents). L'accès à cet espace nécessite la gestion appropriée des permissions utilisateur.
+\end{itemize}
+
+\subsubsection{Bonnes pratiques pour la gestion des fichiers}
+
+\begin{enumerate}
+    \item \textbf{Vérification d'existence} : Toujours vérifier la présence d'un fichier avant toute tentative de lecture
+    \item \textbf{Fermeture des flux} : Il est crucial de fermer systématiquement tous les flux (\texttt{InputStream}, \texttt{OutputStream}) après usage
+    \item \textbf{Protection des données sensibles} : Pour les informations confidentielles, utilisez le stockage interne
+    \item \textbf{Gestion des erreurs} : Mettez en place des blocs \texttt{try-catch} robustes
+    \item \textbf{Maintenance des fichiers} : Prévoyez des mécanismes pour la suppression ou la mise à jour régulière des fichiers obsolètes
+\end{enumerate}
+
+\subsection{SharedPreferences}
+
+Les \texttt{SharedPreferences} sont un mécanisme simple pour stocker des données légères sous forme de paires clé-valeur, utilisées principalement pour les préférences utilisateur et les réglages d'application.
+
+\subsubsection{Obtenir l'Instance}
+
+\begin{lstlisting}
+SharedPreferences prefs = getSharedPreferences("MonAppPrefs", 
+    Context.MODE_PRIVATE);
+\end{lstlisting}
+
+\subsubsection{Lire des Données}
+
+\begin{lstlisting}
+String nom = prefs.getString("nomUtilisateur", "Invité");
+int age = prefs.getInt("age", 0);
+boolean notifs = prefs.getBoolean("notificationsActives", false);
+\end{lstlisting}
+
+\subsubsection{Écrire des Données}
+
+\begin{lstlisting}
+SharedPreferences.Editor editor = prefs.edit();
+editor.putString("nomUtilisateur", "John Doe");
+editor.putInt("age", 30);
+editor.putBoolean("notificationsActives", true);
+editor.apply(); // ou editor.commit()
+\end{lstlisting}
+
+\subsubsection{Supprimer des Données}
+
+\begin{lstlisting}
+editor.remove("nomUtilisateur");
+editor.apply();
+\end{lstlisting}
+
+\subsubsection{apply() vs commit()}
+
+\begin{itemize}
+    \item \textbf{apply()} : Asynchrone, plus rapide, pas de valeur de retour
+    \item \textbf{commit()} : Synchrone, bloque le thread, retourne un booléen
+\end{itemize}
+
+\textbf{Recommandation} : Utiliser \texttt{apply()} dans la plupart des cas.
+
+\subsection{Bases de Données SQLite}
+
+SQLite est une solution de base de données relationnelle légère et efficace, idéale pour la persistance des données directement sur l'appareil Android.
+
+\subsubsection{Caractéristiques}
+
+\begin{itemize}
+    \item \textbf{Base de données Embarquée} : SQLite est entièrement intégrée à l'application
+    \item \textbf{Stockage Structuré} : Permet d'organiser et de stocker des données dans des tables
+    \item \textbf{Autonome et Locale} : Absence de serveur, fonctionnement hors ligne complet
+    \item \textbf{Compatible SQL} : Supporte la majorité des commandes SQL standards
+\end{itemize}
+
+\subsubsection{SQLiteOpenHelper}
+
+\texttt{SQLiteOpenHelper} est une classe utilitaire fournie par Android pour faciliter la création, l'ouverture et la gestion des versions de votre base de données.
+
+\subsubsection{Création d'une classe DatabaseHelper}
+
+\begin{lstlisting}
+public class DatabaseHelper extends SQLiteOpenHelper {
+    public static final String DATABASE_NAME = "MaBaseDeDonnees.db";
+    public static final int DATABASE_VERSION = 1;
+    
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+    
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE produits (" +
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "nom TEXT," +
+                              "prix REAL," +
+                              "quantite INTEGER)";
+        db.execSQL(CREATE_TABLE);
+    }
+    
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS produits");
+        onCreate(db);
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Opérations CRUD}
+
+\paragraph{Insertion de Données}
+
+\begin{lstlisting}
+public boolean insertData(String nom, double prix, int quantite) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put("nom", nom);
+    contentValues.put("prix", prix);
+    contentValues.put("quantite", quantite);
+    long result = db.insert("produits", null, contentValues);
+    return result != -1;
+}
+\end{lstlisting}
+
+\paragraph{Lecture de Données}
+
+\begin{lstlisting}
+public Cursor getData() {
+    SQLiteDatabase db = this.getWritableDatabase();
+    Cursor res = db.rawQuery("SELECT * FROM produits", null);
+    return res;
+}
+\end{lstlisting}
+
+\paragraph{Mise à Jour de Données}
+
+\begin{lstlisting}
+public boolean updateData(String id, String nom, double prix, int quantite) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put("nom", nom);
+    contentValues.put("prix", prix);
+    contentValues.put("quantite", quantite);
+    db.update("produits", contentValues, "id = ?", new String[]{id});
+    return true;
+}
+\end{lstlisting}
+
+\paragraph{Suppression de Données}
+
+\begin{lstlisting}
+public Integer deleteData(String id) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    return db.delete("produits", "id = ?", new String[]{id});
+}
+\end{lstlisting}
+
+\subsubsection{Utilisation dans une Activity}
+
+\begin{lstlisting}
+public class MainActivity extends AppCompatActivity {
+    DatabaseHelper myDb;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        myDb = new DatabaseHelper(this);
+        
+        // Exemple d'insertion
+        boolean isInserted = myDb.insertData("Livre", 19.99, 50);
+        if (isInserted) {
+            Toast.makeText(this, "Données insérées", 
+                Toast.LENGTH_LONG).show();
+        }
+    }
+}
+\end{lstlisting}
+
+\section{Chapitre 5 : Communication et Threads}
+
+\subsection{Thread Principal (UI Thread)}
+
+Le thread principal (UI Thread) est responsable de l'affichage de l'interface utilisateur et de la gestion des interactions. Il ne doit jamais être bloqué par des opérations longues.
+
+\subsection{Multi-threading}
+
+Le multi-threading permet d'exécuter des tâches en arrière-plan sans bloquer l'interface utilisateur, garantissant une expérience utilisateur fluide.
+
+\subsection{Handler}
+
+Le \texttt{Handler} permet de communiquer entre threads et d'exécuter du code sur le thread principal depuis un thread secondaire.
+
+\subsection{AsyncTask (Déprécié)}
+
+\texttt{AsyncTask} était une classe qui permettait d'exécuter des opérations en arrière-plan et de publier les résultats sur le thread UI. Elle est maintenant dépréciée depuis Android 11.
+
+\textbf{Recommandation moderne} : Utiliser \texttt{Coroutines} (Kotlin) ou \texttt{ExecutorService} avec \texttt{Handler} (Java).
+
+\section{Chapitre 6 : Intents et Communication entre Composants}
+
+\subsection{Introduction aux Intents}
+
+Un \textbf{Intent} est un message envoyé à Android pour déclencher une action. Il permet la communication entre :
+\begin{itemize}
+    \item Les activités d'une même application
+    \item Les services
+    \item D'autres applications installées
+    \item Des composants du système Android (ex. AlarmManager)
+\end{itemize}
+
+\subsection{Les Intents Explicites}
+
+Permettent de lancer une activité précise (classe connue).
+
+\begin{lstlisting}
+Intent intent = new Intent(this, DetailActivity.class);
+startActivity(intent);
+\end{lstlisting}
+
+Utilisés pour la navigation interne à l'application. Chaque activité cible doit être déclarée dans le \texttt{AndroidManifest.xml}.
+
+\subsection{Les Intents Implicites}
+
+Décrivent l'action à accomplir, sans nommer le composant. Android choisit automatiquement une application capable de répondre.
+
+\begin{lstlisting}
+Intent intent = new Intent(Intent.ACTION_VIEW, 
+    Uri.parse("https://emsi.ma"));
+startActivity(intent);
+\end{lstlisting}
+
+\subsection{Composantes d'un Intent}
+
+\begin{itemize}
+    \item \textbf{Action} : \texttt{intent.setAction(Intent.ACTION\_VIEW)}
+    \item \textbf{Data (URI)} : \texttt{intent.setData(Uri.parse("https://emsi.ma"))}
+    \item \textbf{Type} : \texttt{intent.setType("text/plain")}
+    \item \textbf{Extras} : \texttt{intent.putExtra("key", "value")}
+    \item \textbf{Category} : \texttt{intent.addCategory(Intent.CATEGORY\_BROWSABLE)}
+    \item \textbf{Flags} : \texttt{intent.setFlags(Intent.FLAG\_ACTIVITY\_NEW\_TASK)}
+\end{itemize}
+
+\subsection{Exemples d'Actions Prédéfinies}
+
+\begin{itemize}
+    \item \texttt{Intent.ACTION\_VIEW} : Ouvrir un lien, une image ou un contact
+    \item \texttt{Intent.ACTION\_DIAL} : Ouvrir le composeur téléphonique
+    \item \texttt{Intent.ACTION\_SEND} : Partager du contenu (email par exemple)
+    \item \texttt{Intent.ACTION\_PICK} : Sélectionner une image ou un contact
+\end{itemize}
+
+\subsection{Exemples Pratiques}
+
+\subsubsection{Ouvrir une Page Web}
+
+\begin{lstlisting}
+Uri webpage = Uri.parse("https://www.google.com");
+Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+startActivity(webIntent);
+\end{lstlisting}
+
+\subsubsection{Faire un Appel Téléphonique}
+
+\begin{lstlisting}
+Uri number = Uri.parse("tel:0645127859");
+Intent call = new Intent(Intent.ACTION_DIAL, number);
+startActivity(call);
+\end{lstlisting}
+
+\subsubsection{Partager du Texte}
+
+\begin{lstlisting}
+Intent shareIntent = new Intent(Intent.ACTION_SEND);
+shareIntent.setType("text/plain");
+shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Sujet du message");
+shareIntent.putExtra(Intent.EXTRA_TEXT, "Contenu à partager");
+startActivity(Intent.createChooser(shareIntent, "Partager via"));
+\end{lstlisting}
+
+\subsection{Passage de Données entre Activités}
+
+\subsubsection{Envoi d'Extras}
+
+\begin{lstlisting}
+Intent intent = new Intent(this, ProfileActivity.class);
+intent.putExtra("username", "Ali");
+startActivity(intent);
+\end{lstlisting}
+
+\subsubsection{Récupération}
+
+\begin{lstlisting}
+String user = getIntent().getStringExtra("username");
+\end{lstlisting}
+
+\subsubsection{Transmission d'Objets Complexes (Parcelable)}
+
+\texttt{Parcelable} est la méthode recommandée pour passer des objets.
+
+\begin{lstlisting}
+// Envoi
+intent.putExtra("user", userObject);
+
+// Récupération
+User user = getIntent().getParcelableExtra("user");
+\end{lstlisting}
+
+\subsection{Activity Result API}
+
+La nouvelle méthode standard et recommandée pour gérer les résultats d'activité.
+
+\begin{lstlisting}
+ActivityResultLauncher<Intent> launcher =
+    registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                // Traitement du résultat
+            }
+        });
+\end{lstlisting}
+
+\subsection{Broadcast Receivers}
+
+Les Broadcasts diffusent des messages à plusieurs composants.
+
+\subsubsection{Types}
+
+\begin{itemize}
+    \item \textbf{Système} : Batterie, réseau, écran, démarrage, etc.
+    \item \textbf{Personnalisé} : Créé par l'application
+\end{itemize}
+
+\subsubsection{Exemple}
+
+\begin{lstlisting}
+// Émission
+Intent intent = new Intent("com.emsi.MON_ACTION_PERSONNALISEE");
+sendBroadcast(intent);
+
+// Réception
+registerReceiver(new MyReceiver(), 
+    new IntentFilter(Intent.ACTION_POWER_CONNECTED));
+\end{lstlisting}
+
+\subsection{PendingIntent}
+
+Un Intent différé exécuté plus tard, souvent par le système. Utilisé pour :
+\begin{itemize}
+    \item Notifications
+    \item Alarmes
+    \item App Widgets
+\end{itemize}
+
+\begin{lstlisting}
+PendingIntent pendingIntent = PendingIntent.getActivity(
+    this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+\end{lstlisting}
+
+\section{Chapitre 7 : API Android}
+
+\subsection{Content Providers et Accès aux Contacts}
+
+Les \textbf{Content Providers} constituent le mécanisme fondamental d'Android pour partager des données entre applications.
+
+\subsubsection{Permissions nécessaires}
+
+\begin{lstlisting}[language=xml]
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+<uses-permission android:name="android.permission.WRITE_CONTACTS" />
+\end{lstlisting}
+
+\subsubsection{Exemple : Lire les contacts}
+
+\begin{lstlisting}
+Cursor cursor = getContentResolver().query(
+    ContactsContract.Contacts.CONTENT_URI,
+    null, null, null, null
+);
+
+while (cursor.moveToNext()) {
+    String name = cursor.getString(
+        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+    );
+    Log.d("CONTACT", name);
+}
+cursor.close(); // Important : libérer les ressources
+\end{lstlisting}
+
+\subsection{Fonctions de Téléphonie}
+
+\subsubsection{Appels téléphoniques}
+
+\begin{itemize}
+    \item \textbf{ACTION\_DIAL} : Ouvre le dialer sans permission - l'utilisateur contrôle l'appel
+    \item \textbf{ACTION\_CALL} : Lance l'appel directement - nécessite CALL\_PHONE permission
+\end{itemize}
+
+\begin{lstlisting}
+Intent intent = new Intent(Intent.ACTION_DIAL);
+intent.setData(Uri.parse("tel:0612345678"));
+startActivity(intent);
+\end{lstlisting}
+
+\subsubsection{Envoi de SMS}
+
+\begin{lstlisting}
+SmsManager sms = SmsManager.getDefault();
+sms.sendTextMessage(
+    "0612345678",
+    null,
+    "Bonjour depuis Android",
+    null, null
+);
+\end{lstlisting}
+
+\textbf{Permission nécessaire} : \texttt{SEND\_SMS}
+
+\subsection{Géolocalisation avec Android}
+
+\subsubsection{Sources de localisation}
+
+\begin{itemize}
+    \item \textbf{GPS} : Précision élevée (5-10m) mais consommation batterie importante
+    \item \textbf{Réseau mobile} : Précision moyenne (100-500m), consommation modérée
+    \item \textbf{Wi-Fi} : Bonne précision en zone urbaine (20-50m), faible consommation
+\end{itemize}
+
+\subsubsection{APIs de localisation}
+
+\begin{itemize}
+    \item \textbf{LocationManager} : API historique d'Android, accès direct aux fournisseurs de localisation
+    \item \textbf{FusedLocationProvider} : API moderne recommandée par Google. Fusionne automatiquement les sources pour optimiser précision et batterie
+\end{itemize}
+
+\subsubsection{Permissions de localisation}
+
+\begin{itemize}
+    \item \texttt{ACCESS\_COARSE\_LOCATION} : Localisation approximative via réseau et Wi-Fi
+    \item \texttt{ACCESS\_FINE\_LOCATION} : Localisation précise via GPS
+    \item \textbf{Background Location} : Depuis Android 10, permission séparée pour localisation en arrière-plan
+\end{itemize}
+
+\subsection{Caméra}
+
+Android permet d'accéder à l'appareil photo pour capturer des photos et vidéos. L'accès nécessite des permissions appropriées et peut se faire via :
+\begin{itemize}
+    \item Intent implicite (déléguer à l'app caméra système)
+    \item Camera2 API (contrôle avancé)
+    \item CameraX (bibliothèque moderne recommandée)
+\end{itemize}
+
+\subsection{Multimédia}
+
+\subsubsection{Sonneries et Vibrations}
+
+\begin{lstlisting}
+// Vibration
+Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+vibrator.vibrate(500); // 500 millisecondes
+
+// Sonnerie
+MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.son);
+mediaPlayer.start();
+\end{lstlisting}
+
+\section{Chapitre 8 : Communication Réseau sous Android}
+
+\subsection{Établissement de Connexions}
+
+Android permet d'établir des connexions à des serveurs distants via HTTP/HTTPS.
+
+\subsection{Protocoles de Communication}
+
+\subsubsection{HTTP/HTTPS}
+
+Les applications Android peuvent communiquer avec des serveurs web via les protocoles HTTP et HTTPS.
+
+\subsection{Web Services}
+
+\subsubsection{REST et JSON}
+
+Les services web REST utilisent JSON pour l'échange de données. Android fournit des bibliothèques comme \texttt{Retrofit} et \texttt{OkHttp} pour faciliter ces interactions.
+
+\subsubsection{Retrofit}
+
+\texttt{Retrofit} est une bibliothèque moderne et puissante pour effectuer des appels réseau en Android.
+
+\begin{lstlisting}
+// Interface de service
+public interface ApiService {
+    @GET("users")
+    Call<List<User>> getUsers();
+}
+
+// Utilisation
+Retrofit retrofit = new Retrofit.Builder()
+    .baseUrl("https://api.example.com/")
+    .addConverterFactory(GsonConverterFactory.create())
+    .build();
+
+ApiService service = retrofit.create(ApiService.class);
+Call<List<User>> call = service.getUsers();
+call.enqueue(new Callback<List<User>>() {
+    @Override
+    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+        // Traitement de la réponse
+    }
+    
+    @Override
+    public void onFailure(Call<List<User>> call, Throwable t) {
+        // Gestion des erreurs
+    }
+});
+\end{lstlisting}
+
+\subsection{Communication Réseau en Multitâches}
+
+Les opérations réseau doivent toujours être effectuées sur un thread secondaire pour ne pas bloquer le thread UI. Utiliser :
+\begin{itemize}
+    \item \texttt{ExecutorService} avec \texttt{Handler}
+    \item \texttt{Coroutines} (Kotlin)
+    \item \texttt{Retrofit} (gère automatiquement les threads)
+\end{itemize}
+
+\section{Chapitre 9 : Déployer et Sécuriser des Applications Android}
+
+\subsection{Préparation}
+
+Comprendre les distinctions entre les versions Debug et Release, la configuration adéquate, la gestion des logs et le versioning.
+
+\subsection{Signature}
+
+Maîtriser les Keystores, la gestion des clés et certificats, ainsi que les bonnes pratiques de sécurité.
+
+\subsubsection{Création d'un Keystore}
+
+\begin{lstlisting}
+keytool -genkey -v -keystore mon-keystore.jks 
+    -keyalg RSA -keysize 2048 -validity 10000 
+    -alias mon-alias
+\end{lstlisting}
+
+\subsection{Publication}
+
+Utiliser efficacement la Play Console, préparer les App Bundles (AAB) et APK, et effectuer des tests internes rigoureux avant le lancement.
+
+\subsection{Déploiement}
+
+Gérer les différentes versions et canaux de déploiement, assurer un suivi précis des performances et planifier les mises à jour.
+
+\subsection{Processus complet}
+
+Le déploiement et la sécurisation d'applications Android sont des étapes fondamentales qui exigent une attention méticuleuse à chaque phase. D'une préparation rigoureuse de la version à la gestion stratégique de sa publication et de son déploiement via la Play Console, chaque détail compte. La signature sécurisée de l'application est un pilier central, garantissant l'intégrité et l'authenticité du code.
+
+\section{Concepts Clés à Retenir}
+
+\subsection{Architecture Android}
+
+\begin{itemize}
+    \item \textbf{Activities} : Écrans de l'application
+    \item \textbf{Fragments} : Composants réutilisables d'interface
+    \item \textbf{Services} : Tâches en arrière-plan
+    \item \textbf{Broadcast Receivers} : Réception d'événements système
+    \item \textbf{Content Providers} : Partage de données
+\end{itemize}
+
+\subsection{Cycle de Vie}
+
+\begin{itemize}
+    \item \textbf{onCreate()} : Initialisation de l'activité
+    \item \textbf{onStart()} : L'activité devient visible
+    \item \textbf{onResume()} : L'activité est au premier plan
+    \item \textbf{onPause()} : L'activité perd le focus
+    \item \textbf{onStop()} : L'activité n'est plus visible
+    \item \textbf{onDestroy()} : Destruction de l'activité
+\end{itemize}
+
+\subsection{Persistance des Données}
+
+\begin{itemize}
+    \item \textbf{SharedPreferences} : Données légères clé-valeur
+    \item \textbf{Fichiers} : Stockage interne/externe
+    \item \textbf{SQLite} : Base de données relationnelle
+    \item \textbf{Room} : Bibliothèque moderne pour SQLite (recommandée)
+\end{itemize}
+
+\subsection{Communication}
+
+\begin{itemize}
+    \item \textbf{Intents} : Communication entre composants
+    \item \textbf{Broadcasts} : Messages système et personnalisés
+    \item \textbf{HTTP/HTTPS} : Communication réseau
+    \item \textbf{Web Services} : REST, JSON, SOAP
+\end{itemize}
+
+\subsection{Sécurité}
+
+\begin{itemize}
+    \item \textbf{Permissions} : Runtime permissions depuis Android 6.0
+    \item \textbf{Signature} : Keystore pour signer les applications
+    \item \textbf{ProGuard} : Obfuscation du code
+    \item \textbf{Chiffrement} : Protection des données sensibles
+\end{itemize}
+
+\section{Conclusion}
+
+Le développement Android nécessite une compréhension approfondie de l'architecture du système, des composants de base, de la gestion des données et de la communication. En maîtrisant ces concepts fondamentaux, vous serez capable de créer des applications robustes, performantes et sécurisées qui offrent une excellente expérience utilisateur.
+
+Les bonnes pratiques incluent :
+\begin{itemize}
+    \item Utiliser des layouts adaptatifs (ConstraintLayout, dp/sp)
+    \item Gérer correctement le cycle de vie des composants
+    \item Effectuer les opérations longues sur des threads secondaires
+    \item Demander les permissions au runtime
+    \item Tester sur différents appareils et versions Android
+    \item Optimiser les performances et la consommation de batterie
+\end{itemize}
+
+\end{document}
+
