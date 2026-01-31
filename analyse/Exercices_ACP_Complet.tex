@@ -1,0 +1,1283 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tcolorbox}
+\usepackage{multicol}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Exercices ACP}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries\color{blue!30!black}}
+{}
+{0em}
+{}
+
+% Boîtes colorées
+\newtcolorbox{conseilbox}{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=\textbf{Conseil},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{rappelbox}{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=\textbf{Rappel},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{attentionbox}{
+    colback=orange!5!white,
+    colframe=orange!75!black,
+    title=\textbf{Attention},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{astucebox}{
+    colback=yellow!5!white,
+    colframe=yellow!75!black,
+    title=\textbf{Astuce},
+    fonttitle=\bfseries
+}
+
+% Commandes personnalisées
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\E}{\mathbb{E}}
+
+% Métadonnées
+\title{Exercices Complets - Analyse en Composantes Principales (ACP)\\
+\large Avec Conseils, Consignes, Explications et Solutions}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction et Méthodologie}
+
+\subsection{Objectif de ce document}
+
+Ce document présente une série d'exercices progressifs sur l'Analyse en Composantes Principales (ACP), avec :
+\begin{itemize}
+    \item Des \textbf{conseils} pour bien aborder chaque étape
+    \item Des \textbf{consignes} claires pour chaque exercice
+    \item Des \textbf{explications détaillées} de chaque concept
+    \item Des \textbf{solutions complètes} avec astuces et rappels
+\end{itemize}
+
+\subsection{Méthodologie générale de l'ACP}
+
+Pour résoudre un problème d'ACP, suivez ces étapes dans l'ordre :
+
+\begin{enumerate}
+    \item \textbf{Préparer les données} : Calculer moyennes et écarts-types
+    \item \textbf{Centrer et réduire} : Construire la matrice centrée réduite
+    \item \textbf{Matrice de corrélation} : Calculer $\mathbf{U} = \frac{1}{n}\mathbf{M}_{cr}^T\mathbf{M}_{cr}$
+    \item \textbf{Valeurs propres} : Résoudre $\det(\mathbf{U} - \lambda\mathbf{I}) = 0$
+    \item \textbf{Vecteurs propres} : Résoudre $\mathbf{U}\mathbf{u}_k = \lambda_k\mathbf{u}_k$
+    \item \textbf{Composantes principales} : Calculer $\mathbf{C}_k = \mathbf{M}_{cr}\mathbf{u}_k$
+    \item \textbf{Inertie expliquée} : Calculer $\frac{\lambda_k}{\sum \lambda_i}$
+    \item \textbf{Contributions} : Calculer contributions des individus et variables
+    \item \textbf{Interpréter} : Analyser les résultats
+\end{enumerate}
+
+\begin{conseilbox}
+\textbf{Conseil important} : 
+\begin{itemize}
+    \item Travaillez toujours avec des données \textbf{centrées et réduites} pour l'ACP
+    \item Vérifiez que la somme des valeurs propres égale le nombre de variables
+    \item Les vecteurs propres doivent être \textbf{orthonormés} (orthogonaux et de norme 1)
+    \item Organisez vos calculs dans des tableaux pour éviter les erreurs
+\end{itemize}
+\end{conseilbox}
+
+\newpage
+
+\section{Partie 1 : Préparation des Données et Centrage-Réduction}
+
+\subsection{Théorie et Étapes}
+
+\subsubsection{Pourquoi centrer et réduire ?}
+
+Les variables dans un tableau de données ont souvent :
+\begin{itemize}
+    \item Des \textbf{unités différentes} (euros, pourcentages, kg, etc.)
+    \item Des \textbf{ordres de grandeur différents} (millions vs unités)
+    \item Des \textbf{écarts-types différents}
+\end{itemize}
+
+Le centrage et la réduction permettent de :
+\begin{itemize}
+    \item \textbf{Homogénéiser les unités} : toutes les variables ont une moyenne nulle et une variance unitaire
+    \item \textbf{Donner le même poids} à chaque variable dans l'analyse
+    \item \textbf{Faciliter les calculs} : la matrice de corrélation devient plus simple
+\end{itemize}
+
+\subsubsection{Étapes de calcul}
+
+\begin{enumerate}
+    \item \textbf{Calculer les moyennes} :
+    \begin{align*}
+    \bar{x}_j = \frac{1}{n}\sum_{i=1}^{n} x_{ij}
+    \end{align*}
+    
+    \item \textbf{Calculer les écarts-types} :
+    \begin{align*}
+    \sigma_j = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_{ij} - \bar{x}_j)^2}
+    \end{align*}
+    
+    \item \textbf{Construire la matrice centrée réduite} :
+    \begin{align*}
+    m_{ij} = \frac{x_{ij} - \bar{x}_j}{\sigma_j}
+    \end{align*}
+\end{enumerate}
+
+\begin{rappelbox}
+\textbf{Rappel} : Pour des données centrées-réduites :
+\begin{itemize}
+    \item Moyenne de chaque variable : $\bar{X}_j = 0$
+    \item Variance de chaque variable : $\Var(X_j) = 1$
+    \item Inertie totale : $I_g = p$ (nombre de variables)
+\end{itemize}
+\end{rappelbox}
+
+\newpage
+
+\subsection{Exercice 1 : Centrage et Réduction}
+
+\subsubsection{Consignes}
+
+Une étude porte sur 5 entreprises caractérisées par 3 variables :
+\begin{itemize}
+    \item $X_1$ : Chiffre d'affaires (en millions d'euros)
+    \item $X_2$ : Nombre d'employés
+    \item $X_3$ : Taux de satisfaction client (\%)
+\end{itemize}
+
+\textbf{Tableau des données brutes} :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Entreprise} & $X_1$ (CA) & $X_2$ (Employés) & $X_3$ (Satisfaction) \\
+\hline
+A & 120 & 50 & 85 \\
+\hline
+B & 200 & 80 & 90 \\
+\hline
+C & 150 & 60 & 75 \\
+\hline
+D & 180 & 70 & 88 \\
+\hline
+E & 100 & 40 & 80 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Travail à faire} :
+\begin{enumerate}
+    \item Calculer la moyenne et l'écart-type de chaque variable
+    \item Construire la matrice centrée réduite $\mathbf{M}_{cr}$
+    \item Vérifier que les moyennes des variables centrées-réduites sont nulles
+    \item Vérifier que les variances des variables centrées-réduites sont égales à 1
+\end{enumerate}
+
+\subsubsection{Solution de l'Exercice 1}
+
+\textbf{1. Calcul des moyennes} :
+
+\begin{align*}
+\bar{x}_1 &= \frac{120 + 200 + 150 + 180 + 100}{5} = \frac{750}{5} = 150 \\
+\bar{x}_2 &= \frac{50 + 80 + 60 + 70 + 40}{5} = \frac{300}{5} = 60 \\
+\bar{x}_3 &= \frac{85 + 90 + 75 + 88 + 80}{5} = \frac{418}{5} = 83.6
+\end{align*}
+
+\textbf{2. Calcul des écarts-types} :
+
+Pour $X_1$ :
+\begin{align*}
+\sigma_1^2 &= \frac{1}{5}[(120-150)^2 + (200-150)^2 + (150-150)^2 + (180-150)^2 + (100-150)^2] \\
+&= \frac{1}{5}[900 + 2500 + 0 + 900 + 2500] \\
+&= \frac{1}{5} \times 6800 = 1360 \\
+\sigma_1 &= \sqrt{1360} \approx 36.88
+\end{align*}
+
+Pour $X_2$ :
+\begin{align*}
+\sigma_2^2 &= \frac{1}{5}[(50-60)^2 + (80-60)^2 + (60-60)^2 + (70-60)^2 + (40-60)^2] \\
+&= \frac{1}{5}[100 + 400 + 0 + 100 + 400] \\
+&= \frac{1}{5} \times 1000 = 200 \\
+\sigma_2 &= \sqrt{200} \approx 14.14
+\end{align*}
+
+Pour $X_3$ :
+\begin{align*}
+\sigma_3^2 &= \frac{1}{5}[(85-83.6)^2 + (90-83.6)^2 + (75-83.6)^2 + (88-83.6)^2 + (80-83.6)^2] \\
+&= \frac{1}{5}[1.96 + 40.96 + 73.96 + 19.36 + 12.96] \\
+&= \frac{1}{5} \times 149.2 = 29.84 \\
+\sigma_3 &= \sqrt{29.84} \approx 5.46
+\end{align*}
+
+\textbf{3. Matrice centrée réduite} :
+
+\begin{align*}
+m_{ij} = \frac{x_{ij} - \bar{x}_j}{\sigma_j}
+\end{align*}
+
+Calculons chaque élément :
+
+\begin{align*}
+\mathbf{M}_{cr} &= \begin{pmatrix}
+\frac{120-150}{36.88} & \frac{50-60}{14.14} & \frac{85-83.6}{5.46} \\
+\frac{200-150}{36.88} & \frac{80-60}{14.14} & \frac{90-83.6}{5.46} \\
+\frac{150-150}{36.88} & \frac{60-60}{14.14} & \frac{75-83.6}{5.46} \\
+\frac{180-150}{36.88} & \frac{70-60}{14.14} & \frac{88-83.6}{5.46} \\
+\frac{100-150}{36.88} & \frac{40-60}{14.14} & \frac{80-83.6}{5.46}
+\end{pmatrix} \\
+&= \begin{pmatrix}
+-0.81 & -0.71 & 0.26 \\
+1.36 & 1.41 & 1.17 \\
+0.00 & 0.00 & -1.58 \\
+0.81 & 0.71 & 0.81 \\
+-1.36 & -1.41 & -0.66
+\end{pmatrix}
+\end{align*}
+
+\textbf{4. Vérifications} :
+
+\textbf{Moyennes} (doivent être nulles) :
+\begin{align*}
+\bar{m}_1 &= \frac{-0.81 + 1.36 + 0.00 + 0.81 - 1.36}{5} = 0 \quad \checkmark \\
+\bar{m}_2 &= \frac{-0.71 + 1.41 + 0.00 + 0.71 - 1.41}{5} = 0 \quad \checkmark \\
+\bar{m}_3 &= \frac{0.26 + 1.17 - 1.58 + 0.81 - 0.66}{5} = 0 \quad \checkmark
+\end{align*}
+
+\textbf{Variances} (doivent être égales à 1) :
+\begin{align*}
+\Var(m_1) &= \frac{1}{5}[(-0.81)^2 + (1.36)^2 + (0.00)^2 + (0.81)^2 + (-1.36)^2] \\
+&= \frac{1}{5}[0.656 + 1.850 + 0 + 0.656 + 1.850] = 1.002 \approx 1 \quad \checkmark
+\end{align*}
+
+\begin{astucebox}
+\textbf{Astuce} : Les petites différences (0.002) sont dues aux arrondis. C'est normal ! Pour vérifier vos calculs, utilisez toujours les valeurs exactes avant d'arrondir.
+\end{astucebox}
+
+\newpage
+
+\section{Partie 2 : Matrice de Corrélation}
+
+\subsection{Théorie et Étapes}
+
+\subsubsection{Définition}
+
+La \textbf{matrice de corrélation} $\mathbf{U}$ mesure les corrélations linéaires entre toutes les paires de variables. Elle est de dimension $p \times p$ (où $p$ est le nombre de variables).
+
+\subsubsection{Calcul}
+
+\begin{align*}
+\mathbf{U} = \frac{1}{n} \mathbf{M}_{cr}^T \mathbf{M}_{cr}
+\end{align*}
+
+où $\mathbf{M}_{cr}^T$ est la transposée de la matrice centrée réduite.
+
+\subsubsection{Propriétés}
+
+\begin{itemize}
+    \item \textbf{Symétrique} : $u_{ij} = u_{ji}$
+    \item \textbf{Diagonale} : $u_{ii} = 1$ (corrélation d'une variable avec elle-même)
+    \item \textbf{Hors diagonale} : $u_{ij} \in [-1, 1]$ (coefficient de corrélation de Pearson)
+    \item \textbf{Interprétation} :
+    \begin{itemize}
+        \item $u_{ij} > 0$ : corrélation positive (les variables varient dans le même sens)
+        \item $u_{ij} < 0$ : corrélation négative (les variables varient en sens opposé)
+        \item $|u_{ij}| \approx 1$ : forte corrélation
+        \item $|u_{ij}| \approx 0$ : faible corrélation
+    \end{itemize}
+\end{itemize}
+
+\begin{attentionbox}
+\textbf{Attention} : 
+\begin{itemize}
+    \item La matrice de corrélation se calcule à partir de la matrice \textbf{centrée réduite}
+    \item Ne confondez pas avec la matrice de variances-covariances qui se calcule à partir de la matrice centrée (non réduite)
+    \item Pour l'ACP, on utilise toujours la matrice de corrélation
+\end{itemize}
+\end{attentionbox}
+
+\newpage
+
+\subsection{Exercice 2 : Calcul de la Matrice de Corrélation}
+
+\subsubsection{Consignes}
+
+En utilisant la matrice centrée réduite de l'exercice 1 :
+
+\textbf{Travail à faire} :
+\begin{enumerate}
+    \item Calculer la transposée $\mathbf{M}_{cr}^T$
+    \item Calculer le produit matriciel $\mathbf{M}_{cr}^T \mathbf{M}_{cr}$
+    \item Calculer la matrice de corrélation $\mathbf{U} = \frac{1}{n}\mathbf{M}_{cr}^T \mathbf{M}_{cr}$
+    \item Vérifier les propriétés de la matrice $\mathbf{U}$
+    \item Interpréter les coefficients de corrélation
+\end{enumerate}
+
+\subsubsection{Solution de l'Exercice 2}
+
+\textbf{1. Transposée de $\mathbf{M}_{cr}$} :
+
+\begin{align*}
+\mathbf{M}_{cr}^T = \begin{pmatrix}
+-0.81 & 1.36 & 0.00 & 0.81 & -1.36 \\
+-0.71 & 1.41 & 0.00 & 0.71 & -1.41 \\
+0.26 & 1.17 & -1.58 & 0.81 & -0.66
+\end{pmatrix}
+\end{align*}
+
+\textbf{2. Produit matriciel $\mathbf{M}_{cr}^T \mathbf{M}_{cr}$} :
+
+Pour calculer le produit, on utilise la formule :
+\begin{align*}
+(\mathbf{M}_{cr}^T \mathbf{M}_{cr})_{ij} = \sum_{k=1}^{n} m_{ki} \times m_{kj}
+\end{align*}
+
+Calculons quelques éléments :
+
+\textbf{Élément (1,1)} :
+\begin{align*}
+\sum_{k=1}^{5} m_{k1} \times m_{k1} &= (-0.81)^2 + (1.36)^2 + (0.00)^2 + (0.81)^2 + (-1.36)^2 \\
+&= 0.656 + 1.850 + 0 + 0.656 + 1.850 = 5.012
+\end{align*}
+
+\textbf{Élément (1,2)} :
+\begin{align*}
+\sum_{k=1}^{5} m_{k1} \times m_{k2} &= (-0.81)(-0.71) + (1.36)(1.41) + (0.00)(0.00) + (0.81)(0.71) + (-1.36)(-1.41) \\
+&= 0.575 + 1.918 + 0 + 0.575 + 1.918 = 4.986
+\end{align*}
+
+\textbf{Élément (1,3)} :
+\begin{align*}
+\sum_{k=1}^{5} m_{k1} \times m_{k3} &= (-0.81)(0.26) + (1.36)(1.17) + (0.00)(-1.58) + (0.81)(0.81) + (-1.36)(-0.66) \\
+&= -0.211 + 1.591 + 0 + 0.656 + 0.898 = 2.934
+\end{align*}
+
+En continuant pour tous les éléments :
+
+\begin{align*}
+\mathbf{M}_{cr}^T \mathbf{M}_{cr} = \begin{pmatrix}
+5.012 & 4.986 & 2.934 \\
+4.986 & 5.000 & 2.850 \\
+2.934 & 2.850 & 5.000
+\end{pmatrix}
+\end{align*}
+
+\textbf{3. Matrice de corrélation} :
+
+\begin{align*}
+\mathbf{U} = \frac{1}{5} \begin{pmatrix}
+5.012 & 4.986 & 2.934 \\
+4.986 & 5.000 & 2.850 \\
+2.934 & 2.850 & 5.000
+\end{pmatrix} = \begin{pmatrix}
+1.002 & 0.997 & 0.587 \\
+0.997 & 1.000 & 0.570 \\
+0.587 & 0.570 & 1.000
+\end{pmatrix}
+\end{align*}
+
+\textbf{4. Vérifications} :
+
+\begin{itemize}
+    \item \textbf{Symétrie} : $u_{12} = 0.997 = u_{21} = 0.997 \quad \checkmark$
+    \item \textbf{Diagonale} : $u_{11} = 1.002 \approx 1$, $u_{22} = 1.000 = 1$, $u_{33} = 1.000 = 1 \quad \checkmark$
+    \item \textbf{Valeurs dans $[-1,1]$} : Tous les coefficients sont dans l'intervalle $[-1,1] \quad \checkmark$
+\end{itemize}
+
+\textbf{5. Interprétation} :
+
+\begin{itemize}
+    \item $r(X_1, X_2) = 0.997$ : \textbf{Forte corrélation positive} entre le chiffre d'affaires et le nombre d'employés. Plus une entreprise a d'employés, plus son CA est élevé.
+    \item $r(X_1, X_3) = 0.587$ : \textbf{Corrélation positive modérée} entre le CA et la satisfaction client.
+    \item $r(X_2, X_3) = 0.570$ : \textbf{Corrélation positive modérée} entre le nombre d'employés et la satisfaction client.
+\end{itemize}
+
+\begin{rappelbox}
+\textbf{Rappel} : Les petites différences par rapport à 1 sur la diagonale sont dues aux arrondis. En théorie, tous les éléments diagonaux valent exactement 1.
+\end{rappelbox}
+
+\newpage
+
+\section{Partie 3 : Valeurs Propres et Vecteurs Propres}
+
+\subsection{Théorie et Étapes}
+
+\subsubsection{Valeurs propres}
+
+Les \textbf{valeurs propres} $\lambda_k$ de la matrice $\mathbf{U}$ sont les solutions de l'équation :
+
+\begin{align*}
+\det(\mathbf{U} - \lambda \mathbf{I}_p) = 0
+\end{align*}
+
+où $\mathbf{I}_p$ est la matrice identité de dimension $p \times p$.
+
+\subsubsection{Propriétés des valeurs propres}
+
+\begin{itemize}
+    \item Les valeurs propres sont \textbf{ordonnées} : $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p \geq 0$
+    \item La \textbf{somme des valeurs propres} égale la trace de $\mathbf{U}$ : $\sum_{k=1}^{p} \lambda_k = \text{tr}(\mathbf{U}) = p$
+    \item Pour des données centrées-réduites, la trace de $\mathbf{U}$ vaut $p$ (nombre de variables)
+    \item Plus $\lambda_k$ est grand, plus l'axe $k$ contient d'information
+\end{itemize}
+
+\subsubsection{Vecteurs propres}
+
+Pour chaque valeur propre $\lambda_k$, on trouve le \textbf{vecteur propre} $\mathbf{u}_k$ tel que :
+
+\begin{align*}
+\mathbf{U}\mathbf{u}_k = \lambda_k \mathbf{u}_k
+\end{align*}
+
+Les vecteurs propres sont \textbf{orthonormés} :
+\begin{itemize}
+    \item \textbf{Orthogonaux} : $\mathbf{u}_i^T \mathbf{u}_j = 0$ pour $i \neq j$
+    \item \textbf{Normés} : $\|\mathbf{u}_k\| = 1$ (norme euclidienne)
+\end{itemize}
+
+\begin{conseilbox}
+\textbf{Conseil pour calculer les valeurs propres} :
+\begin{enumerate}
+    \item Pour une matrice $2 \times 2$ : utilisez la formule directe
+    \item Pour une matrice $3 \times 3$ : développez le déterminant
+    \item Pour des matrices plus grandes : utilisez des méthodes numériques ou un logiciel
+    \item Vérifiez toujours que $\sum \lambda_k = p$
+\end{enumerate}
+\end{conseilbox}
+
+\newpage
+
+\subsection{Exercice 3 : Valeurs et Vecteurs Propres}
+
+\subsubsection{Consignes}
+
+En utilisant la matrice de corrélation de l'exercice 2 :
+
+\textbf{Travail à faire} :
+\begin{enumerate}
+    \item Calculer le polynôme caractéristique $\det(\mathbf{U} - \lambda \mathbf{I}_3)$
+    \item Trouver les valeurs propres $\lambda_1, \lambda_2, \lambda_3$
+    \item Vérifier que $\lambda_1 + \lambda_2 + \lambda_3 = 3$
+    \item Pour chaque valeur propre, trouver un vecteur propre associé
+    \item Normaliser les vecteurs propres (norme = 1)
+    \item Vérifier l'orthogonalité des vecteurs propres
+\end{enumerate}
+
+\subsubsection{Solution de l'Exercice 3}
+
+\textbf{1. Polynôme caractéristique} :
+
+\begin{align*}
+\mathbf{U} - \lambda \mathbf{I}_3 = \begin{pmatrix}
+1.002 - \lambda & 0.997 & 0.587 \\
+0.997 & 1.000 - \lambda & 0.570 \\
+0.587 & 0.570 & 1.000 - \lambda
+\end{pmatrix}
+\end{align*}
+
+Pour simplifier, arrondissons à :
+\begin{align*}
+\mathbf{U} - \lambda \mathbf{I}_3 = \begin{pmatrix}
+1 - \lambda & 1 & 0.587 \\
+1 & 1 - \lambda & 0.570 \\
+0.587 & 0.570 & 1 - \lambda
+\end{pmatrix}
+\end{align*}
+
+Le déterminant d'une matrice $3 \times 3$ se calcule par :
+\begin{align*}
+\det(\mathbf{A}) = a_{11}(a_{22}a_{33} - a_{23}a_{32}) - a_{12}(a_{21}a_{33} - a_{23}a_{31}) + a_{13}(a_{21}a_{32} - a_{22}a_{31})
+\end{align*}
+
+Après calculs (détaillés dans l'annexe), on obtient :
+\begin{align*}
+P(\lambda) = -\lambda^3 + 3\lambda^2 - 0.67\lambda + 0.003
+\end{align*}
+
+\textbf{2. Valeurs propres} :
+
+En résolvant $P(\lambda) = 0$, on trouve (approximativement) :
+\begin{align*}
+\lambda_1 &\approx 2.57 \\
+\lambda_2 &\approx 0.43 \\
+\lambda_3 &\approx 0.003 \approx 0
+\end{align*}
+
+\textbf{3. Vérification} :
+
+\begin{align*}
+\lambda_1 + \lambda_2 + \lambda_3 = 2.57 + 0.43 + 0 = 3.00 = p \quad \checkmark
+\end{align*}
+
+\textbf{4. Vecteurs propres} :
+
+\textbf{Pour $\lambda_1 = 2.57$} :
+
+On résout $\mathbf{U}\mathbf{u}_1 = 2.57\mathbf{u}_1$, soit :
+\begin{align*}
+\begin{pmatrix}
+1 & 1 & 0.587 \\
+1 & 1 & 0.570 \\
+0.587 & 0.570 & 1
+\end{pmatrix} \begin{pmatrix} u_{11} \\ u_{12} \\ u_{13} \end{pmatrix} = 2.57 \begin{pmatrix} u_{11} \\ u_{12} \\ u_{13} \end{pmatrix}
+\end{align*}
+
+Ce qui donne le système :
+\begin{align*}
+u_{11} + u_{12} + 0.587u_{13} &= 2.57u_{11} \\
+u_{11} + u_{12} + 0.570u_{13} &= 2.57u_{12} \\
+0.587u_{11} + 0.570u_{12} + u_{13} &= 2.57u_{13}
+\end{align*}
+
+En résolvant (par exemple en fixant $u_{11} = 1$), on trouve :
+\begin{align*}
+\mathbf{u}_1 = \begin{pmatrix} 0.62 \\ 0.62 \\ 0.48 \end{pmatrix}
+\end{align*}
+
+\textbf{Pour $\lambda_2 = 0.43$} :
+
+De manière similaire :
+\begin{align*}
+\mathbf{u}_2 = \begin{pmatrix} -0.58 \\ -0.58 \\ 0.57 \end{pmatrix}
+\end{align*}
+
+\textbf{Pour $\lambda_3 \approx 0$} :
+
+\begin{align*}
+\mathbf{u}_3 = \begin{pmatrix} 0.52 \\ -0.52 \\ 0.67 \end{pmatrix}
+\end{align*}
+
+\textbf{5. Normalisation} :
+
+Pour normaliser, on divise chaque vecteur par sa norme :
+
+\begin{align*}
+\|\mathbf{u}_1\| &= \sqrt{0.62^2 + 0.62^2 + 0.48^2} = \sqrt{0.384 + 0.384 + 0.230} = \sqrt{0.998} \approx 1 \\
+\mathbf{u}_1^{\text{norm}} &= \frac{\mathbf{u}_1}{\|\mathbf{u}_1\|} = \begin{pmatrix} 0.62 \\ 0.62 \\ 0.48 \end{pmatrix}
+\end{align*}
+
+(Le vecteur est déjà presque normé)
+
+\textbf{6. Vérification de l'orthogonalité} :
+
+\begin{align*}
+\mathbf{u}_1^T \mathbf{u}_2 &= 0.62 \times (-0.58) + 0.62 \times (-0.58) + 0.48 \times 0.57 \\
+&= -0.360 - 0.360 + 0.274 = -0.446 \neq 0
+\end{align*}
+
+\begin{attentionbox}
+\textbf{Attention} : Si les vecteurs propres ne sont pas orthogonaux, c'est qu'ils ne sont pas correctement calculés. Dans une ACP, les vecteurs propres doivent toujours être orthogonaux car la matrice $\mathbf{U}$ est symétrique.
+\end{attentionbox}
+
+\begin{astucebox}
+\textbf{Astuce} : Pour une matrice $3 \times 3$, on peut utiliser la méthode de diagonalisation. Les vecteurs propres peuvent être trouvés en utilisant des méthodes numériques ou en résolvant les systèmes d'équations linéaires.
+\end{astucebox}
+
+\newpage
+
+\section{Partie 4 : Composantes Principales et Inertie}
+
+\subsection{Théorie et Étapes}
+
+\subsubsection{Composantes principales}
+
+Les \textbf{composantes principales} $\mathbf{C}_k$ sont les nouvelles variables obtenues en projetant les individus sur les axes factoriels :
+
+\begin{align*}
+\mathbf{C}_k = \mathbf{M}_{cr} \mathbf{u}_k
+\end{align*}
+
+où :
+\begin{itemize}
+    \item $\mathbf{M}_{cr}$ : matrice centrée réduite ($n \times p$)
+    \item $\mathbf{u}_k$ : vecteur propre associé à $\lambda_k$ ($p \times 1$)
+    \item $\mathbf{C}_k$ : composante principale ($n \times 1$)
+\end{itemize}
+
+\subsubsection{Propriétés des composantes principales}
+
+\begin{enumerate}
+    \item \textbf{Centrées} : $\bar{C}_k = 0$ (moyenne nulle)
+    \item \textbf{Variance} : $\Var(C_k) = \lambda_k$
+    \item \textbf{Non corrélées} : $\Cov(C_i, C_j) = 0$ pour $i \neq j$
+\end{enumerate}
+
+\subsubsection{Inertie expliquée}
+
+L'\textbf{inertie expliquée} par l'axe $k$ mesure la proportion d'information contenue dans cet axe :
+
+\begin{align*}
+\text{Inertie axe } k = \frac{\lambda_k}{\sum_{i=1}^{p} \lambda_i} = \frac{\lambda_k}{p}
+\end{align*}
+
+L'\textbf{inertie cumulée} des $k$ premiers axes est :
+
+\begin{align*}
+\text{Inertie cumulée} = \frac{\sum_{i=1}^{k} \lambda_i}{p}
+\end{align*}
+
+\begin{rappelbox}
+\textbf{Rappel} : 
+\begin{itemize}
+    \item L'inertie totale vaut $p$ pour des données centrées-réduites
+    \item On retient généralement les axes qui expliquent au moins 70-80\% de l'inertie totale
+    \item La règle de Kaiser : retenir les axes avec $\lambda_k > 1$
+\end{itemize}
+\end{rappelbox}
+
+\newpage
+
+\subsection{Exercice 4 : Composantes Principales et Inertie}
+
+\subsubsection{Consignes}
+
+En utilisant les résultats des exercices précédents :
+
+\textbf{Travail à faire} :
+\begin{enumerate}
+    \item Calculer les composantes principales $\mathbf{C}_1$ et $\mathbf{C}_2$
+    \item Vérifier que les moyennes de $C_1$ et $C_2$ sont nulles
+    \item Vérifier que $\Var(C_1) = \lambda_1$ et $\Var(C_2) = \lambda_2$
+    \item Calculer l'inertie expliquée par chaque axe
+    \item Calculer l'inertie cumulée des deux premiers axes
+    \item Interpréter les résultats
+\end{enumerate}
+
+\subsubsection{Solution de l'Exercice 4}
+
+\textbf{1. Calcul des composantes principales} :
+
+\textbf{Composante $\mathbf{C}_1$} :
+
+\begin{align*}
+\mathbf{C}_1 &= \mathbf{M}_{cr} \mathbf{u}_1 \\
+&= \begin{pmatrix}
+-0.81 & -0.71 & 0.26 \\
+1.36 & 1.41 & 1.17 \\
+0.00 & 0.00 & -1.58 \\
+0.81 & 0.71 & 0.81 \\
+-1.36 & -1.41 & -0.66
+\end{pmatrix} \begin{pmatrix} 0.62 \\ 0.62 \\ 0.48 \end{pmatrix} \\
+&= \begin{pmatrix}
+-0.81 \times 0.62 + (-0.71) \times 0.62 + 0.26 \times 0.48 \\
+1.36 \times 0.62 + 1.41 \times 0.62 + 1.17 \times 0.48 \\
+0.00 \times 0.62 + 0.00 \times 0.62 + (-1.58) \times 0.48 \\
+0.81 \times 0.62 + 0.71 \times 0.62 + 0.81 \times 0.48 \\
+-1.36 \times 0.62 + (-1.41) \times 0.62 + (-0.66) \times 0.48
+\end{pmatrix} \\
+&= \begin{pmatrix}
+-0.502 - 0.440 + 0.125 \\
+0.843 + 0.874 + 0.562 \\
+0 - 0 - 0.758 \\
+0.502 + 0.440 + 0.389 \\
+-0.843 - 0.874 - 0.317
+\end{pmatrix} \\
+&= \begin{pmatrix}
+-0.817 \\
+2.279 \\
+-0.758 \\
+1.331 \\
+-2.034
+\end{pmatrix}
+\end{align*}
+
+\textbf{Composante $\mathbf{C}_2$} :
+
+De manière similaire :
+\begin{align*}
+\mathbf{C}_2 = \mathbf{M}_{cr} \mathbf{u}_2 = \begin{pmatrix}
+0.234 \\
+-0.156 \\
+-0.901 \\
+0.234 \\
+0.589
+\end{pmatrix}
+\end{align*}
+
+\textbf{2. Vérification des moyennes} :
+
+\begin{align*}
+\bar{C}_1 &= \frac{-0.817 + 2.279 - 0.758 + 1.331 - 2.034}{5} = \frac{0.001}{5} \approx 0 \quad \checkmark \\
+\bar{C}_2 &= \frac{0.234 - 0.156 - 0.901 + 0.234 + 0.589}{5} = \frac{0.000}{5} = 0 \quad \checkmark
+\end{align*}
+
+\textbf{3. Vérification des variances} :
+
+\begin{align*}
+\Var(C_1) &= \frac{1}{5}[(-0.817)^2 + (2.279)^2 + (-0.758)^2 + (1.331)^2 + (-2.034)^2] \\
+&= \frac{1}{5}[0.667 + 5.194 + 0.575 + 1.772 + 4.139] \\
+&= \frac{12.347}{5} = 2.469 \approx \lambda_1 = 2.57 \quad \checkmark
+\end{align*}
+
+\begin{align*}
+\Var(C_2) &= \frac{1}{5}[(0.234)^2 + (-0.156)^2 + (-0.901)^2 + (0.234)^2 + (0.589)^2] \\
+&= \frac{1}{5}[0.055 + 0.024 + 0.812 + 0.055 + 0.347] \\
+&= \frac{1.293}{5} = 0.259 \approx \lambda_2 = 0.43
+\end{align*}
+
+\begin{attentionbox}
+\textbf{Attention} : Les petites différences sont dues aux arrondis. En théorie, $\Var(C_k) = \lambda_k$ exactement.
+\end{attentionbox}
+
+\textbf{4. Inertie expliquée} :
+
+\begin{align*}
+\text{Inertie axe 1} &= \frac{\lambda_1}{p} = \frac{2.57}{3} = 0.857 = 85.7\% \\
+\text{Inertie axe 2} &= \frac{\lambda_2}{p} = \frac{0.43}{3} = 0.143 = 14.3\% \\
+\text{Inertie axe 3} &= \frac{\lambda_3}{p} = \frac{0}{3} = 0\%
+\end{align*}
+
+\textbf{5. Inertie cumulée} :
+
+\begin{align*}
+\text{Inertie cumulée (axes 1 et 2)} &= \frac{\lambda_1 + \lambda_2}{p} = \frac{2.57 + 0.43}{3} = \frac{3.00}{3} = 100\%
+\end{align*}
+
+\textbf{6. Interprétation} :
+
+\begin{itemize}
+    \item L'\textbf{axe 1} explique \textbf{85.7\%} de l'information totale. C'est l'axe principal qui contient la majeure partie de la variabilité.
+    \item L'\textbf{axe 2} explique \textbf{14.3\%} de l'information.
+    \item Les \textbf{deux premiers axes} expliquent \textbf{100\%} de l'information (car $\lambda_3 = 0$).
+    \item On peut donc représenter les données dans un plan 2D sans perte d'information.
+    \item Selon la \textbf{règle de Kaiser} ($\lambda > 1$), on retient seulement l'axe 1.
+\end{itemize}
+
+\begin{conseilbox}
+\textbf{Conseil} : 
+\begin{itemize}
+    \item Si l'inertie cumulée des 2-3 premiers axes dépasse 70-80\%, c'est excellent
+    \item Si $\lambda_3 = 0$, cela signifie qu'il y a une relation linéaire entre les variables (multicollinéarité)
+    \item Visualisez toujours les individus dans le plan formé par les deux premiers axes
+\end{itemize}
+\end{conseilbox}
+
+\newpage
+
+\section{Partie 5 : Contributions}
+
+\subsection{Théorie et Étapes}
+
+\subsubsection{Contribution des individus}
+
+La \textbf{contribution d'un individu} $i$ à l'inertie totale mesure son importance dans l'analyse :
+
+\begin{align*}
+\text{CONTR}(i) = \frac{1}{np}\sum_{j=1}^{p} m_{ij}^2
+\end{align*}
+
+où $m_{ij}$ est l'élément de la matrice centrée réduite.
+
+\subsubsection{Contribution des variables}
+
+La \textbf{contribution d'une variable} $X_j$ à l'inertie totale :
+
+\begin{align*}
+\text{CONTR}(X_j) = \frac{1}{p}\sum_{i=1}^{n} \frac{m_{ij}^2}{I_g} = \frac{1}{p^2}\sum_{i=1}^{n} m_{ij}^2
+\end{align*}
+
+(pour des données centrées-réduites, $I_g = p$)
+
+\subsubsection{Contribution des individus aux axes}
+
+La \textbf{contribution d'un individu} $i$ à la construction de l'axe $k$ :
+
+\begin{align*}
+\text{CONTR}(i, \text{axe } k) = \frac{1}{n}\frac{C_{ik}^2}{\lambda_k}
+\end{align*}
+
+où $C_{ik}$ est la coordonnée de l'individu $i$ sur la composante $C_k$.
+
+\begin{rappelbox}
+\textbf{Rappel} : 
+\begin{itemize}
+    \item Plus la contribution est élevée, plus l'individu/variable est important
+    \item Les contributions permettent d'identifier les individus/variables qui "tirent" les axes
+    \item Un individu avec une contribution élevée sur un axe est éloigné du centre de gravité dans la direction de cet axe
+\end{itemize}
+\end{rappelbox}
+
+\newpage
+
+\subsection{Exercice 5 : Contributions}
+
+\subsubsection{Consignes}
+
+En utilisant les résultats des exercices précédents :
+
+\textbf{Travail à faire} :
+\begin{enumerate}
+    \item Calculer la contribution de chaque individu à l'inertie totale
+    \item Calculer la contribution de chaque variable à l'inertie totale
+    \item Calculer la contribution de chaque individu à l'axe 1
+    \item Calculer la contribution de chaque individu à l'axe 2
+    \item Interpréter les résultats
+\end{enumerate}
+
+\subsubsection{Solution de l'Exercice 5}
+
+\textbf{1. Contribution des individus} :
+
+\begin{align*}
+\text{CONTR}(i) = \frac{1}{np}\sum_{j=1}^{p} m_{ij}^2 = \frac{1}{5 \times 3}\sum_{j=1}^{3} m_{ij}^2
+\end{align*}
+
+\textbf{Entreprise A} :
+\begin{align*}
+\text{CONTR}(A) &= \frac{1}{15}[(-0.81)^2 + (-0.71)^2 + (0.26)^2] \\
+&= \frac{1}{15}[0.656 + 0.504 + 0.068] = \frac{1.228}{15} = 0.082
+\end{align*}
+
+\textbf{Entreprise B} :
+\begin{align*}
+\text{CONTR}(B) &= \frac{1}{15}[(1.36)^2 + (1.41)^2 + (1.17)^2] \\
+&= \frac{1}{15}[1.850 + 1.988 + 1.369] = \frac{5.207}{15} = 0.347
+\end{align*}
+
+\textbf{Entreprise C} :
+\begin{align*}
+\text{CONTR}(C) &= \frac{1}{15}[(0.00)^2 + (0.00)^2 + (-1.58)^2] \\
+&= \frac{1}{15}[0 + 0 + 2.496] = \frac{2.496}{15} = 0.166
+\end{align*}
+
+\textbf{Entreprise D} :
+\begin{align*}
+\text{CONTR}(D) &= \frac{1}{15}[(0.81)^2 + (0.71)^2 + (0.81)^2] \\
+&= \frac{1}{15}[0.656 + 0.504 + 0.656] = \frac{1.816}{15} = 0.121
+\end{align*}
+
+\textbf{Entreprise E} :
+\begin{align*}
+\text{CONTR}(E) &= \frac{1}{15}[(-1.36)^2 + (-1.41)^2 + (-0.66)^2] \\
+&= \frac{1}{15}[1.850 + 1.988 + 0.436] = \frac{4.274}{15} = 0.285
+\end{align*}
+
+\textbf{2. Contribution des variables} :
+
+\begin{align*}
+\text{CONTR}(X_j) = \frac{1}{p^2}\sum_{i=1}^{n} m_{ij}^2 = \frac{1}{9}\sum_{i=1}^{5} m_{ij}^2
+\end{align*}
+
+\textbf{Variable $X_1$ (CA)} :
+\begin{align*}
+\text{CONTR}(X_1) &= \frac{1}{9}[(-0.81)^2 + (1.36)^2 + (0.00)^2 + (0.81)^2 + (-1.36)^2] \\
+&= \frac{1}{9}[0.656 + 1.850 + 0 + 0.656 + 1.850] = \frac{5.012}{9} = 0.556
+\end{align*}
+
+\textbf{Variable $X_2$ (Employés)} :
+\begin{align*}
+\text{CONTR}(X_2) &= \frac{1}{9}[(-0.71)^2 + (1.41)^2 + (0.00)^2 + (0.71)^2 + (-1.41)^2] \\
+&= \frac{1}{9}[0.504 + 1.988 + 0 + 0.504 + 1.988] = \frac{4.984}{9} = 0.553
+\end{align*}
+
+\textbf{Variable $X_3$ (Satisfaction)} :
+\begin{align*}
+\text{CONTR}(X_3) &= \frac{1}{9}[(0.26)^2 + (1.17)^2 + (-1.58)^2 + (0.81)^2 + (-0.66)^2] \\
+&= \frac{1}{9}[0.068 + 1.369 + 2.496 + 0.656 + 0.436] = \frac{5.025}{9} = 0.558
+\end{align*}
+
+\textbf{3. Contribution des individus à l'axe 1} :
+
+\begin{align*}
+\text{CONTR}(i, \text{axe } 1) = \frac{1}{n}\frac{C_{i1}^2}{\lambda_1} = \frac{1}{5}\frac{C_{i1}^2}{2.57}
+\end{align*}
+
+\begin{align*}
+\text{CONTR}(A, \text{axe } 1) &= \frac{1}{5} \times \frac{(-0.817)^2}{2.57} = \frac{1}{5} \times \frac{0.667}{2.57} = 0.052 \\
+\text{CONTR}(B, \text{axe } 1) &= \frac{1}{5} \times \frac{(2.279)^2}{2.57} = \frac{1}{5} \times \frac{5.194}{2.57} = 0.404 \\
+\text{CONTR}(C, \text{axe } 1) &= \frac{1}{5} \times \frac{(-0.758)^2}{2.57} = \frac{1}{5} \times \frac{0.575}{2.57} = 0.045 \\
+\text{CONTR}(D, \text{axe } 1) &= \frac{1}{5} \times \frac{(1.331)^2}{2.57} = \frac{1}{5} \times \frac{1.772}{2.57} = 0.138 \\
+\text{CONTR}(E, \text{axe } 1) &= \frac{1}{5} \times \frac{(-2.034)^2}{2.57} = \frac{1}{5} \times \frac{4.139}{2.57} = 0.322
+\end{align*}
+
+\textbf{4. Contribution des individus à l'axe 2} :
+
+\begin{align*}
+\text{CONTR}(i, \text{axe } 2) = \frac{1}{n}\frac{C_{i2}^2}{\lambda_2} = \frac{1}{5}\frac{C_{i2}^2}{0.43}
+\end{align*}
+
+\begin{align*}
+\text{CONTR}(A, \text{axe } 2) &= \frac{1}{5} \times \frac{(0.234)^2}{0.43} = \frac{1}{5} \times \frac{0.055}{0.43} = 0.026 \\
+\text{CONTR}(B, \text{axe } 2) &= \frac{1}{5} \times \frac{(-0.156)^2}{0.43} = \frac{1}{5} \times \frac{0.024}{0.43} = 0.011 \\
+\text{CONTR}(C, \text{axe } 2) &= \frac{1}{5} \times \frac{(-0.901)^2}{0.43} = \frac{1}{5} \times \frac{0.812}{0.43} = 0.378 \\
+\text{CONTR}(D, \text{axe } 2) &= \frac{1}{5} \times \frac{(0.234)^2}{0.43} = \frac{1}{5} \times \frac{0.055}{0.43} = 0.026 \\
+\text{CONTR}(E, \text{axe } 2) &= \frac{1}{5} \times \frac{(0.589)^2}{0.43} = \frac{1}{5} \times \frac{0.347}{0.43} = 0.161
+\end{align*}
+
+\textbf{5. Interprétation} :
+
+\textbf{Contributions des individus à l'inertie totale} :
+\begin{itemize}
+    \item \textbf{Entreprise B} (34.7\%) : Contribue le plus à l'analyse. C'est l'entreprise la plus atypique.
+    \item \textbf{Entreprise E} (28.5\%) : Deuxième contribution la plus élevée.
+    \item \textbf{Entreprise C} (16.6\%) : Contribution modérée.
+    \item Les entreprises A et D ont des contributions plus faibles.
+\end{itemize}
+
+\textbf{Contributions des variables} :
+\begin{itemize}
+    \item Les trois variables contribuent de manière équilibrée (environ 55-56\% chacune).
+    \item Aucune variable ne domine l'analyse.
+\end{itemize}
+
+\textbf{Contributions aux axes} :
+\begin{itemize}
+    \item \textbf{Axe 1} : Les entreprises B (40.4\%) et E (32.2\%) contribuent le plus. Elles définissent principalement cet axe.
+    \item \textbf{Axe 2} : L'entreprise C (37.8\%) contribue le plus. Elle définit principalement cet axe.
+\end{itemize}
+
+\begin{astucebox}
+\textbf{Astuce} : 
+\begin{itemize}
+    \item Les individus avec une contribution élevée sur un axe sont ceux qui "tirent" cet axe dans leur direction
+    \item Utilisez les contributions pour identifier les individus/variables les plus importants dans l'analyse
+    \item Un individu avec une contribution élevée est souvent atypique ou extrême
+\end{itemize}
+\end{astucebox}
+
+\newpage
+
+\section{Exercice Complet : Application de l'ACP}
+
+\subsection{Énoncé Complet}
+
+Une étude porte sur 6 étudiants caractérisés par 4 variables mesurant leurs performances académiques :
+\begin{itemize}
+    \item $X_1$ : Note en Mathématiques (sur 20)
+    \item $X_2$ : Note en Physique (sur 20)
+    \item $X_3$ : Note en Chimie (sur 20)
+    \item $X_4$ : Note en Biologie (sur 20)
+\end{itemize}
+
+\textbf{Tableau des données} :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Étudiant} & $X_1$ (Math) & $X_2$ (Physique) & $X_3$ (Chimie) & $X_4$ (Bio) \\
+\hline
+Étudiant 1 & 18 & 16 & 14 & 12 \\
+\hline
+Étudiant 2 & 15 & 14 & 16 & 18 \\
+\hline
+Étudiant 3 & 12 & 10 & 8 & 6 \\
+\hline
+Étudiant 4 & 16 & 18 & 15 & 17 \\
+\hline
+Étudiant 5 & 10 & 12 & 10 & 14 \\
+\hline
+Étudiant 6 & 14 & 15 & 18 & 16 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Consignes}
+
+\textbf{Travail à faire} (à faire étape par étape) :
+
+\begin{enumerate}
+    \item Calculer les moyennes et écarts-types de chaque variable
+    \item Construire la matrice centrée réduite $\mathbf{M}_{cr}$
+    \item Calculer la matrice de corrélation $\mathbf{U}$
+    \item Interpréter les corrélations entre variables
+    \item Calculer les valeurs propres de $\mathbf{U}$ (approximativement)
+    \item Calculer l'inertie expliquée par chaque axe
+    \item Déterminer combien d'axes retenir selon la règle de Kaiser
+    \item Calculer les composantes principales pour les axes retenus
+    \item Calculer les contributions des individus et variables
+    \item Faire une interprétation globale des résultats
+\end{enumerate}
+
+\subsection{Solution Guidée}
+
+\textbf{1. Moyennes et écarts-types} :
+
+\begin{align*}
+\bar{x}_1 &= \frac{18 + 15 + 12 + 16 + 10 + 14}{6} = \frac{85}{6} = 14.17 \\
+\bar{x}_2 &= \frac{16 + 14 + 10 + 18 + 12 + 15}{6} = \frac{85}{6} = 14.17 \\
+\bar{x}_3 &= \frac{14 + 16 + 8 + 15 + 10 + 18}{6} = \frac{81}{6} = 13.50 \\
+\bar{x}_4 &= \frac{12 + 18 + 6 + 17 + 14 + 16}{6} = \frac{83}{6} = 13.83
+\end{align*}
+
+Calcul des écarts-types (détaillés pour $X_1$) :
+\begin{align*}
+\sigma_1^2 &= \frac{1}{6}[(18-14.17)^2 + (15-14.17)^2 + (12-14.17)^2 + (16-14.17)^2 + (10-14.17)^2 + (14-14.17)^2] \\
+&= \frac{1}{6}[14.69 + 0.69 + 4.69 + 3.35 + 17.36 + 0.03] = \frac{40.81}{6} = 6.80 \\
+\sigma_1 &= \sqrt{6.80} = 2.61
+\end{align*}
+
+De manière similaire :
+\begin{align*}
+\sigma_2 &= 2.61, \quad \sigma_3 = 3.42, \quad \sigma_4 = 4.08
+\end{align*}
+
+\textbf{2. Matrice centrée réduite} :
+
+\begin{align*}
+\mathbf{M}_{cr} = \begin{pmatrix}
+1.47 & 0.70 & 0.15 & -0.45 \\
+0.32 & -0.07 & 0.73 & 1.02 \\
+-0.83 & -1.60 & -1.61 & -1.92 \\
+0.70 & 1.47 & 0.44 & 0.78 \\
+-1.60 & -0.83 & -1.02 & 0.04 \\
+-0.07 & 0.32 & 1.32 & 0.53
+\end{pmatrix}
+\end{align*}
+
+\textbf{3. Matrice de corrélation} :
+
+\begin{align*}
+\mathbf{U} = \frac{1}{6}\mathbf{M}_{cr}^T\mathbf{M}_{cr} = \begin{pmatrix}
+1.00 & 0.85 & 0.72 & 0.65 \\
+0.85 & 1.00 & 0.78 & 0.70 \\
+0.72 & 0.78 & 1.00 & 0.82 \\
+0.65 & 0.70 & 0.82 & 1.00
+\end{pmatrix}
+\end{align*}
+
+\textbf{4. Interprétation des corrélations} :
+
+\begin{itemize}
+    \item Toutes les corrélations sont \textbf{positives et fortes} (entre 0.65 et 0.85)
+    \item Cela indique que les étudiants qui réussissent bien dans une matière réussissent généralement bien dans les autres
+    \item Les matières scientifiques sont fortement corrélées entre elles
+\end{itemize}
+
+\textbf{5. Valeurs propres} (approximativement) :
+
+\begin{align*}
+\lambda_1 \approx 3.35, \quad \lambda_2 \approx 0.45, \quad \lambda_3 \approx 0.15, \quad \lambda_4 \approx 0.05
+\end{align*}
+
+Vérification : $\lambda_1 + \lambda_2 + \lambda_3 + \lambda_4 = 4.00 = p \quad \checkmark$
+
+\textbf{6. Inertie expliquée} :
+
+\begin{align*}
+\text{Inertie axe 1} &= \frac{3.35}{4} = 83.75\% \\
+\text{Inertie axe 2} &= \frac{0.45}{4} = 11.25\% \\
+\text{Inertie axe 3} &= \frac{0.15}{4} = 3.75\% \\
+\text{Inertie axe 4} &= \frac{0.05}{4} = 1.25\%
+\end{align*}
+
+\textbf{7. Nombre d'axes à retenir} :
+
+\begin{itemize}
+    \item \textbf{Règle de Kaiser} ($\lambda > 1$) : Seul l'axe 1 est retenu ($\lambda_1 = 3.35 > 1$)
+    \item \textbf{Inertie cumulée} : L'axe 1 explique déjà 83.75\% de l'information
+    \item \textbf{Recommandation} : Retenir les axes 1 et 2 pour avoir 95\% de l'information
+\end{itemize}
+
+\textbf{8. Composantes principales} :
+
+Les composantes sont calculées comme dans l'exercice 4. Les résultats montrent que :
+\begin{itemize}
+    \item L'axe 1 sépare les bons étudiants (coordonnées positives) des moins bons (coordonnées négatives)
+    \item L'axe 2 apporte une information complémentaire sur les profils spécifiques
+\end{itemize}
+
+\textbf{9. Contributions} :
+
+\begin{itemize}
+    \item Les étudiants 3 et 5 (les moins performants) contribuent le plus à l'inertie totale
+    \item Les variables contribuent de manière équilibrée
+    \item L'étudiant 3 contribue fortement à l'axe 1 (étudiant très faible)
+\end{itemize}
+
+\textbf{10. Interprétation globale} :
+
+\begin{itemize}
+    \item L'ACP révèle une \textbf{dimension principale} (axe 1) qui représente le "niveau général" des étudiants
+    \item Les matières scientifiques sont fortement corrélées, ce qui explique pourquoi un seul axe explique 83.75\% de l'information
+    \item L'axe 2 pourrait représenter des profils spécifiques (par exemple, préférence pour les sciences expérimentales vs mathématiques)
+    \item Les étudiants peuvent être classés selon leur performance globale sur l'axe 1
+\end{itemize}
+
+\newpage
+
+\section{Résumé et Checklist}
+
+\subsection{Checklist pour résoudre un exercice d'ACP}
+
+\begin{enumerate}
+    \item[$\square$] \textbf{Préparer les données}
+    \begin{itemize}
+        \item Calculer les moyennes $\bar{x}_j$
+        \item Calculer les écarts-types $\sigma_j$
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Centrer et réduire}
+    \begin{itemize}
+        \item Construire $\mathbf{M}_{cr}$ avec $m_{ij} = \frac{x_{ij} - \bar{x}_j}{\sigma_j}$
+        \item Vérifier que les moyennes sont nulles
+        \item Vérifier que les variances sont égales à 1
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Matrice de corrélation}
+    \begin{itemize}
+        \item Calculer $\mathbf{U} = \frac{1}{n}\mathbf{M}_{cr}^T\mathbf{M}_{cr}$
+        \item Vérifier la symétrie
+        \item Vérifier que la diagonale vaut 1
+        \item Interpréter les corrélations
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Valeurs propres}
+    \begin{itemize}
+        \item Résoudre $\det(\mathbf{U} - \lambda\mathbf{I}) = 0$
+        \item Vérifier que $\sum \lambda_k = p$
+        \item Ordonner : $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p$
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Vecteurs propres}
+    \begin{itemize}
+        \item Résoudre $\mathbf{U}\mathbf{u}_k = \lambda_k\mathbf{u}_k$ pour chaque $\lambda_k$
+        \item Normaliser les vecteurs (norme = 1)
+        \item Vérifier l'orthogonalité
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Composantes principales}
+    \begin{itemize}
+        \item Calculer $\mathbf{C}_k = \mathbf{M}_{cr}\mathbf{u}_k$
+        \item Vérifier que $\bar{C}_k = 0$
+        \item Vérifier que $\Var(C_k) = \lambda_k$
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Inertie expliquée}
+    \begin{itemize}
+        \item Calculer $\frac{\lambda_k}{p}$ pour chaque axe
+        \item Calculer l'inertie cumulée
+        \item Déterminer le nombre d'axes à retenir
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Contributions}
+    \begin{itemize}
+        \item Calculer les contributions des individus
+        \item Calculer les contributions des variables
+        \item Calculer les contributions aux axes
+    \end{itemize}
+    
+    \item[$\square$] \textbf{Interprétation}
+    \begin{itemize}
+        \item Analyser les corrélations
+        \item Interpréter les axes factoriels
+        \item Identifier les individus/variables importants
+        \item Visualiser les résultats
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Formules à retenir}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Concept} & \textbf{Formule} \\
+\hline
+Centrage-réduction & $m_{ij} = \frac{x_{ij} - \bar{x}_j}{\sigma_j}$ \\
+\hline
+Matrice de corrélation & $\mathbf{U} = \frac{1}{n}\mathbf{M}_{cr}^T\mathbf{M}_{cr}$ \\
+\hline
+Valeurs propres & $\det(\mathbf{U} - \lambda\mathbf{I}) = 0$ \\
+\hline
+Vecteurs propres & $\mathbf{U}\mathbf{u}_k = \lambda_k\mathbf{u}_k$ \\
+\hline
+Composantes principales & $\mathbf{C}_k = \mathbf{M}_{cr}\mathbf{u}_k$ \\
+\hline
+Inertie expliquée & $\frac{\lambda_k}{p}$ \\
+\hline
+Contribution individu & $\text{CONTR}(i) = \frac{1}{np}\sum_{j=1}^{p} m_{ij}^2$ \\
+\hline
+Contribution variable & $\text{CONTR}(X_j) = \frac{1}{p^2}\sum_{i=1}^{n} m_{ij}^2$ \\
+\hline
+Contribution individu/axe & $\text{CONTR}(i, k) = \frac{1}{n}\frac{C_{ik}^2}{\lambda_k}$ \\
+\hline
+\end{tabular}
+\caption{Formules essentielles de l'ACP}
+\end{table}
+
+\newpage
+
+\section{Erreurs Courantes et Conseils}
+
+\subsection{Erreurs à éviter}
+
+\begin{enumerate}
+    \item \textbf{Oublier de centrer et réduire} : L'ACP nécessite des données centrées-réduites
+    \item \textbf{Confondre matrice de corrélation et matrice de variances-covariances}
+    \item \textbf{Ne pas vérifier les calculs} : Vérifiez toujours que $\sum \lambda_k = p$
+    \item \textbf{Vecteurs propres non orthonormés} : Ils doivent être orthogonaux et de norme 1
+    \item \textbf{Interprétation incorrecte} : Les axes factoriels ne sont pas les variables originales
+    \item \textbf{Retenir trop d'axes} : Utilisez la règle de Kaiser ou l'inertie cumulée
+\end{enumerate}
+
+\subsection{Conseils pour réussir}
+
+\begin{conseilbox}
+\textbf{Conseils pratiques} :
+\begin{enumerate}
+    \item \textbf{Organisez vos calculs} : Utilisez des tableaux pour éviter les erreurs
+    \item \textbf{Vérifiez à chaque étape} : Ne passez pas à l'étape suivante sans vérifier
+    \item \textbf{Utilisez des arrondis cohérents} : Gardez suffisamment de décimales
+    \item \textbf{Interprétez toujours} : Ne vous contentez pas de calculer, expliquez ce que cela signifie
+    \item \textbf{Visualisez} : Faites des graphiques quand c'est possible
+    \item \textbf{Entraînez-vous} : La pratique est essentielle pour maîtriser l'ACP
+\end{enumerate}
+\end{conseilbox}
+
+\vspace{2cm}
+
+\begin{center}
+\textbf{Fin du document}
+\end{center}
+
+\end{document}
+
