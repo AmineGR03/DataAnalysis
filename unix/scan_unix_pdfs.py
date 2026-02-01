@@ -99,3 +99,5 @@ if __name__ == "__main__":
     # Sauvegarder le contenu extrait
     save_extracted_content(pdf_files)
 
+
+
