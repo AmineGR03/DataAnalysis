@@ -1,0 +1,306 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tcolorbox}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Exercice Khi-deux}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries\color{blue!30!black}}
+{}
+{0em}
+{}
+
+% Boîtes colorées
+\newtcolorbox{astucebox}{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=\textbf{Astuce},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{rappelbox}{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=\textbf{Rappel},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{attentionbox}{
+    colback=orange!5!white,
+    colframe=orange!75!black,
+    title=\textbf{Attention},
+    fonttitle=\bfseries
+}
+
+% Commandes personnalisées
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\chideux}{\chi^2}
+
+% Métadonnées
+\title{Exercice Complet - Test du Khi-deux\\
+\large Test d'Indépendance}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Ce document présente un exercice complet sur le test du Khi-deux d'indépendance, avec une explication détaillée de chaque étape.
+
+\newpage
+
+\section{Exercice : Test d'Indépendance du Khi-deux}
+
+\subsection{Énoncé}
+
+On souhaite tester s'il existe une relation entre le niveau de satisfaction des clients et le type de produit acheté. Un échantillon de 200 clients a été interrogé. Les résultats sont présentés dans le tableau suivant :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & \textbf{Produit A} & \textbf{Produit B} & \textbf{Total} \\
+\hline
+\textbf{Satisfait} & 45 & 55 & 100 \\
+\hline
+\textbf{Non satisfait} & 35 & 65 & 100 \\
+\hline
+\textbf{Total} & 80 & 120 & 200 \\
+\hline
+\end{tabular}
+\caption{Tableau de contingence : Satisfaction vs Type de produit}
+\end{table}
+
+\begin{enumerate}
+    \item Formuler les hypothèses du test.
+    \item Calculer les effectifs attendus sous l'hypothèse d'indépendance.
+    \item Calculer la statistique du test du Khi-deux.
+    \item Déterminer le nombre de degrés de liberté.
+    \item Déterminer la valeur critique au seuil $\alpha = 0.05$.
+    \item Conclure sur l'indépendance entre la satisfaction et le type de produit.
+    \item Calculer la p-value et interpréter.
+\end{enumerate}
+
+\subsection{Rappels Théoriques}
+
+\begin{rappelbox}
+\textbf{Test du Khi-deux d'indépendance :}
+
+On teste l'hypothèse que deux variables qualitatives sont indépendantes.
+
+\textbf{Hypothèses :}
+\begin{align}
+H_0 &: \text{Les deux variables sont indépendantes} \\
+H_1 &: \text{Les deux variables sont dépendantes}
+\end{align}
+
+\textbf{Statistique de test :}
+$$\chideux_0 = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$$
+
+où :
+\begin{itemize}
+    \item $O_{ij}$ : effectif observé dans la case $(i,j)$
+    \item $E_{ij}$ : effectif attendu sous $H_0$ : $E_{ij} = \frac{n_i \times n_j}{n}$
+    \item $r$ : nombre de lignes
+    \item $c$ : nombre de colonnes
+    \item $n$ : effectif total
+\end{itemize}
+
+\textbf{Degrés de liberté :}
+$$\nu = (r - 1) \times (c - 1)$$
+
+\textbf{Règle de décision :}
+\begin{itemize}
+    \item Si $\chideux_0 > \chideux_{\alpha, \nu}$ : on rejette $H_0$
+    \item Sinon : on ne rejette pas $H_0$
+\end{itemize}
+\end{rappelbox}
+
+\subsection{Solution Détaillée}
+
+\begin{enumerate}
+    \item \textbf{Formulation des hypothèses :}
+    
+    \begin{align}
+    H_0 &: \text{La satisfaction et le type de produit sont indépendants} \\
+    H_1 &: \text{La satisfaction et le type de produit sont dépendants}
+    \end{align}
+    
+    \item \textbf{Calcul des effectifs attendus :}
+    
+    Sous l'hypothèse d'indépendance $H_0$, les effectifs attendus sont calculés par :
+    $$E_{ij} = \frac{n_i \times n_j}{n}$$
+    
+    où $n_i$ est le total de la ligne $i$, $n_j$ est le total de la colonne $j$, et $n$ est l'effectif total.
+    
+    \begin{itemize}
+        \item $E_{11}$ (Satisfait, Produit A) : $E_{11} = \frac{100 \times 80}{200} = \frac{8000}{200} = 40$
+        \item $E_{12}$ (Satisfait, Produit B) : $E_{12} = \frac{100 \times 120}{200} = \frac{12000}{200} = 60$
+        \item $E_{21}$ (Non satisfait, Produit A) : $E_{21} = \frac{100 \times 80}{200} = \frac{8000}{200} = 40$
+        \item $E_{22}$ (Non satisfait, Produit B) : $E_{22} = \frac{100 \times 120}{200} = \frac{12000}{200} = 60$
+    \end{itemize}
+    
+    \begin{table}[h]
+    \centering
+    \begin{tabular}{|l|c|c|}
+    \hline
+     & \textbf{Produit A} & \textbf{Produit B} \\
+    \hline
+    \textbf{Satisfait} & 40 & 60 \\
+    \hline
+    \textbf{Non satisfait} & 40 & 60 \\
+    \hline
+    \end{tabular}
+    \caption{Effectifs attendus sous $H_0$}
+    \end{table}
+    
+    \item \textbf{Calcul de la statistique du test :}
+    
+    $$\chideux_0 = \sum_{i=1}^{2} \sum_{j=1}^{2} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$$
+    
+    Calculons chaque terme :
+    \begin{align}
+    \frac{(O_{11} - E_{11})^2}{E_{11}} &= \frac{(45 - 40)^2}{40} = \frac{25}{40} = 0.625 \\
+    \frac{(O_{12} - E_{12})^2}{E_{12}} &= \frac{(55 - 60)^2}{60} = \frac{25}{60} = 0.417 \\
+    \frac{(O_{21} - E_{21})^2}{E_{21}} &= \frac{(35 - 40)^2}{40} = \frac{25}{40} = 0.625 \\
+    \frac{(O_{22} - E_{22})^2}{E_{22}} &= \frac{(65 - 60)^2}{60} = \frac{25}{60} = 0.417
+    \end{align}
+    
+    Donc :
+    $$\chideux_0 = 0.625 + 0.417 + 0.625 + 0.417 = 2.084$$
+    
+    \item \textbf{Nombre de degrés de liberté :}
+    
+    $$\nu = (r - 1) \times (c - 1) = (2 - 1) \times (2 - 1) = 1 \times 1 = 1$$
+    
+    \item \textbf{Valeur critique :}
+    
+    Au seuil $\alpha = 0.05$ avec $\nu = 1$ degré de liberté, on consulte la table du Khi-deux :
+    $$\chideux_{0.05, 1} = 3.841$$
+    
+    \item \textbf{Conclusion :}
+    
+    Puisque $\chideux_0 = 2.084 < \chideux_{0.05, 1} = 3.841$, on \textbf{ne rejette pas $H_0$} au seuil de 5\%.
+    
+    On conclut qu'il n'y a \textbf{pas de preuve statistique} d'une dépendance entre la satisfaction des clients et le type de produit acheté.
+    
+    \item \textbf{Calcul de la p-value :}
+    
+    La p-value est la probabilité d'observer une valeur au moins aussi extrême que celle observée sous $H_0$ :
+    $$p = P(\chideux_1 \geq 2.084)$$
+    
+    En consultant la table du Khi-deux avec $\nu = 1$ :
+    \begin{itemize}
+        \item $P(\chideux_1 \geq 2.706) = 0.10$
+        \item $P(\chideux_1 \geq 3.841) = 0.05$
+    \end{itemize}
+    
+    Par interpolation, on trouve : $p \approx 0.15$
+    
+    Puisque $p = 0.15 > \alpha = 0.05$, on confirme qu'on ne rejette pas $H_0$.
+    
+    \textbf{Interprétation :} La probabilité d'observer un écart aussi grand (ou plus grand) entre les effectifs observés et attendus, si les variables étaient indépendantes, est d'environ 15\%. C'est une probabilité assez élevée, donc on ne peut pas conclure à une dépendance.
+\end{enumerate}
+
+\subsection{Tableau Récapitulatif des Calculs}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Case} & \textbf{Observé $O_{ij}$} & \textbf{Attendu $E_{ij}$} & \textbf{Contribution $\frac{(O_{ij}-E_{ij})^2}{E_{ij}}$} \\
+\hline
+(Satisfait, A) & 45 & 40 & 0.625 \\
+\hline
+(Satisfait, B) & 55 & 60 & 0.417 \\
+\hline
+(Non satisfait, A) & 35 & 40 & 0.625 \\
+\hline
+(Non satisfait, B) & 65 & 60 & 0.417 \\
+\hline
+\textbf{Total} & 200 & 200 & \textbf{2.084} \\
+\hline
+\end{tabular}
+\caption{Détail des calculs pour le test du Khi-deux}
+\end{table}
+
+\begin{attentionbox}
+\textbf{Conditions d'application du test :}
+\begin{itemize}
+    \item Les effectifs attendus doivent être $\geq 5$ dans au moins 80\% des cases
+    \item Aucun effectif attendu ne doit être $< 1$
+    \item Dans notre cas : tous les effectifs attendus sont $\geq 5$, donc le test est valide
+\end{itemize}
+\end{attentionbox}
+
+\begin{astucebox}
+\textbf{Méthode rapide pour un tableau 2×2 :}
+Pour un tableau 2×2, on peut utiliser la formule simplifiée :
+$$\chideux_0 = \frac{n(ad - bc)^2}{(a+b)(c+d)(a+c)(b+d)}$$
+où $a, b, c, d$ sont les effectifs observés dans les 4 cases.
+\end{astucebox}
+
+\newpage
+
+\section{Résumé des Étapes}
+
+\begin{enumerate}
+    \item \textbf{Formuler les hypothèses} : $H_0$ (indépendance) vs $H_1$ (dépendance)
+    \item \textbf{Calculer les effectifs attendus} : $E_{ij} = \frac{n_i \times n_j}{n}$
+    \item \textbf{Calculer la statistique} : $\chideux_0 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$
+    \item \textbf{Déterminer les degrés de liberté} : $\nu = (r-1)(c-1)$
+    \item \textbf{Comparer à la valeur critique} : $\chideux_0$ vs $\chideux_{\alpha, \nu}$
+    \item \textbf{Conclure} : Rejeter ou ne pas rejeter $H_0$
+    \item \textbf{Calculer la p-value} pour une interprétation plus fine
+\end{enumerate}
+
+\vspace{2cm}
+
+\begin{center}
+\textbf{Fin du document}
+\end{center}
+
+\end{document}
+

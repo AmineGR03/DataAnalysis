@@ -1,0 +1,304 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tcolorbox}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Exercice P-value}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries\color{blue!30!black}}
+{}
+{0em}
+{}
+
+% Boîtes colorées
+\newtcolorbox{astucebox}{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=\textbf{Astuce},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{rappelbox}{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=\textbf{Rappel},
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{attentionbox}{
+    colback=orange!5!white,
+    colframe=orange!75!black,
+    title=\textbf{Attention},
+    fonttitle=\bfseries
+}
+
+% Commandes personnalisées
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\student}{t}
+
+% Métadonnées
+\title{Exercice Complet - P-value\\
+\large Interprétation et Calcul}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Ce document présente un exercice complet sur la p-value, avec une explication détaillée de son calcul et de son interprétation dans le contexte d'un test d'hypothèse.
+
+\newpage
+
+\section{Exercice : Test sur la Moyenne avec P-value}
+
+\subsection{Énoncé}
+
+Un fabricant de batteries affirme que ses batteries ont une durée de vie moyenne d'au moins 120 heures. Un contrôleur qualité soupçonne que la durée de vie moyenne est inférieure à cette valeur. Il teste un échantillon de 25 batteries et obtient les résultats suivants :
+\begin{itemize}
+    \item Durée de vie moyenne observée : $\overline{X} = 115$ heures
+    \item Écart-type observé : $s = 10$ heures
+    \item Taille de l'échantillon : $n = 25$
+\end{itemize}
+
+On suppose que la durée de vie suit une loi normale.
+
+\begin{enumerate}
+    \item Formuler les hypothèses du test.
+    \item Calculer la statistique de test.
+    \item Déterminer la p-value.
+    \item Interpréter la p-value.
+    \item Conclure au seuil $\alpha = 0.05$.
+    \item Que se passerait-il si on choisissait $\alpha = 0.01$ ?
+    \item Donner un intervalle de confiance à 95\% pour la durée de vie moyenne.
+\end{enumerate}
+
+\subsection{Rappels Théoriques}
+
+\begin{rappelbox}
+\textbf{P-value (valeur-p) :}
+
+La p-value est la probabilité d'observer une statistique de test au moins aussi extrême que celle observée, sous l'hypothèse que $H_0$ est vraie.
+
+\textbf{Interprétation :}
+\begin{itemize}
+    \item Si $p < \alpha$ : on rejette $H_0$ (résultat significatif)
+    \item Si $p \geq \alpha$ : on ne rejette pas $H_0$ (pas de preuve contre $H_0$)
+\end{itemize}
+
+\textbf{Test sur la moyenne (variance inconnue) :}
+
+Si $\sigma$ est inconnu et $n$ petit, on utilise la loi de Student :
+$$t = \frac{\overline{X} - \mu_0}{s/\sqrt{n}} \sim t_{n-1}$$
+
+\textbf{Test unilatéral à gauche :}
+\begin{itemize}
+    \item $H_0 : \mu \geq \mu_0$ contre $H_1 : \mu < \mu_0$
+    \item P-value : $p = P(T_{n-1} \leq t)$
+\end{itemize}
+\end{rappelbox}
+
+\subsection{Solution Détaillée}
+
+\begin{enumerate}
+    \item \textbf{Formulation des hypothèses :}
+    
+    Le fabricant affirme "au moins 120 heures", donc :
+    \begin{align}
+    H_0 &: \mu \geq 120 \quad \text{(la durée de vie moyenne est d'au moins 120 heures)} \\
+    H_1 &: \mu < 120 \quad \text{(la durée de vie moyenne est inférieure à 120 heures)}
+    \end{align}
+    
+    C'est un \textbf{test unilatéral à gauche}.
+    
+    \item \textbf{Calcul de la statistique de test :}
+    
+    Comme $\sigma$ est inconnu et $n = 25$ (petit échantillon), on utilise la loi de Student avec $\nu = n - 1 = 24$ degrés de liberté.
+    
+    $$t = \frac{\overline{X} - \mu_0}{s/\sqrt{n}} = \frac{115 - 120}{10/\sqrt{25}} = \frac{-5}{10/5} = \frac{-5}{2} = -2.5$$
+    
+    \item \textbf{Calcul de la p-value :}
+    
+    Pour un test unilatéral à gauche, la p-value est :
+    $$p = P(T_{24} \leq -2.5) = P(T_{24} \geq 2.5)$$
+    
+    (Par symétrie de la loi de Student)
+    
+    En consultant la table de Student avec $\nu = 24$ degrés de liberté :
+    \begin{itemize}
+        \item $P(T_{24} \geq 2.492) = 0.01$
+        \item $P(T_{24} \geq 2.797) = 0.005$
+    \end{itemize}
+    
+    Par interpolation linéaire entre $t = 2.492$ et $t = 2.797$ :
+    \begin{align}
+    p &\approx 0.01 - \frac{0.01 - 0.005}{2.797 - 2.492} \times (2.5 - 2.492) \\
+    &\approx 0.01 - \frac{0.005}{0.305} \times 0.008 \\
+    &\approx 0.01 - 0.00013 \\
+    &\approx 0.00987
+    \end{align}
+    
+    Donc $p \approx 0.010$ (environ 1\%)
+    
+    \item \textbf{Interprétation de la p-value :}
+    
+    La p-value de $0.010$ signifie que :
+    \begin{itemize}
+        \item Si $H_0$ était vraie (si la durée de vie moyenne était vraiment $\geq 120$ heures)
+        \item La probabilité d'observer une moyenne d'échantillon aussi faible (ou plus faible) que 115 heures
+        \item Est d'environ 1\%
+    \end{itemize}
+    
+    C'est une probabilité \textbf{faible}, ce qui suggère que les données observées sont peu compatibles avec $H_0$.
+    
+    \item \textbf{Conclusion au seuil $\alpha = 0.05$ :}
+    
+    Puisque $p = 0.010 < \alpha = 0.05$, on \textbf{rejette $H_0$} au seuil de 5\%.
+    
+    On conclut qu'il existe des \textbf{preuves statistiques significatives} que la durée de vie moyenne des batteries est \textbf{inférieure à 120 heures}.
+    
+    \item \textbf{Conclusion au seuil $\alpha = 0.01$ :}
+    
+    Puisque $p = 0.010 = \alpha = 0.01$, on est à la limite. En général, on considère que si $p = \alpha$, on rejette $H_0$.
+    
+    Cependant, avec $p \approx 0.010$, on est très proche de la frontière. On peut dire qu'on \textbf{rejette $H_0$} au seuil de 1\%, mais de justesse.
+    
+    \textbf{Note :} Si on avait $p = 0.011 > 0.01$, on ne rejetterait pas $H_0$ au seuil de 1\%.
+    
+    \item \textbf{Intervalle de confiance à 95\% :}
+    
+    Pour un niveau de confiance de 95\%, on a $\alpha = 0.05$, donc $\alpha/2 = 0.025$.
+    
+    Avec $\nu = 24$ degrés de liberté, on consulte la table : $t_{0.025, 24} \approx 2.064$
+    
+    L'intervalle de confiance est :
+    $$IC_{95\%} = \left[\overline{X} - t_{0.025, 24} \frac{s}{\sqrt{n}}, \overline{X} + t_{0.025, 24} \frac{s}{\sqrt{n}}\right]$$
+    
+    $$IC_{95\%} = \left[115 - 2.064 \times \frac{10}{\sqrt{25}}, 115 + 2.064 \times \frac{10}{\sqrt{25}}\right]$$
+    
+    $$IC_{95\%} = \left[115 - 2.064 \times 2, 115 + 2.064 \times 2\right]$$
+    
+    $$IC_{95\%} = \left[115 - 4.128, 115 + 4.128\right] = [110.87, 119.13]$$
+    
+    \textbf{Interprétation :} On est confiant à 95\% que la durée de vie moyenne des batteries se situe entre 110.87 et 119.13 heures.
+    
+    On remarque que $\mu_0 = 120$ n'est \textbf{pas} dans l'intervalle de confiance, ce qui confirme le rejet de $H_0$.
+\end{enumerate}
+
+\subsection{Tableau Récapitulatif}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Élément} & \textbf{Valeur} \\
+\hline
+Hypothèse nulle $H_0$ & $\mu \geq 120$ \\
+\hline
+Hypothèse alternative $H_1$ & $\mu < 120$ \\
+\hline
+Moyenne observée $\overline{X}$ & 115 heures \\
+\hline
+Écart-type observé $s$ & 10 heures \\
+\hline
+Taille échantillon $n$ & 25 \\
+\hline
+Statistique de test $t$ & $-2.5$ \\
+\hline
+Degrés de liberté $\nu$ & 24 \\
+\hline
+P-value $p$ & $\approx 0.010$ (1\%) \\
+\hline
+Seuil $\alpha$ & 0.05 (5\%) \\
+\hline
+Décision ($\alpha = 0.05$) & Rejeter $H_0$ \\
+\hline
+Décision ($\alpha = 0.01$) & Rejeter $H_0$ (de justesse) \\
+\hline
+\end{tabular}
+\caption{Résumé du test}
+\end{table}
+
+\begin{attentionbox}
+\textbf{Erreurs fréquentes à éviter :}
+\begin{itemize}
+    \item La p-value n'est \textbf{PAS} la probabilité que $H_0$ soit vraie
+    \item La p-value est la probabilité d'observer des données aussi extrêmes \textbf{sous l'hypothèse que $H_0$ est vraie}
+    \item Une p-value faible ne signifie pas que l'effet est important, seulement qu'il est statistiquement significatif
+    \item Ne pas confondre significativité statistique et significativité pratique
+\end{itemize}
+\end{attentionbox}
+
+\begin{astucebox}
+\textbf{Interprétation pratique de la p-value :}
+\begin{itemize}
+    \item $p < 0.01$ : Preuve très forte contre $H_0$ (très significatif)
+    \item $0.01 \leq p < 0.05$ : Preuve forte contre $H_0$ (significatif)
+    \item $0.05 \leq p < 0.10$ : Preuve modérée contre $H_0$ (marginalement significatif)
+    \item $p \geq 0.10$ : Pas de preuve contre $H_0$ (non significatif)
+\end{itemize}
+\end{astucebox}
+
+\newpage
+
+\section{Résumé des Étapes}
+
+\begin{enumerate}
+    \item \textbf{Formuler les hypothèses} : $H_0$ vs $H_1$
+    \item \textbf{Choisir la statistique de test} : selon que $\sigma$ est connu ou non
+    \item \textbf{Calculer la statistique observée} : $t$ ou $z$
+    \item \textbf{Calculer la p-value} : selon le type de test (unilatéral ou bilatéral)
+    \item \textbf{Interpréter la p-value} : probabilité sous $H_0$
+    \item \textbf{Comparer à $\alpha$} : $p < \alpha$ $\Rightarrow$ rejeter $H_0$
+    \item \textbf{Conclure} : dans le contexte du problème
+\end{enumerate}
+
+\vspace{2cm}
+
+\begin{center}
+\textbf{Fin du document}
+\end{center}
+
+\end{document}
+
