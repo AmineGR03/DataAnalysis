@@ -58,6 +58,13 @@
     fonttitle=\bfseries
 }
 
+\newtcolorbox{astucebox}{
+    colback=yellow!5!white,
+    colframe=yellow!75!black,
+    title=\textbf{Astuce},
+    fonttitle=\bfseries
+}
+
 % Configuration pour le code
 \lstset{
     basicstyle=\ttfamily\small,
@@ -278,7 +285,89 @@ Les opérations \textbf{CRUD} sont les quatre opérations de base pour manipuler
 
 \newpage
 
-\section{Cassandra - CRUD}
+\section{Cassandra - Structure et CRUD}
+
+\subsection{Création de Structure}
+
+\subsubsection{Création d'un Keyspace}
+
+\begin{lstlisting}[language=SQL]
+-- Créer un keyspace avec stratégie de réplication simple
+CREATE KEYSPACE ma_base
+WITH REPLICATION = {
+    'class': 'SimpleStrategy',
+    'replication_factor': 3
+};
+
+-- Utiliser le keyspace
+USE ma_base;
+
+-- Créer un keyspace avec stratégie de réplication réseau
+CREATE KEYSPACE ma_base
+WITH REPLICATION = {
+    'class': 'NetworkTopologyStrategy',
+    'datacenter1': 3,
+    'datacenter2': 2
+};
+\end{lstlisting}
+
+\subsubsection{Création d'une Table Simple}
+
+\begin{lstlisting}[language=SQL]
+-- Table avec clé primaire simple
+CREATE TABLE utilisateurs (
+    id UUID PRIMARY KEY,
+    nom TEXT,
+    email TEXT,
+    age INT,
+    ville TEXT,
+    date_creation TIMESTAMP
+);
+\end{lstlisting}
+
+\subsubsection{Création d'une Table avec Clustering Key}
+
+\begin{lstlisting}[language=SQL]
+-- Table avec partition key et clustering key
+CREATE TABLE commandes (
+    client_id UUID,
+    date_commande TIMESTAMP,
+    produit TEXT,
+    quantite INT,
+    prix DECIMAL,
+    PRIMARY KEY (client_id, date_commande, produit)
+);
+\end{lstlisting}
+
+\subsubsection{Création d'une Table avec Partition Key Composite}
+
+\begin{lstlisting}[language=SQL]
+-- Table avec partition key composite (entre parenthèses)
+CREATE TABLE articles (
+    categorie TEXT,
+    sous_categorie TEXT,
+    id UUID,
+    titre TEXT,
+    prix DECIMAL,
+    PRIMARY KEY ((categorie, sous_categorie), id)
+);
+\end{lstlisting}
+
+\subsubsection{Modification de Structure}
+
+\begin{lstlisting}[language=SQL]
+-- Ajouter une colonne
+ALTER TABLE utilisateurs ADD telephone TEXT;
+
+-- Supprimer une colonne
+ALTER TABLE utilisateurs DROP telephone;
+
+-- Supprimer une table
+DROP TABLE utilisateurs;
+
+-- Supprimer un keyspace
+DROP KEYSPACE ma_base;
+\end{lstlisting}
 
 \subsection{Create (INSERT)}
 
@@ -390,7 +479,79 @@ Delete & \texttt{DELETE FROM ... WHERE ...} \\
 
 \newpage
 
-\section{MongoDB - CRUD}
+\section{MongoDB - Structure et CRUD}
+
+\subsection{Création de Structure}
+
+\subsubsection{Création d'une Base de Données}
+
+\begin{lstlisting}[language=JavaScript]
+// Créer/Utiliser une base de données
+use ma_base
+
+// Lister les bases de données
+show dbs
+\end{lstlisting}
+
+\subsubsection{Création d'une Collection}
+
+\begin{lstlisting}[language=JavaScript]
+// MongoDB crée automatiquement les collections lors de la première insertion
+// Mais on peut aussi les créer explicitement
+
+// Créer une collection simple
+db.createCollection("utilisateurs")
+
+// Créer une collection avec options
+db.createCollection("articles", {
+    capped: true,
+    size: 100000,
+    max: 5000
+})
+
+// Lister les collections
+show collections
+// ou
+db.getCollectionNames()
+\end{lstlisting}
+
+\subsubsection{Création d'Index}
+
+\begin{lstlisting}[language=JavaScript]
+// Index simple
+db.utilisateurs.createIndex({nom: 1})
+
+// Index composé
+db.utilisateurs.createIndex({ville: 1, age: -1})
+
+// Index unique
+db.utilisateurs.createIndex({email: 1}, {unique: true})
+
+// Index sur champ imbriqué
+db.utilisateurs.createIndex({"adresse.ville": 1})
+
+// Index sur tableau
+db.utilisateurs.createIndex({tags: 1})
+
+// Lister les index
+db.utilisateurs.getIndexes()
+
+// Supprimer un index
+db.utilisateurs.dropIndex({nom: 1})
+\end{lstlisting}
+
+\subsubsection{Modification de Structure}
+
+\begin{lstlisting}[language=JavaScript]
+// Renommer une collection
+db.ancienne_collection.renameCollection("nouvelle_collection")
+
+// Supprimer une collection
+db.collection.drop()
+
+// Supprimer une base de données
+db.dropDatabase()
+\end{lstlisting}
 
 \subsection{Create (Insert)}
 
@@ -503,7 +664,49 @@ Delete & \texttt{deleteOne()}, \texttt{deleteMany()} \\
 
 \newpage
 
-\section{Neo4j - CRUD}
+\section{Neo4j - Structure et CRUD}
+
+\subsection{Création de Structure}
+
+\subsubsection{Création d'Index}
+
+\begin{lstlisting}[language=SQL]
+-- Créer un index sur une propriété
+CREATE INDEX ON :Person(nom);
+CREATE INDEX ON :Person(age);
+
+-- Index composite
+CREATE INDEX ON :Person(nom, age);
+
+-- Lister les index
+CALL db.indexes()
+\end{lstlisting}
+
+\subsubsection{Création de Contraintes}
+
+\begin{lstlisting}[language=SQL]
+-- Contrainte unique
+CREATE CONSTRAINT ON (p:Person) ASSERT p.email IS UNIQUE;
+
+-- Contrainte d'existence
+CREATE CONSTRAINT ON (p:Person) ASSERT EXISTS(p.nom);
+
+-- Contrainte de type (Neo4j 4.3+)
+CREATE CONSTRAINT ON (p:Person) ASSERT p.age IS TYPED INTEGER;
+
+-- Lister les contraintes
+CALL db.constraints()
+
+-- Supprimer une contrainte
+DROP CONSTRAINT ON (p:Person) ASSERT p.email IS UNIQUE;
+
+-- Supprimer un index
+DROP INDEX ON :Person(nom);
+\end{lstlisting}
+
+\begin{astucebox}
+\textbf{Note importante :} Dans Neo4j, les nœuds et relations sont créés dynamiquement. Il n'y a pas de schéma prédéfini comme dans les bases relationnelles. Les labels (comme \texttt{:Person}) servent à catégoriser les nœuds.
+\end{astucebox}
 
 \subsection{Create (CREATE, MERGE)}
 
@@ -633,7 +836,62 @@ Remove & \texttt{MATCH ... REMOVE} \\
 
 \newpage
 
-\section{Redis - CRUD}
+\section{Redis - Structure et CRUD}
+
+\subsection{Création de Structure}
+
+\subsubsection{Types de Données}
+
+\begin{astucebox}
+Redis ne nécessite pas de création explicite de structures. Les structures de données sont créées automatiquement lors de la première opération. Cependant, il est important de comprendre les différents types disponibles.
+\end{astucebox}
+
+\begin{itemize}
+    \item \textbf{String} : Valeur simple (texte, nombre, binaire)
+    \item \textbf{Hash} : Tableau associatif (clé-valeur imbriquée)
+    \item \textbf{List} : Liste ordonnée de chaînes
+    \item \textbf{Set} : Ensemble non ordonné de chaînes uniques
+    \item \textbf{Sorted Set} : Ensemble ordonné par score
+\end{itemize}
+
+\subsubsection{Exemples de Structures}
+
+\begin{lstlisting}
+-- String : Créé automatiquement avec SET
+SET utilisateur:1:nom "Dupont"
+
+-- Hash : Créé automatiquement avec HSET
+HSET utilisateur:1 nom "Dupont" age 30 ville "Paris"
+
+-- List : Créé automatiquement avec LPUSH ou RPUSH
+LPUSH commandes:1 "produit1" "produit2"
+
+-- Set : Créé automatiquement avec SADD
+SADD tags:article:1 "tech" "programming"
+
+-- Sorted Set : Créé automatiquement avec ZADD
+ZADD leaderboard 1000 "joueur1" 2000 "joueur2"
+\end{lstlisting}
+
+\subsubsection{Vérification et Gestion}
+
+\begin{lstlisting}
+-- Vérifier le type d'une clé
+TYPE utilisateur:1
+
+-- Vérifier l'existence d'une clé
+EXISTS utilisateur:1
+
+-- Obtenir la taille d'une structure
+STRLEN utilisateur:1:nom        -- String
+HLEN utilisateur:1              -- Hash
+LLEN commandes:1                 -- List
+SCARD tags:article:1             -- Set
+ZCARD leaderboard                -- Sorted Set
+
+-- Supprimer une clé (tous types)
+DEL utilisateur:1
+\end{lstlisting}
 
 \subsection{Create (SET, HSET, LPUSH, RPUSH, SADD, ZADD)}
 
