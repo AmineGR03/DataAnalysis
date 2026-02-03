@@ -1,0 +1,309 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Examen Blanc 2 - Administration Unix}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{}
+
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    showstringspaces=false
+}
+
+\definecolor{questionbox}{RGB}{255,250,240}
+\newtcolorbox{questionbox}{
+    colback=questionbox,
+    colframe=orange!50!black,
+    title=Question,
+    fonttitle=\bfseries
+}
+
+\title{\textbf{Examen Blanc 2 - Administration Unix/Linux}\\
+\large Durée : 2 heures - Documents autorisés}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section*{Instructions}
+\begin{itemize}
+    \item Durée : 2 heures
+    \item Documents autorisés : Résumés de cours et TP
+    \item Toutes les questions sont obligatoires
+    \item Soignez la présentation et l'orthographe
+    \item Pour les commandes, précisez si elles nécessitent des privilèges root
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% QUESTION 1 : PROCÉDURE D'ADMINISTRATION
+% ============================================================
+
+\section{Question 1 : Procédure d'Administration (15 points)}
+
+\begin{questionbox}
+Vous devez configurer un nouveau serveur Linux. Décrivez étape par étape la procédure complète pour :
+
+\begin{enumerate}
+    \item Créer un utilisateur "admin" avec les privilèges sudo complets
+    \item Configurer un nouveau disque de 500 Go : partitionner, formater en ext4, et monter sur /mnt/storage de manière permanente
+    \item Installer et configurer le service Apache (httpd) pour qu'il démarre automatiquement au boot
+    \item Créer un fichier swap de 4 Go et l'activer de manière permanente
+\end{enumerate}
+
+Pour chaque étape, donnez les commandes exactes et expliquez ce que vous faites.
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 2 : HIÉRARCHIE ET COMMANDES
+% ============================================================
+
+\section{Question 2 : Hiérarchie des Fichiers et Commandes (12 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Répertoires système (4 points)}
+Expliquez le rôle et donnez des exemples de contenu pour :
+\begin{itemize}
+    \item /etc
+    \item /var
+    \item /usr
+    \item /sbin
+\end{itemize}
+
+\subsection*{Partie B : Commandes de recherche (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Comment trouver tous les fichiers .conf modifiés dans les 7 derniers jours dans /etc ?
+    \item Comment rechercher le mot "error" dans tous les fichiers .log de /var/log ?
+    \item Quelle commande permet de connaître le chemin complet de la commande "python3" ?
+    \item Comment lister tous les fichiers de plus de 50 Mo dans /home, triés par taille décroissante ?
+\end{enumerate}
+
+\subsection*{Partie C : Liens et inodes (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Créez un lien symbolique /usr/local/bin/python pointant vers /usr/bin/python3. Quelle commande utilisez-vous ?
+    \item Comment vérifier qu'un fichier est un lien symbolique ?
+    \item Expliquez pourquoi on ne peut pas créer de lien physique entre deux systèmes de fichiers différents.
+    \item Comment connaître le nombre d'inodes utilisés sur le système de fichiers racine ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 3 : DÉMARRAGE ET GRUB
+% ============================================================
+
+\section{Question 3 : Démarrage et Configuration GRUB (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Théorie (5 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez le rôle de chaque composant dans la séquence de démarrage : BIOS/UEFI, GRUB, noyau Linux, initramfs, systemd.
+    \item Pourquoi l'initramfs est-il nécessaire dans certains cas ? Donnez des exemples.
+    \item Quelle est la différence entre un runlevel (SysVinit) et un target (systemd) ?
+\end{enumerate}
+
+\subsection*{Partie B : Configuration GRUB (3 points)}
+Vous voulez modifier le délai d'attente du menu GRUB à 10 secondes. Décrivez la procédure complète avec les commandes.
+
+\subsection*{Partie C : Arrêt système (2 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quelle commande permet d'arrêter le système de manière gracieuse ?
+    \item Comment programmer un arrêt dans 1 heure avec un message pour les utilisateurs ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 4 : GESTION DES SERVICES
+% ============================================================
+
+\section{Question 4 : Gestion des Services systemd (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Commandes systemd (5 points)}
+Pour le service "sshd" (SSH), donnez les commandes pour :
+\begin{enumerate}[label=\alph*)]
+    \item Vérifier son état actuel
+    \item Le démarrer s'il est arrêté
+    \item L'activer pour qu'il démarre automatiquement au boot
+    \item Consulter ses logs depuis le dernier démarrage
+    \item Le redémarrer
+\end{enumerate}
+
+\subsection*{Partie B : Journalisation (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Comment afficher les logs système depuis 1 heure ?
+    \item Comment suivre les nouveaux logs en temps réel ?
+    \item Comment afficher uniquement les erreurs du système ?
+\end{enumerate}
+
+\subsection*{Partie C : Targets (2 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Comment passer du mode graphique au mode multi-utilisateurs texte ?
+    \item Quelle commande permet de définir le mode multi-utilisateurs texte comme défaut au démarrage ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 5 : GESTION DES PAQUETAGES
+% ============================================================
+
+\section{Question 5 : Gestion des Paquetages (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Concepts (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez ce qu'est un dépôt (repository) dans le contexte de la gestion des paquets.
+    \item Quelle est la différence entre "yum install" et "rpm -i" ? Quand utiliseriez-vous chacun ?
+    \item Qu'est-ce qu'une dépendance transitive ? Donnez un exemple.
+    \item Où sont stockées les métadonnées des paquets RPM installés ?
+\end{enumerate}
+
+\subsection*{Partie B : Commandes YUM (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Comment rechercher un paquet contenant la commande "gcc" ?
+    \item Comment mettre à jour tous les paquets du système ?
+    \item Comment désinstaller un paquet et toutes ses dépendances non utilisées ?
+    \item Comment vider le cache YUM pour libérer de l'espace disque ?
+\end{enumerate}
+
+\subsection*{Partie C : Dépôts (2 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Où se trouvent les fichiers de configuration des dépôts YUM ?
+    \item Comment activer un dépôt désactivé nommé "epel" ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 6 : UTILISATEURS ET PERMISSIONS
+% ============================================================
+
+\section{Question 6 : Utilisateurs, Groupes et Permissions (13 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Fichiers de configuration (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Décrivez la structure du fichier /etc/group. Que signifie chaque champ ?
+    \item Pourquoi le fichier /etc/shadow a-t-il des permissions restrictives (400 ou 000) ?
+    \item Que contient le champ "passwd" dans /etc/passwd et que signifie-t-il ?
+    \item Comment modifier la date d'expiration d'un compte utilisateur ?
+\end{enumerate}
+
+\subsection*{Partie B : Gestion utilisateurs (5 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Créez un utilisateur "developpeur" avec :
+    \begin{itemize}
+        \item Groupe primaire "developers"
+        \item Groupes secondaires "wheel" et "docker"
+        \item Shell /bin/bash
+        \item Répertoire personnel /home/developpeur
+    \end{itemize}
+    \item Comment supprimer complètement un utilisateur et son répertoire personnel ?
+    \item Comment forcer un utilisateur à changer son mot de passe à la prochaine connexion ?
+\end{enumerate}
+
+\subsection*{Partie C : Permissions et sudo (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez la permission 640 en mode octal. À quoi correspond-elle en mode symbolique ?
+    \item Donnez la commande pour donner les permissions rwx------ à un fichier.
+    \item Comment configurer sudo pour qu'un utilisateur "backup" puisse exécuter uniquement la commande /usr/bin/tar sans mot de passe ?
+    \item Quelle est la différence entre setuid et setgid sur un répertoire ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 7 : GESTION DES DISQUES
+% ============================================================
+
+\section{Question 7 : Gestion des Disques et Systèmes de Fichiers (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Partitionnement (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quelles sont les principales différences entre MBR et GPT ? Dans quels cas utiliseriez-vous GPT ?
+    \item Comment lister tous les disques et leurs partitions avec leurs tailles et types de systèmes de fichiers ?
+    \item Quelle commande permet d'obtenir l'UUID d'une partition ? Pourquoi préférer UUID à /dev/sdX dans /etc/fstab ?
+\end{enumerate}
+
+\subsection*{Partie B : Systèmes de fichiers (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quels sont les avantages d'ext4 par rapport à ext2 ?
+    \item Qu'est-ce que la journalisation dans un système de fichiers ? Quels sont ses avantages ?
+    \item Donnez la commande pour formater une partition /dev/sdc1 en XFS.
+\end{enumerate}
+
+\subsection*{Partie C : Montage (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez le rôle et la structure du fichier /etc/fstab.
+    \item Écrivez une ligne /etc/fstab pour monter /dev/sdb1 sur /mnt/backup en ext4, en lecture seule, sans vérification fsck.
+    \item Comment forcer le remontage d'un système de fichiers en lecture seule sans le démonter ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 8 : SWAP
+% ============================================================
+
+\section{Question 8 : Gestion de l'Espace Swap (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Concepts (5 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez le mécanisme de la mémoire virtuelle et le rôle du swap.
+    \item Qu'est-ce que le "thrashing" ? Comment l'éviter ?
+    \item Quelle est la différence entre une partition swap et un fichier swap ? Quels sont les avantages/inconvénients de chacun ?
+    \item Qu'est-ce que le paramètre "swappiness" ? Comment le modifier ?
+\end{enumerate}
+
+\subsection*{Partie B : Configuration pratique (5 points)}
+Décrivez la procédure complète pour créer une partition swap de 8 Go sur /dev/sdb2, l'activer, et la rendre permanente. Incluez toutes les commandes nécessaires.
+\end{questionbox}
+
+\newpage
+
+\section*{Fin de l'examen}
+
+\textbf{Bon courage !}
+
+\end{document}
+

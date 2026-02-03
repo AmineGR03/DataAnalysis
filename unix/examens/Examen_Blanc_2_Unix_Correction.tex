@@ -1,0 +1,1012 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Correction Examen Blanc 2 - Administration Unix}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{}
+
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    showstringspaces=false
+}
+
+\definecolor{answerbox}{RGB}{240,255,240}
+\newtcolorbox{answerbox}{
+    colback=answerbox,
+    colframe=green!50!black,
+    title=Réponse,
+    fonttitle=\bfseries
+}
+
+\definecolor{explanationbox}{RGB}{240,248,255}
+\newtcolorbox{explanationbox}{
+    colback=explanationbox,
+    colframe=blue!50!black,
+    title=Explication,
+    fonttitle=\bfseries
+}
+
+\title{\textbf{Correction Examen Blanc 2 - Administration Unix/Linux}\\
+\large Corrections et Explications Détaillées}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section*{Barème}
+\begin{itemize}
+    \item Question 1 : 15 points
+    \item Question 2 : 12 points
+    \item Question 3 : 10 points
+    \item Question 4 : 10 points
+    \item Question 5 : 10 points
+    \item Question 6 : 13 points
+    \item Question 7 : 10 points
+    \item Question 8 : 10 points
+    \item \textbf{Total : 90 points}
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 1
+% ============================================================
+
+\section{Correction Question 1 : Procédure d'Administration (15 points)}
+
+\begin{answerbox}
+\textbf{1. Créer utilisateur "admin" avec privilèges sudo (4 points)}
+
+\begin{enumerate}
+    \item Créer l'utilisateur :
+    \begin{lstlisting}
+sudo useradd -m -s /bin/bash admin
+    \end{lstlisting}
+    \textbf{Explication :} Crée l'utilisateur avec répertoire personnel et shell bash
+    
+    \item Définir le mot de passe :
+    \begin{lstlisting}
+sudo passwd admin
+    \end{lstlisting}
+    
+    \item Ajouter au groupe wheel (ou configurer sudo directement) :
+    \begin{lstlisting}
+sudo usermod -aG wheel admin
+    \end{lstlisting}
+    
+    \item Configurer sudo (éditer /etc/sudoers) :
+    \begin{lstlisting}
+sudo visudo
+    \end{lstlisting}
+    
+    Ajouter la ligne :
+    \begin{verbatim}
+admin ALL=(ALL:ALL) ALL
+    \end{verbatim}
+    
+    \textbf{Explication :} Donne à "admin" tous les privilèges sudo sur tous les hôtes
+\end{enumerate}
+
+\textbf{2. Configurer nouveau disque 500 Go (5 points)}
+
+\begin{enumerate}
+    \item Identifier le disque :
+    \begin{lstlisting}
+lsblk
+    \end{lstlisting}
+    Supposons que le nouveau disque soit /dev/sdb
+    
+    \item Créer une partition (utiliser fdisk ou gdisk) :
+    \begin{lstlisting}
+sudo fdisk /dev/sdb
+    \end{lstlisting}
+    Dans fdisk :
+    \begin{itemize}
+        \item \texttt{n} : Nouvelle partition
+        \item \texttt{p} : Partition primaire
+        \item \texttt{1} : Numéro de partition
+        \item Entrée : Début par défaut
+        \item Entrée : Fin (toute la taille)
+        \item \texttt{w} : Sauvegarder
+    \end{itemize}
+    
+    \item Formater en ext4 :
+    \begin{lstlisting}
+sudo mkfs.ext4 /dev/sdb1
+    \end{lstlisting}
+    
+    \item Obtenir l'UUID :
+    \begin{lstlisting}
+sudo blkid /dev/sdb1
+    \end{lstlisting}
+    
+    \item Créer le point de montage :
+    \begin{lstlisting}
+sudo mkdir -p /mnt/storage
+    \end{lstlisting}
+    
+    \item Ajouter dans /etc/fstab :
+    \begin{lstlisting}
+sudo vi /etc/fstab
+    \end{lstlisting}
+    
+    Ajouter la ligne (remplacer UUID par la valeur obtenue) :
+    \begin{verbatim}
+UUID=xxxx-xxxx-xxxx  /mnt/storage  ext4  defaults  0  2
+    \end{verbatim}
+    
+    \item Tester le montage :
+    \begin{lstlisting}
+sudo mount -a
+    \end{lstlisting}
+    
+    \item Vérifier :
+    \begin{lstlisting}
+df -h /mnt/storage
+    \end{lstlisting}
+\end{enumerate}
+
+\textbf{3. Installer et configurer Apache (3 points)}
+
+\begin{enumerate}
+    \item Installer le paquet :
+    \begin{lstlisting}
+sudo yum install httpd
+    \end{lstlisting}
+    
+    \item Activer au démarrage :
+    \begin{lstlisting}
+sudo systemctl enable httpd
+    \end{lstlisting}
+    
+    \item Démarrer le service :
+    \begin{lstlisting}
+sudo systemctl start httpd
+    \end{lstlisting}
+    
+    \item Vérifier l'état :
+    \begin{lstlisting}
+systemctl status httpd
+    \end{lstlisting}
+\end{enumerate}
+
+\textbf{4. Créer fichier swap 4 Go (3 points)}
+
+\begin{enumerate}
+    \item Créer le fichier :
+    \begin{lstlisting}
+sudo fallocate -l 4G /swapfile
+    \end{lstlisting}
+    
+    \item Permissions :
+    \begin{lstlisting}
+sudo chmod 600 /swapfile
+    \end{lstlisting}
+    
+    \item Formater comme swap :
+    \begin{lstlisting}
+sudo mkswap /swapfile
+    \end{lstlisting}
+    
+    \item Activer :
+    \begin{lstlisting}
+sudo swapon /swapfile
+    \end{lstlisting}
+    
+    \item Ajouter dans /etc/fstab :
+    \begin{verbatim}
+/swapfile  none  swap  defaults  0  0
+    \end{verbatim}
+    
+    \item Vérifier :
+    \begin{lstlisting}
+swapon --show
+free -h
+    \end{lstlisting}
+\end{enumerate}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 2
+% ============================================================
+
+\section{Correction Question 2 : Hiérarchie et Commandes (12 points)}
+
+\subsection*{Partie A : Répertoires système (4 points)}
+
+\begin{answerbox}
+\textbf{/etc - 1 point}
+\begin{itemize}
+    \item \textbf{Rôle} : Fichiers de configuration système
+    \item \textbf{Exemples} : /etc/passwd, /etc/shadow, /etc/fstab, /etc/hosts, /etc/sudoers
+\end{itemize}
+
+\textbf{/var - 1 point}
+\begin{itemize}
+    \item \textbf{Rôle} : Données variables (taille change pendant fonctionnement)
+    \item \textbf{Exemples} : /var/log (journaux), /var/spool (files d'attente), /var/tmp
+\end{itemize}
+
+\textbf{/usr - 1 point}
+\begin{itemize}
+    \item \textbf{Rôle} : Unix System Resources - programmes et utilitaires utilisateur
+    \item \textbf{Exemples} : /usr/bin (exécutables), /usr/lib (bibliothèques), /usr/share (données partagées)
+\end{itemize}
+
+\textbf{/sbin - 1 point}
+\begin{itemize}
+    \item \textbf{Rôle} : Exécutables système pour administration
+    \item \textbf{Exemples} : shutdown, ifconfig, fsck, mount (nécessitent généralement root)
+\end{itemize}
+\end{answerbox}
+
+\subsection*{Partie B : Commandes de recherche (4 points)}
+
+\begin{answerbox}
+\textbf{a) Fichiers .conf modifiés - 1 point}
+\begin{lstlisting}
+find /etc -name "*.conf" -mtime -7
+\end{lstlisting}
+
+\textbf{b) Rechercher "error" dans .log - 1 point}
+\begin{lstlisting}
+grep -r "error" /var/log/*.log
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+find /var/log -name "*.log" -exec grep -l "error" {} \;
+\end{lstlisting}
+
+\textbf{c) Chemin de python3 - 1 point}
+\begin{lstlisting}
+which python3
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+whereis python3
+\end{lstlisting}
+
+\textbf{d) Fichiers > 50 Mo triés - 1 point}
+\begin{lstlisting}
+find /home -type f -size +50M -exec ls -lh {} \; | sort -k5 -hr
+\end{lstlisting}
+
+ou avec du plus simple :
+
+\begin{lstlisting}
+find /home -type f -size +50M | xargs ls -lhS
+\end{lstlisting}
+\end{answerbox}
+
+\subsection*{Partie C : Liens et inodes (4 points)}
+
+\begin{answerbox}
+\textbf{a) Créer lien symbolique - 1 point}
+\begin{lstlisting}
+sudo ln -s /usr/bin/python3 /usr/local/bin/python
+\end{lstlisting}
+
+\textbf{b) Vérifier lien symbolique - 1 point}
+\begin{lstlisting}
+ls -l /usr/local/bin/python
+\end{lstlisting}
+Affiche : \texttt{lrwxrwxrwx ... python -> /usr/bin/python3}
+
+ou
+
+\begin{lstlisting}
+file /usr/local/bin/python
+\end{lstlisting}
+
+\textbf{c) Pourquoi pas de hard link entre systèmes de fichiers - 1 point}
+
+Les inodes sont uniques par système de fichiers. Un inode d'un système de fichiers ne peut pas référencer un inode d'un autre système de fichiers. Les hard links partagent le même inode, donc ils doivent être dans le même système de fichiers.
+
+\textbf{d) Inodes utilisés sur racine - 1 point}
+\begin{lstlisting}
+df -i /
+\end{lstlisting}
+
+Affiche IUsed (inodes utilisés), IFree (libres), IUse\% (pourcentage)
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 3
+% ============================================================
+
+\section{Correction Question 3 : Démarrage et GRUB (10 points)}
+
+\subsection*{Partie A : Théorie (5 points)}
+
+\begin{answerbox}
+\textbf{a) Rôle des composants - 3 points}
+
+\begin{itemize}
+    \item \textbf{BIOS/UEFI} : Firmware qui initialise le matériel et charge le bootloader
+    \item \textbf{GRUB} : Bootloader qui charge le noyau Linux et l'initramfs en mémoire
+    \item \textbf{Noyau Linux} : Cœur du système, gère les ressources et lance init
+    \item \textbf{Initramfs} : Système de fichiers temporaire contenant modules nécessaires pour accéder à la racine
+    \item \textbf{Systemd} : Processus PID 1, gère tous les services et le démarrage des applications
+\end{itemize}
+
+\textbf{b) Nécessité initramfs - 1 point}
+
+Initramfs est nécessaire quand le noyau a besoin de modules pour accéder au disque racine :
+\begin{itemize}
+    \item Disque racine sur LVM
+    \item Disque racine sur RAID
+    \item Système de fichiers crypté
+    \item Système de fichiers réseau (NFS)
+\end{itemize}
+
+\textbf{c) Runlevel vs Target - 1 point}
+
+\begin{itemize}
+    \item \textbf{Runlevel (SysVinit)} : Niveaux numérotés (0-6) définissant l'état du système
+    \item \textbf{Target (systemd)} : Groupes d'unités définissant un état (plus flexible, avec dépendances)
+    \item \textbf{Équivalents} : 
+    \begin{itemize}
+        \item Runlevel 3 = multi-user.target
+        \item Runlevel 5 = graphical.target
+    \end{itemize}
+\end{itemize}
+\end{answerbox}
+
+\subsection*{Partie B : Configuration GRUB (3 points)}
+
+\begin{answerbox}
+\textbf{Procédure complète :}
+
+\begin{enumerate}
+    \item Éditer /etc/default/grub :
+    \begin{lstlisting}
+sudo vi /etc/default/grub
+    \end{lstlisting}
+    
+    \item Modifier la ligne :
+    \begin{verbatim}
+GRUB_TIMEOUT=10
+    \end{verbatim}
+    
+    \item Régénérer grub.cfg :
+    \begin{lstlisting}
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    \end{lstlisting}
+    
+    \textbf{Explication :} On ne modifie jamais grub.cfg directement car il est régénéré automatiquement. On modifie /etc/default/grub puis on régénère.
+\end{enumerate}
+\end{answerbox}
+
+\subsection*{Partie C : Arrêt système (2 points)}
+
+\begin{answerbox}
+\textbf{a) Arrêt gracieux - 1 point}
+\begin{lstlisting}
+sudo systemctl poweroff
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+sudo shutdown -h now
+\end{lstlisting}
+
+\textbf{b) Arrêt programmé - 1 point}
+\begin{lstlisting}
+sudo shutdown -h +60 "Le système sera arrêté dans 1 heure pour maintenance"
+\end{lstlisting}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 4
+% ============================================================
+
+\section{Correction Question 4 : Gestion des Services (10 points)}
+
+\subsection*{Partie A : Commandes systemd (5 points)}
+
+\begin{answerbox}
+\textbf{a) Vérifier état - 1 point}
+\begin{lstlisting}
+systemctl status sshd
+\end{lstlisting}
+
+\textbf{b) Démarrer - 1 point}
+\begin{lstlisting}
+sudo systemctl start sshd
+\end{lstlisting}
+
+\textbf{c) Activer au boot - 1 point}
+\begin{lstlisting}
+sudo systemctl enable sshd
+\end{lstlisting}
+
+\textbf{d) Logs depuis démarrage - 1 point}
+\begin{lstlisting}
+journalctl -u sshd -b
+\end{lstlisting}
+\texttt{-b} : depuis le dernier boot
+
+\textbf{e) Redémarrer - 1 point}
+\begin{lstlisting}
+sudo systemctl restart sshd
+\end{lstlisting}
+\end{answerbox}
+
+\subsection*{Partie B : Journalisation (3 points)}
+
+\begin{answerbox}
+\textbf{a) Logs depuis 1 heure - 1 point}
+\begin{lstlisting}
+journalctl --since "1 hour ago"
+\end{lstlisting}
+
+\textbf{b) Suivre en temps réel - 1 point}
+\begin{lstlisting}
+journalctl -f
+\end{lstlisting}
+
+\textbf{c) Erreurs uniquement - 1 point}
+\begin{lstlisting}
+journalctl -p err
+\end{lstlisting}
+Affiche erreurs et niveaux supérieurs (crit, alert, emerg)
+\end{answerbox}
+
+\subsection*{Partie C : Targets (2 points)}
+
+\begin{answerbox}
+\textbf{a) Passer au mode texte - 1 point}
+\begin{lstlisting}
+sudo systemctl isolate multi-user.target
+\end{lstlisting}
+
+\textbf{b) Définir comme défaut - 1 point}
+\begin{lstlisting}
+sudo systemctl set-default multi-user.target
+\end{lstlisting}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 5
+% ============================================================
+
+\section{Correction Question 5 : Gestion des Paquetages (10 points)}
+
+\subsection*{Partie A : Concepts (4 points)}
+
+\begin{answerbox}
+\textbf{a) Dépôt - 1 point}
+
+Un \textbf{dépôt} (repository) est une source de paquets accessible via HTTP, FTP, ou localement. Il contient :
+\begin{itemize}
+    \item Les paquets (.rpm)
+    \item Les métadonnées (dépendances, descriptions)
+    \item Les signatures pour vérification
+\end{itemize}
+
+\textbf{b) yum install vs rpm -i - 1.5 points}
+
+\begin{itemize}
+    \item \textbf{rpm -i} : Outil bas niveau
+    \begin{itemize}
+        \item Installe un paquet local
+        \item Ne résout PAS les dépendances
+        \item Nécessite installation manuelle des dépendances
+        \item Utilisé pour paquets téléchargés manuellement
+    \end{itemize}
+    \item \textbf{yum install} : Outil haut niveau
+    \begin{itemize}
+        \item Résout automatiquement les dépendances
+        \item Télécharge depuis les dépôts configurés
+        \item Utilisé pour installation normale
+    \end{itemize}
+\end{itemize}
+
+\textbf{c) Dépendance transitive - 1 point}
+
+Une dépendance transitive est une dépendance d'une dépendance.
+
+\textbf{Exemple :}
+\begin{itemize}
+    \item Logiciel A nécessite B (dépendance directe)
+    \item B nécessite C (dépendance directe de B)
+    \item C est une dépendance transitive de A
+\end{itemize}
+
+YUM résout automatiquement toutes les dépendances (directes et transitives).
+
+\textbf{d) Métadonnées RPM - 0.5 point}
+
+Dans \texttt{/var/lib/rpm/}
+\end{answerbox}
+
+\subsection*{Partie B : Commandes YUM (4 points)}
+
+\begin{answerbox}
+\textbf{a) Rechercher paquet avec gcc - 1 point}
+\begin{lstlisting}
+yum provides gcc
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+yum provides "*/gcc"
+\end{lstlisting}
+
+\textbf{b) Mettre à jour tout - 1 point}
+\begin{lstlisting}
+sudo yum update
+\end{lstlisting}
+
+\textbf{c) Désinstaller avec dépendances - 1 point}
+\begin{lstlisting}
+sudo yum remove package
+\end{lstlisting}
+YUM ne supprime que les dépendances non utilisées par d'autres paquets.
+
+Pour supprimer aussi les dépendances orphelines :
+\begin{lstlisting}
+sudo yum autoremove
+\end{lstlisting}
+
+\textbf{d) Vider cache - 1 point}
+\begin{lstlisting}
+sudo yum clean all
+\end{lstlisting}
+\end{answerbox}
+
+\subsection*{Partie C : Dépôts (2 points)}
+
+\begin{answerbox}
+\textbf{a) Localisation - 1 point}
+\begin{lstlisting}
+/etc/yum.repos.d/
+\end{lstlisting}
+Fichiers avec extension .repo
+
+\textbf{b) Activer dépôt - 1 point}
+\begin{lstlisting}
+sudo yum-config-manager --enable epel
+\end{lstlisting}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 6
+% ============================================================
+
+\section{Correction Question 6 : Utilisateurs et Permissions (13 points)}
+
+\subsection*{Partie A : Fichiers de configuration (4 points)}
+
+\begin{answerbox}
+\textbf{a) Structure /etc/group - 1.5 points}
+
+Format : \texttt{nom:passwd:gid:membres}
+
+\begin{itemize}
+    \item \texttt{nom} : Nom du groupe
+    \item \texttt{passwd} : Mot de passe du groupe (rarement utilisé, généralement "x")
+    \item \texttt{gid} : Group ID
+    \item \texttt{membres} : Liste des membres séparés par des virgules
+\end{itemize}
+
+\textbf{b) Permissions /etc/shadow - 1 point}
+
+Permissions 400 ou 000 (lecture root uniquement) pour sécurité maximale. Empêche les attaques par dictionnaire sur les mots de passe cryptés.
+
+\textbf{c) Champ passwd dans /etc/passwd - 1 point}
+
+Le champ "passwd" contient "x", indiquant que le mot de passe est stocké dans /etc/shadow (séparation pour sécurité).
+
+\textbf{d) Modifier date expiration - 0.5 point}
+\begin{lstlisting}
+sudo chage -E 2025-12-31 utilisateur
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+sudo usermod -e 2025-12-31 utilisateur
+\end{lstlisting}
+\end{answerbox}
+
+\subsection*{Partie B : Gestion utilisateurs (5 points)}
+
+\begin{answerbox}
+\textbf{a) Créer utilisateur - 3 points}
+
+\begin{enumerate}
+    \item Créer le groupe primaire s'il n'existe pas :
+    \begin{lstlisting}
+sudo groupadd developers
+    \end{lstlisting}
+    
+    \item Créer l'utilisateur :
+    \begin{lstlisting}
+sudo useradd -g developers -G wheel,docker -s /bin/bash -d /home/developpeur -m developpeur
+    \end{lstlisting}
+    
+    \textbf{Explication :}
+    \begin{itemize}
+        \item \texttt{-g developers} : Groupe primaire
+        \item \texttt{-G wheel,docker} : Groupes secondaires
+        \item \texttt{-s /bin/bash} : Shell
+        \item \texttt{-d /home/developpeur} : Répertoire personnel
+        \item \texttt{-m} : Créer le répertoire
+    \end{itemize}
+    
+    \item Définir le mot de passe :
+    \begin{lstlisting}
+sudo passwd developpeur
+    \end{lstlisting}
+\end{enumerate}
+
+\textbf{b) Supprimer complètement - 1 point}
+\begin{lstlisting}
+sudo userdel -r developpeur
+\end{lstlisting}
+\texttt{-r} : Supprime aussi le répertoire personnel
+
+\textbf{c) Forcer changement mot de passe - 1 point}
+\begin{lstlisting}
+sudo passwd -e developpeur
+\end{lstlisting}
+Fait expirer le mot de passe, forçant le changement à la prochaine connexion.
+\end{answerbox}
+
+\subsection*{Partie C : Permissions et sudo (4 points)}
+
+\begin{answerbox}
+\textbf{a) Permission 640 - 1 point}
+
+\texttt{640} en octal :
+\begin{itemize}
+    \item \textbf{6 (propriétaire)} : rw- (lecture, écriture)
+    \item \textbf{4 (groupe)} : r-- (lecture)
+    \item \textbf{0 (autres)} : --- (aucun droit)
+\end{itemize}
+
+En mode symbolique : \texttt{rw-r-----}
+
+\textbf{b) Permission rwx------ - 1 point}
+\begin{lstlisting}
+chmod 700 fichier
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+chmod u=rwx,g=,o= fichier
+\end{lstlisting}
+
+\textbf{c) Configurer sudo - 1 point}
+
+Éditer /etc/sudoers :
+\begin{lstlisting}
+sudo visudo
+\end{lstlisting}
+
+Ajouter :
+\begin{verbatim}
+backup ALL=(ALL) NOPASSWD: /usr/bin/tar
+\end{verbatim}
+
+\textbf{Explication :} Permet à "backup" d'exécuter uniquement /usr/bin/tar sans mot de passe.
+
+\textbf{d) Setuid vs setgid sur répertoire - 1 point}
+
+\begin{itemize}
+    \item \textbf{Setuid sur répertoire} : Non utilisé (pas de sens)
+    \item \textbf{Setgid sur répertoire} : Nouveaux fichiers créés héritent du groupe du répertoire
+    \begin{itemize}
+        \item Utile pour collaboration en équipe
+        \item Tous les fichiers créés appartiennent au groupe du répertoire
+    \end{itemize}
+\end{itemize}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 7
+% ============================================================
+
+\section{Correction Question 7 : Gestion des Disques (10 points)}
+
+\subsection*{Partie A : Partitionnement (4 points)}
+
+\begin{answerbox}
+\textbf{a) MBR vs GPT - 2 points}
+
+\begin{itemize}
+    \item \textbf{MBR} :
+    \begin{itemize}
+        \item 4 partitions primaires max
+        \item 2.2 To max par partition
+        \item BIOS uniquement
+    \end{itemize}
+    \item \textbf{GPT} :
+    \begin{itemize}
+        \item 128 partitions (extensible)
+        \item Jusqu'à 9.4 Zo
+        \item UEFI natif, BIOS avec support
+        \item Redondance et CRC32
+    \end{itemize}
+\end{itemize}
+
+\textbf{Utiliser GPT quand :}
+\begin{itemize}
+    \item Disques > 2 To
+    \item Système UEFI
+    \item Besoin de plus de 4 partitions
+    \item Besoin de redondance
+\end{itemize}
+
+\textbf{b) Lister disques et partitions - 1 point}
+\begin{lstlisting}
+lsblk -f
+\end{lstlisting}
+Affiche disques, partitions, tailles et types de systèmes de fichiers
+
+\textbf{c) UUID et préférence - 1 point}
+\begin{lstlisting}
+sudo blkid
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+sudo blkid /dev/sda1
+\end{lstlisting}
+
+\textbf{Pourquoi préférer UUID :}
+\begin{itemize}
+    \item UUID est unique et stable
+    \item /dev/sdX peut changer (ajout/suppression de disques)
+    \item Plus fiable pour montage automatique
+\end{itemize}
+\end{answerbox}
+
+\subsection*{Partie B : Systèmes de fichiers (3 points)}
+
+\begin{answerbox}
+\textbf{a) Avantages ext4 vs ext2 - 1 point}
+
+\begin{itemize}
+    \item \textbf{Journalisation} : Récupération rapide après crash
+    \item \textbf{Volumes > 16 To} : Support de très gros volumes
+    \item \textbf{Extents} : Meilleures performances (moins de fragmentation)
+    \item \textbf{Timestamps nanoseconde} : Précision accrue
+    \item \textbf{Allocation retardée} : Optimisation des écritures
+\end{itemize}
+
+\textbf{b) Journalisation - 1 point}
+
+Mécanisme qui enregistre les modifications avant de les appliquer.
+
+\textbf{Avantages :}
+\begin{itemize}
+    \item Récupération rapide après crash (rejouer le journal)
+    \item Cohérence garantie
+    \item Pas besoin de fsck long
+\end{itemize}
+
+\textbf{c) Formater en XFS - 1 point}
+\begin{lstlisting}
+sudo mkfs.xfs /dev/sdc1
+\end{lstlisting}
+
+ou
+
+\begin{lstlisting}
+sudo mkfs -t xfs /dev/sdc1
+\end{lstlisting}
+\end{answerbox}
+
+\subsection*{Partie C : Montage (3 points)}
+
+\begin{answerbox}
+\textbf{a) Rôle et structure /etc/fstab - 1.5 points}
+
+\textbf{Rôle :} Définit les systèmes de fichiers à monter automatiquement au démarrage.
+
+\textbf{Structure :} \texttt{périphérique point\_montage type options dump fsck}
+
+\textbf{b) Ligne /etc/fstab - 1 point}
+\begin{verbatim}
+/dev/sdb1  /mnt/backup  ext4  ro,defaults  0  0
+\end{verbatim}
+
+\textbf{Explication :}
+\begin{itemize}
+    \item \texttt{ro} : Lecture seule
+    \item \texttt{0} : Pas de dump
+    \item \texttt{0} : Pas de fsck
+\end{itemize}
+
+\textbf{c) Remontage en lecture seule - 0.5 point}
+\begin{lstlisting}
+sudo mount -o remount,ro /mnt/backup
+\end{lstlisting}
+\end{answerbox}
+
+\newpage
+
+% ============================================================
+% CORRECTION QUESTION 8
+% ============================================================
+
+\section{Correction Question 8 : Gestion du Swap (10 points)}
+
+\subsection*{Partie A : Concepts (5 points)}
+
+\begin{answerbox}
+\textbf{a) Mémoire virtuelle et swap - 1.5 points}
+
+La \textbf{mémoire virtuelle} permet au système de donner à chaque processus l'illusion d'avoir accès à un espace d'adressage complet.
+
+\textbf{Rôle du swap :}
+\begin{itemize}
+    \item Extension de la RAM sur disque
+    \item Stocke les pages mémoire inactives
+    \item Permet d'exécuter plus de processus que la RAM ne le permet
+    \item Libère de la RAM pour les processus actifs
+\end{itemize}
+
+\textbf{b) Thrashing - 1.5 points}
+
+Le \textbf{thrashing} se produit quand le système passe trop de temps à swapper des pages (pages constamment déplacées entre RAM et swap).
+
+\textbf{Symptômes :} Système très lent, disque très actif, CPU en attente d'I/O.
+
+\textbf{Éviter :}
+\begin{itemize}
+    \item Augmenter la RAM
+    \item Augmenter la taille du swap
+    \item Réduire swappiness
+    \item Fermer les processus inutiles
+\end{itemize}
+
+\textbf{c) Partition vs Fichier swap - 1.5 points}
+
+\begin{itemize}
+    \item \textbf{Partition swap} :
+    \begin{itemize}
+        \item Avantages : Meilleure performance (accès direct)
+        \item Inconvénients : Taille fixe, nécessite redimensionnement partition
+    \end{itemize}
+    \item \textbf{Fichier swap} :
+    \begin{itemize}
+        \item Avantages : Flexibilité (taille modifiable facilement)
+        \item Inconvénients : Performance légèrement inférieure (via système de fichiers)
+    \end{itemize}
+\end{itemize}
+
+\textbf{d) Swappiness - 0.5 point}
+
+Paramètre (0-100) contrôlant l'agressivité du swap.
+
+\begin{lstlisting}
+cat /proc/sys/vm/swappiness
+\end{lstlisting}
+
+Modifier :
+\begin{lstlisting}
+sudo sysctl vm.swappiness=10
+\end{lstlisting}
+
+Permanent : Ajouter dans /etc/sysctl.conf
+\end{answerbox}
+
+\subsection*{Partie B : Configuration pratique (5 points)}
+
+\begin{answerbox}
+\textbf{Procédure complète pour partition swap 8 Go :}
+
+\begin{enumerate}
+    \item \textbf{Créer la partition} (supposons /dev/sdb2 existe déjà) :
+    \begin{lstlisting}
+sudo fdisk /dev/sdb
+    \end{lstlisting}
+    Dans fdisk, changer le type de partition en "Linux swap" (82 pour MBR, 8200 pour GPT)
+    
+    \item \textbf{Formater comme swap} :
+    \begin{lstlisting}
+sudo mkswap /dev/sdb2
+    \end{lstlisting}
+    
+    \item \textbf{Activer le swap} :
+    \begin{lstlisting}
+sudo swapon /dev/sdb2
+    \end{lstlisting}
+    
+    \item \textbf{Vérifier} :
+    \begin{lstlisting}
+swapon --show
+free -h
+    \end{lstlisting}
+    
+    \item \textbf{Rendre permanent} : Ajouter dans /etc/fstab
+    \begin{lstlisting}
+sudo vi /etc/fstab
+    \end{lstlisting}
+    
+    Ajouter :
+    \begin{verbatim}
+/dev/sdb2  none  swap  defaults  0  0
+    \end{verbatim}
+    
+    Ou avec UUID (recommandé) :
+    \begin{verbatim}
+UUID=xxxx-xxxx-xxxx  none  swap  defaults  0  0
+    \end{verbatim}
+    
+    \item \textbf{Tester} :
+    \begin{lstlisting}
+sudo swapoff /dev/sdb2
+sudo swapon -a
+    \end{lstlisting}
+    \texttt{swapon -a} active tous les swaps de /etc/fstab
+\end{enumerate}
+\end{answerbox}
+
+\newpage
+
+\section*{Conclusion de la correction}
+
+\textbf{Points importants :}
+\begin{itemize}
+    \item Les procédures doivent être complètes et dans l'ordre
+    \item Toujours expliquer le "pourquoi" derrière chaque étape
+    \item Préciser les commandes nécessitant sudo
+    \item Vérifier les résultats après chaque étape importante
+    \item Utiliser UUID plutôt que /dev/sdX dans /etc/fstab pour plus de stabilité
+\end{itemize}
+
+\textbf{Bon travail !}
+
+\end{document}
+

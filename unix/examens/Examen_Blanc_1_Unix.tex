@@ -1,0 +1,314 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Examen Blanc 1 - Administration Unix}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{}
+
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    showstringspaces=false
+}
+
+\definecolor{questionbox}{RGB}{255,250,240}
+\newtcolorbox{questionbox}{
+    colback=questionbox,
+    colframe=orange!50!black,
+    title=Question,
+    fonttitle=\bfseries
+}
+
+\definecolor{answerbox}{RGB}{240,255,240}
+\newtcolorbox{answerbox}{
+    colback=answerbox,
+    colframe=green!50!black,
+    title=Réponse,
+    fonttitle=\bfseries
+}
+
+\title{\textbf{Examen Blanc 1 - Administration Unix/Linux}\\
+\large Durée : 2 heures - Documents autorisés}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section*{Instructions}
+\begin{itemize}
+    \item Durée : 2 heures
+    \item Documents autorisés : Résumés de cours et TP
+    \item Toutes les questions sont obligatoires
+    \item Soignez la présentation et l'orthographe
+    \item Pour les commandes, précisez si elles nécessitent des privilèges root
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% QUESTION 1 : HIÉRARCHIE DES FICHIERS
+% ============================================================
+
+\section{Question 1 : Hiérarchie des Systèmes de Fichiers (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Définitions (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce que le FHS ? Expliquez son rôle et son importance.
+    \item Quelle est la différence entre /bin et /usr/bin ? Pourquoi cette distinction existe-t-elle ?
+\end{enumerate}
+
+\subsection*{Partie B : Commandes (3 points)}
+Donnez les commandes pour :
+\begin{enumerate}[label=\alph*)]
+    \item Lister tous les fichiers (y compris cachés) du répertoire /etc avec leurs permissions
+    \item Trouver tous les fichiers de plus de 100 Mo dans /home
+    \item Afficher les 20 dernières lignes du fichier /var/log/messages en temps réel
+\end{enumerate}
+
+\subsection*{Partie C : Répertoires (3 points)}
+Expliquez le rôle et le contenu des répertoires suivants :
+\begin{itemize}
+    \item /var/log
+    \item /proc
+    \item /dev
+\end{itemize}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 2 : TYPES DE FICHIERS
+% ============================================================
+
+\section{Question 2 : Types de Fichiers Linux (8 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Inodes (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce qu'un inode ? Que contient-il ?
+    \item Pourquoi le nom d'un fichier n'est-il pas stocké dans l'inode ?
+    \item Comment vérifier le nombre d'inodes disponibles sur un système de fichiers ?
+\end{enumerate}
+
+\subsection*{Partie B : Liens (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quelle est la différence entre un lien physique (hard link) et un lien symbolique (soft link) ?
+    \item Donnez la commande pour créer un lien symbolique nommé "python" pointant vers /usr/bin/python3
+    \item Un lien symbolique peut-il pointer vers un fichier sur un autre système de fichiers ? Et un lien physique ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 3 : DÉMARRAGE ET GRUB
+% ============================================================
+
+\section{Question 3 : Démarrage du Système et GRUB (12 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Processus de démarrage (6 points)}
+Décrivez les étapes du processus de démarrage d'un système Linux, de l'alimentation jusqu'au système prêt. Mentionnez le rôle de chaque composant.
+
+\subsection*{Partie B : GRUB2 (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Pourquoi ne doit-on jamais éditer directement le fichier /boot/grub2/grub.cfg ?
+    \item Après avoir modifié /etc/default/grub, quelle commande faut-il exécuter et pourquoi ?
+    \item Qu'est-ce que l'initramfs et dans quels cas est-il nécessaire ?
+\end{enumerate}
+
+\subsection*{Partie C : Arrêt du système (2 points)}
+Donnez les commandes pour :
+\begin{enumerate}[label=\alph*)]
+    \item Arrêter le système immédiatement
+    \item Programmer un redémarrage dans 30 minutes avec un message d'avertissement
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 4 : GESTION DES SERVICES
+% ============================================================
+
+\section{Question 4 : Gestion des Services (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Systemd (6 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quels sont les avantages de systemd par rapport à SysVinit ?
+    \item Donnez les commandes pour :
+    \begin{itemize}
+        \item Démarrer le service httpd
+        \item Vérifier si le service httpd est actif
+        \item Activer le service httpd au démarrage
+        \item Consulter les logs du service httpd en temps réel
+    \end{itemize}
+    \item Quelle est la différence entre \texttt{systemctl start} et \texttt{systemctl enable} ?
+\end{enumerate}
+
+\subsection*{Partie B : Targets (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce qu'un target systemd ? Donnez des exemples.
+    \item Comment passer du mode graphique au mode multi-utilisateurs texte ?
+    \item Quelle commande permet de connaître le target par défaut du système ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 5 : GESTION DES PAQUETAGES
+% ============================================================
+
+\section{Question 5 : Gestion des Paquetages (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Concepts (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce qu'un paquetage ? Que contient-il ?
+    \item Expliquez le concept de dépendances dans la gestion des paquets. Pourquoi est-ce important ?
+    \item Quelle est la différence entre RPM et YUM ?
+\end{enumerate}
+
+\subsection*{Partie B : Commandes YUM (4 points)}
+Donnez les commandes YUM pour :
+\begin{enumerate}[label=\alph*)]
+    \item Rechercher un paquet contenant le fichier /usr/bin/python3
+    \item Installer le paquet httpd et toutes ses dépendances
+    \item Lister tous les paquets installés
+    \item Vérifier s'il y a des mises à jour disponibles
+\end{enumerate}
+
+\subsection*{Partie C : Dépôts (2 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Où sont stockés les fichiers de configuration des dépôts YUM ?
+    \item Comment lister tous les dépôts actifs ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 6 : GESTION DES UTILISATEURS
+% ============================================================
+
+\section{Question 6 : Gestion des Utilisateurs et Groupes (12 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Fichiers de configuration (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Décrivez la structure du fichier /etc/passwd. Que signifie le champ "x" dans la colonne des mots de passe ?
+    \item Pourquoi les mots de passe sont-ils stockés dans /etc/shadow et non dans /etc/passwd ?
+    \item Quelles sont les permissions du fichier /etc/shadow et pourquoi ?
+\end{enumerate}
+
+\subsection*{Partie B : Création et gestion (5 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Donnez la commande complète pour créer un utilisateur "etudiant" avec :
+    \begin{itemize}
+        \item UID 2000
+        \item Groupe primaire "users"
+        \item Répertoire personnel /home/etudiant
+        \item Shell /bin/bash
+    \end{itemize}
+    \item Comment ajouter l'utilisateur "etudiant" au groupe "wheel" ?
+    \item Comment verrouiller le compte d'un utilisateur sans le supprimer ?
+\end{enumerate}
+
+\subsection*{Partie C : Permissions (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez ce que signifie la permission 755 en mode octal
+    \item Quelle est la différence entre setuid, setgid et sticky bit ?
+    \item Donnez la commande pour donner les permissions rwxr-xr-x à un fichier
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 7 : GESTION DES DISQUES
+% ============================================================
+
+\section{Question 7 : Gestion des Disques (10 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Partitionnement (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Quelle est la différence entre MBR et GPT ? Quelles sont les limitations du MBR ?
+    \item Donnez les commandes pour :
+    \begin{itemize}
+        \item Lister tous les disques et partitions du système
+        \item Obtenir l'UUID d'une partition
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{Partie B : Systèmes de fichiers (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce que la journalisation dans un système de fichiers ? Quels sont ses avantages ?
+    \item Donnez la commande pour formater la partition /dev/sdb1 en ext4
+\end{enumerate}
+
+\subsection*{Partie C : Montage (3 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Expliquez le rôle du fichier /etc/fstab
+    \item Donnez un exemple de ligne /etc/fstab pour monter /dev/sdb1 sur /mnt/data en ext4 avec montage automatique au démarrage
+    \item Quelle commande permet de monter tous les systèmes de fichiers définis dans /etc/fstab ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================================
+% QUESTION 8 : GESTION DU SWAP
+% ============================================================
+
+\section{Question 8 : Gestion de l'Espace Swap (8 points)}
+
+\begin{questionbox}
+\subsection*{Partie A : Concepts (4 points)}
+\begin{enumerate}[label=\alph*)]
+    \item Qu'est-ce que le swap ? Quel est son rôle ?
+    \item Expliquez le mécanisme de pagination et le rôle du swap
+    \item Quelle est la différence entre une partition swap et un fichier swap ?
+\end{enumerate}
+
+\subsection*{Partie B : Configuration (4 points)}
+Décrivez les étapes complètes pour créer et activer un fichier swap de 2 Go nommé /swapfile, et le rendre permanent (actif au redémarrage).
+\end{questionbox}
+
+\newpage
+
+\section*{Fin de l'examen}
+
+\textbf{Bon courage !}
+
+\end{document}
+
