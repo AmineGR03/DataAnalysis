@@ -1,0 +1,150 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{K-Means Clustering}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={np, pd, sklearn, plt, sns, KMeans, train_test_split, StandardScaler, silhouette_score, accuracy_score},
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{codebox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Code Python
+}
+
+\newtcolorbox{notebox}{
+    colback=yellow!5,
+    colframe=yellow!50,
+    breakable,
+    title=Note
+}
+
+% Métadonnées
+\title{Code K-Means - Minimum Nécessaire}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Code Python}
+
+\begin{codebox}
+\begin{lstlisting}
+# Imports
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+from sklearn.datasets import make_blobs
+
+# 1. Chargement du dataset
+X, y_true = make_blobs(n_samples=300, centers=4, n_features=2, random_state=42)
+
+# 2. Normalisation
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 3. Division train/test
+X_train, X_test, _, _ = train_test_split(X_scaled, y_true, test_size=0.2, random_state=42)
+
+# 4. K-Means
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+kmeans.fit(X_train)
+
+# 5. Predictions
+y_train_pred = kmeans.predict(X_train)
+y_test_pred = kmeans.predict(X_test)
+
+# 6. Evaluation
+silhouette_train = silhouette_score(X_train, y_train_pred)
+silhouette_test = silhouette_score(X_test, y_test_pred)
+print(f"Score silhouette (train): {silhouette_train:.4f}")
+print(f"Score silhouette (test): {silhouette_test:.4f}")
+
+# 7. Visualisation
+plt.figure(figsize=(10, 4))
+
+plt.subplot(1, 2, 1)
+plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train_pred, cmap='viridis', alpha=0.6)
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], 
+            c='red', marker='x', s=200, linewidths=3, label='Centroides')
+plt.title(f'Clustering Train (Silhouette: {silhouette_train:.3f})')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test_pred, cmap='viridis', alpha=0.6)
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], 
+            c='red', marker='x', s=200, linewidths=3, label='Centroides')
+plt.title(f'Clustering Test (Silhouette: {silhouette_test:.3f})')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+\end{codebox}
+
+
+\end{document}
+
