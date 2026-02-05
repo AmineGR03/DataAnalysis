@@ -1,0 +1,1192 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Solutions Machine Learning}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={np, pd, sklearn, plt, sns},
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{solutionbox}{
+    colback=green!5,
+    colframe=green!50,
+    breakable,
+    title=Solution
+}
+
+\newtcolorbox{tipbox}{
+    colback=yellow!5,
+    colframe=yellow!50,
+    breakable,
+    title=Tip
+}
+
+\newtcolorbox{importantbox}{
+    colback=red!5,
+    colframe=red!50,
+    breakable,
+    title=Important
+}
+
+\newtcolorbox{formulebox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Formule
+}
+
+% Métadonnées
+\title{Solutions - Exercices Machine Learning\\
+\large Régression Linéaire, KNN, K-means, Arbre de Décision}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ============================================
+% PARTIE 1 : RÉGRESSION LINÉAIRE
+% ============================================
+
+\section{Régression Linéaire}
+
+\subsection{Solution Exercice 1 : Calcul de la MSE et des paramètres}
+
+\begin{solutionbox}
+\textbf{Données :}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{X} & \textbf{Y} & \textbf{XY} & \textbf{X²} & \textbf{Y²} \\
+\hline
+1 & 45000 & 45000 & 1 & 2025000000 \\
+2 & 50000 & 100000 & 4 & 2500000000 \\
+3 & 60000 & 180000 & 9 & 3600000000 \\
+4 & 80000 & 320000 & 16 & 6400000000 \\
+5 & 110000 & 550000 & 25 & 12100000000 \\
+\hline
+\textbf{$\sum$} & \textbf{345000} & \textbf{1195000} & \textbf{55} & \textbf{26625000000} \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{1. Calcul de $a$ et $b$ :}
+
+$n = 5$, $\sum X = 15$, $\sum Y = 345000$, $\sum XY = 1195000$, $\sum X^2 = 55$
+
+\begin{align*}
+a &= \frac{n\sum XY - \sum X \sum Y}{n\sum X^2 - (\sum X)^2} \\
+  &= \frac{5 \times 1195000 - 15 \times 345000}{5 \times 55 - 15^2} \\
+  &= \frac{5975000 - 5175000}{275 - 225} \\
+  &= \frac{800000}{50} \\
+  &= 16000
+\end{align*}
+
+\begin{align*}
+b &= \frac{\sum Y - a\sum X}{n} \\
+  &= \frac{345000 - 16000 \times 15}{5} \\
+  &= \frac{345000 - 240000}{5} \\
+  &= \frac{105000}{5} \\
+  &= 21000
+\end{align*}
+
+\textbf{Modèle :} $\hat{Y} = 16000X + 21000$
+
+\textbf{2. Calcul des prédictions :}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{X} & \textbf{Y réel} & \textbf{$\hat{Y}$} & \textbf{Erreur (Y - $\hat{Y}$)} \\
+\hline
+1 & 45000 & 37000 & 8000 \\
+2 & 50000 & 53000 & -3000 \\
+3 & 60000 & 69000 & -9000 \\
+4 & 80000 & 85000 & -5000 \\
+5 & 110000 & 101000 & 9000 \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{3. Calcul de la MSE :}
+
+\begin{align*}
+MSE &= \frac{1}{n}\sum_{i=1}^{n}(Y_i - \hat{Y}_i)^2 \\
+    &= \frac{1}{5}[(8000)^2 + (-3000)^2 + (-9000)^2 + (-5000)^2 + (9000)^2] \\
+    &= \frac{1}{5}[64000000 + 9000000 + 81000000 + 25000000 + 81000000] \\
+    &= \frac{260000000}{5} \\
+    &= 52000000
+\end{align*}
+
+\textbf{4. Interprétation :}
+\begin{itemize}
+    \item \textbf{$a = 16000$} : Chaque année d'expérience supplémentaire augmente le salaire de 16000€ en moyenne.
+    \item \textbf{$b = 21000$} : Le salaire de base (sans expérience) est de 21000€.
+\end{itemize}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour le calcul :}
+\begin{itemize}
+    \item Vérifiez toujours que $\sum X^2 - (\sum X)^2/n \neq 0$ (sinon division par zéro)
+    \item Organisez vos calculs dans un tableau pour éviter les erreurs
+    \item La MSE est toujours positive (somme de carrés)
+    \item Plus la MSE est petite, meilleur est le modèle
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 2 : Gradient Descent}
+
+\begin{solutionbox}
+\textbf{Données :} $a_0 = 0$, $b_0 = 0$, $\alpha = 0.01$, $n = 3$
+
+Points : $(2, 4)$, $(3, 6)$, $(4, 8)$
+
+\textbf{1. Calcul des prédictions initiales :}
+
+Pour chaque point : $\hat{Y}_i = a_0 \times X_i + b_0 = 0 \times X_i + 0 = 0$
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{X} & \textbf{Y} & \textbf{$\hat{Y}$} & \textbf{$\hat{Y} - Y$} \\
+\hline
+2 & 4 & 0 & -4 \\
+3 & 6 & 0 & -6 \\
+4 & 8 & 0 & -8 \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{2. Calcul des dérivées partielles :}
+
+\begin{align*}
+\frac{\partial MSE}{\partial a} &= \frac{2}{n}\sum_{i=1}^{n}X_i(\hat{Y}_i - Y_i) \\
+                                 &= \frac{2}{3}[2 \times (-4) + 3 \times (-6) + 4 \times (-8)] \\
+                                 &= \frac{2}{3}[-8 - 18 - 32] \\
+                                 &= \frac{2}{3} \times (-58) \\
+                                 &= -\frac{116}{3} \approx -38.67
+\end{align*}
+
+\begin{align*}
+\frac{\partial MSE}{\partial b} &= \frac{2}{n}\sum_{i=1}^{n}(\hat{Y}_i - Y_i) \\
+                                 &= \frac{2}{3}[(-4) + (-6) + (-8)] \\
+                                 &= \frac{2}{3} \times (-18) \\
+                                 &= -12
+\end{align*}
+
+\textbf{3. Mise à jour des paramètres :}
+
+\begin{align*}
+a_{new} &= a_{old} - \alpha \frac{\partial MSE}{\partial a} \\
+        &= 0 - 0.01 \times (-38.67) \\
+        &= 0.3867
+\end{align*}
+
+\begin{align*}
+b_{new} &= b_{old} - \alpha \frac{\partial MSE}{\partial b} \\
+        &= 0 - 0.01 \times (-12) \\
+        &= 0.12
+\end{align*}
+
+\textbf{4. Nouvelle MSE :}
+
+Nouvelles prédictions avec $a = 0.3867$ et $b = 0.12$ :
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{X} & \textbf{Y} & \textbf{$\hat{Y}$} & \textbf{$(Y - \hat{Y})^2$} \\
+\hline
+2 & 4 & 0.8934 & 9.65 \\
+3 & 6 & 1.2801 & 22.30 \\
+4 & 8 & 1.6668 & 40.11 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{align*}
+MSE_{new} &= \frac{1}{3}[9.65 + 22.30 + 40.11] \\
+          &= \frac{72.06}{3} \\
+          &= 24.02
+\end{align*}
+
+\textbf{5. Explication de la convergence :}
+
+Le Gradient Descent converge car :
+\begin{itemize}
+    \item Les dérivées indiquent la direction de la plus forte augmentation de l'erreur
+    \item En allant dans le sens opposé (moins la dérivée), on réduit l'erreur
+    \item Avec un taux d'apprentissage approprié, on converge vers le minimum
+    \item Après plusieurs itérations, $a$ et $b$ se rapprochent des valeurs optimales ($a=2$, $b=0$ dans ce cas)
+\end{itemize}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour le Gradient Descent :}
+\begin{itemize}
+    \item Un $\alpha$ trop grand peut faire diverger l'algorithme
+    \item Un $\alpha$ trop petit ralentit la convergence
+    \item Le Gradient Descent converge vers un minimum local (pas forcément global)
+    \item Normalisez vos données pour accélérer la convergence
+    \item Utilisez un critère d'arrêt (ex: changement de MSE < seuil)
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 3 : Questions de cours}
+
+\begin{solutionbox}
+\textbf{1. Différence régression simple vs multiple :}
+\begin{itemize}
+    \item \textbf{Simple :} Une seule variable indépendante : $Y = aX + b$
+    \item \textbf{Multiple :} Plusieurs variables indépendantes : $Y = a_1X_1 + a_2X_2 + ... + a_nX_n + b$
+\end{itemize}
+
+\textbf{2. MSE comme fonction de coût :}
+\begin{itemize}
+    \item Pénalise fortement les grandes erreurs (carré)
+    \item Toujours positive, facile à minimiser
+    \item Différentiable partout
+    \item Sensible aux outliers (valeurs aberrantes)
+\end{itemize}
+
+\textbf{3. Gradient Descent :}
+\begin{itemize}
+    \item Algorithme d'optimisation itératif
+    \item Calcule le gradient (dérivées) de la fonction de coût
+    \item Met à jour les paramètres dans la direction opposée au gradient
+    \item Répète jusqu'à convergence
+\end{itemize}
+
+\textbf{4. Types de Gradient Descent :}
+\begin{itemize}
+    \item \textbf{Batch :} Utilise tout le dataset à chaque itération (lent mais précis)
+    \item \textbf{Stochastique :} Un échantillon à la fois (rapide mais bruyant)
+    \item \textbf{Mini-batch :} Compromis entre les deux (recommandé)
+\end{itemize}
+
+\textbf{5. Coefficient $R^2$ :}
+$$R^2 = 1 - \frac{SS_{res}}{SS_{tot}} = 1 - \frac{\sum(Y_i - \hat{Y}_i)^2}{\sum(Y_i - \bar{Y})^2}$$
+\begin{itemize}
+    \item $R^2 = 1$ : Modèle parfait
+    \item $R^2 = 0$ : Modèle aussi bon que la moyenne
+    \item $R^2 < 0$ : Modèle pire que la moyenne
+    \item Mesure la proportion de variance expliquée
+\end{itemize}
+
+\textbf{6. Overfitting :}
+\begin{itemize}
+    \item Le modèle apprend par cœur les données d'entraînement
+    \item Faible erreur d'entraînement mais forte erreur de test
+    \item Solutions : régularisation (Ridge, Lasso), validation croisée, plus de données
+\end{itemize}
+\end{solutionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 2 : KNN
+% ============================================
+
+\section{K-Nearest Neighbors (KNN)}
+
+\subsection{Solution Exercice 1 : Calcul manuel}
+
+\begin{solutionbox}
+\textbf{Point de test :} $T = (3, 2)$
+
+\textbf{1. Calcul des distances euclidiennes :}
+
+\begin{align*}
+d(T, A) &= \sqrt{(3-1)^2 + (2-2)^2} = \sqrt{4 + 0} = 2.00 \\
+d(T, B) &= \sqrt{(3-2)^2 + (2-3)^2} = \sqrt{1 + 1} = 1.41 \\
+d(T, C) &= \sqrt{(3-3)^2 + (2-1)^2} = \sqrt{0 + 1} = 1.00 \\
+d(T, D) &= \sqrt{(3-4)^2 + (2-2)^2} = \sqrt{1 + 0} = 1.00 \\
+d(T, E) &= \sqrt{(3-5)^2 + (2-3)^2} = \sqrt{4 + 1} = 2.24
+\end{align*}
+
+\textbf{2. Pour $k=1$ :}
+
+Le plus proche voisin est C ou D (distance = 1.00). Si on choisit C : classe = \textbf{Bleu}
+
+\textbf{3. Pour $k=3$ :}
+
+Les 3 plus proches voisins sont (par ordre croissant de distance) :
+\begin{enumerate}
+    \item C (distance = 1.00, classe = Bleu)
+    \item D (distance = 1.00, classe = Bleu)
+    \item B (distance = 1.41, classe = Rouge)
+\end{enumerate}
+
+Vote majoritaire : 2 Bleu, 1 Rouge → Classe prédite = \textbf{Bleu}
+
+\textbf{4. Pour $k=5$ :}
+
+Tous les points sont considérés :
+\begin{itemize}
+    \item Rouge : A, B (2 votes)
+    \item Bleu : C, D, E (3 votes)
+\end{itemize}
+
+Vote majoritaire : Classe prédite = \textbf{Bleu}
+
+\textbf{5. Influence du choix de $k$ :}
+\begin{itemize}
+    \item \textbf{$k$ petit (1-3)} : Modèle plus sensible au bruit, frontières complexes
+    \item \textbf{$k$ grand} : Modèle plus lisse, frontières simples, peut ignorer les détails locaux
+    \item \textbf{$k$ optimal} : Généralement $\sqrt{n}$ où $n$ est le nombre d'échantillons
+    \item \textbf{$k$ impair} : Évite les égalités dans le vote majoritaire
+\end{itemize}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour KNN :}
+\begin{itemize}
+    \item Normalisez toujours vos données (KNN est sensible aux échelles)
+    \item Utilisez $k$ impair pour éviter les égalités
+    \item Testez plusieurs valeurs de $k$ avec validation croisée
+    \item KNN est coûteux en calcul pour de grands datasets
+    \item Considérez des structures de données comme KD-tree pour accélérer
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 2 : Matrice de confusion}
+
+\begin{solutionbox}
+\textbf{1. Matrice de confusion :}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+ & \textbf{Prédit Positif} & \textbf{Prédit Négatif} \\
+\hline
+\textbf{Réel Positif} & TP = 3 & FN = 2 \\
+\hline
+\textbf{Réel Négatif} & FP = 1 & TN = 4 \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Explication des valeurs :}
+\begin{itemize}
+    \item \textbf{TP = 3} : Points 1, 2, 8 (correctement prédits comme Positifs)
+    \item \textbf{TN = 4} : Points 5, 6, 7, 10 (correctement prédits comme Négatifs)
+    \item \textbf{FP = 1} : Point 4 (prédit Positif mais réellement Négatif)
+    \item \textbf{FN = 2} : Points 3, 9 (prédits Négatifs mais réellement Positifs)
+\end{itemize}
+
+\textbf{2. Signification des métriques :}
+\begin{itemize}
+    \item \textbf{TP (True Positive)} : Vrais positifs - Correctement identifiés comme positifs
+    \item \textbf{TN (True Negative)} : Vrais négatifs - Correctement identifiés comme négatifs
+    \item \textbf{FP (False Positive)} : Faux positifs - Erreur de type I (alarme fausse)
+    \item \textbf{FN (False Negative)} : Faux négatifs - Erreur de type II (manqué)
+\end{itemize}
+
+\textbf{3. Calcul des métriques :}
+
+\begin{align*}
+\text{Accuracy} &= \frac{TP + TN}{TP + TN + FP + FN} \\
+               &= \frac{3 + 4}{3 + 4 + 1 + 2} \\
+               &= \frac{7}{10} = 0.70 = 70\%
+\end{align*}
+
+\begin{align*}
+\text{Precision} &= \frac{TP}{TP + FP} \\
+                 &= \frac{3}{3 + 1} \\
+                 &= \frac{3}{4} = 0.75 = 75\%
+\end{align*}
+
+\begin{align*}
+\text{Recall (Sensitivity)} &= \frac{TP}{TP + FN} \\
+                            &= \frac{3}{3 + 2} \\
+                            &= \frac{3}{5} = 0.60 = 60\%
+\end{align*}
+
+\begin{align*}
+\text{Specificity} &= \frac{TN}{TN + FP} \\
+                  &= \frac{4}{4 + 1} \\
+                  &= \frac{4}{5} = 0.80 = 80\%
+\end{align*}
+
+\begin{align*}
+\text{F1-Score} &= \frac{2 \times Precision \times Recall}{Precision + Recall} \\
+               &= \frac{2 \times 0.75 \times 0.60}{0.75 + 0.60} \\
+               &= \frac{0.90}{1.35} \\
+               &= 0.667 = 66.7\%
+\end{align*}
+
+\textbf{4. Interprétation dans un contexte médical :}
+\begin{itemize}
+    \item \textbf{Precision (75\%)} : Sur 4 diagnostics positifs, 3 sont corrects (1 faux positif)
+    \item \textbf{Recall (60\%)} : Sur 5 malades réels, on en détecte 3 (2 manqués - grave !)
+    \item \textbf{Specificity (80\%)} : Sur 5 personnes saines, on en identifie correctement 4
+    \item \textbf{Accuracy (70\%)} : 70\% des diagnostics sont corrects
+\end{itemize}
+
+\textbf{5. Quand privilégier Precision vs Recall :}
+\begin{itemize}
+    \item \textbf{Privilégier Precision} : Quand les faux positifs sont coûteux
+    \begin{itemize}
+        \item Exemple : Spam detection (mieux vaut laisser passer un spam que bloquer un email important)
+        \item Exemple : Recommandation de produits (mieux vaut ne pas recommander que recommander un mauvais produit)
+    \end{itemize}
+    \item \textbf{Privilégier Recall} : Quand les faux négatifs sont dangereux
+    \begin{itemize}
+        \item Exemple : Détection de cancer (mieux vaut un faux positif qu'un faux négatif)
+        \item Exemple : Détection de fraude bancaire
+    \end{itemize}
+\end{itemize}
+\end{solutionbox}
+
+\begin{importantbox}
+\textbf{Important - Matrice de confusion :}
+\begin{itemize}
+    \item TP + FN = Total des vrais positifs dans les données
+    \item TN + FP = Total des vrais négatifs dans les données
+    \item TP + FP = Total des prédictions positives
+    \item TN + FN = Total des prédictions négatives
+    \item TP + TN + FP + FN = Nombre total d'échantillons
+\end{itemize}
+\end{importantbox}
+
+\begin{tipbox}
+\textbf{Tips pour les métriques :}
+\begin{itemize}
+    \item Accuracy peut être trompeuse avec des classes déséquilibrées
+    \item F1-Score est la moyenne harmonique de Precision et Recall
+    \item Utilisez la courbe ROC pour visualiser le compromis Precision/Recall
+    \item En cas de classes déséquilibrées, utilisez F1-Score plutôt qu'Accuracy
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 3 : Questions de cours}
+
+\begin{solutionbox}
+\textbf{1. Principe de KNN :}
+\begin{itemize}
+    \item Algorithme de classification/regression non-paramétrique
+    \item Pour classifier un point, trouve les $k$ plus proches voisins
+    \item Vote majoritaire (classification) ou moyenne (régression)
+    \item Pas d'étape d'entraînement (lazy learning)
+\end{itemize}
+
+\textbf{2. Avantages et inconvénients :}
+\begin{itemize}
+    \item \textbf{Avantages :}
+    \begin{itemize}
+        \item Simple à comprendre et implémenter
+        \item Pas d'hypothèse sur la distribution des données
+        \item Efficace pour datasets non-linéaires
+        \item Pas d'entraînement nécessaire
+    \end{itemize}
+    \item \textbf{Inconvénients :}
+    \begin{itemize}
+        \item Coûteux en calcul (doit calculer toutes les distances)
+        \item Sensible aux features non pertinentes
+        \item Sensible aux outliers
+        \item Nécessite beaucoup de mémoire (stocke tout le dataset)
+    \end{itemize}
+\end{itemize}
+
+\textbf{3. Choix de $k$ :}
+\begin{itemize}
+    \item Utiliser validation croisée
+    \item Règle empirique : $k = \sqrt{n}$ où $n$ est le nombre d'échantillons
+    \item $k$ impair pour éviter les égalités
+    \item $k$ trop petit : surapprentissage
+    \item $k$ trop grand : sous-apprentissage
+\end{itemize}
+
+\textbf{4. Normalisation :}
+\begin{itemize}
+    \item KNN utilise des distances, donc sensible aux échelles
+    \item Normaliser (StandardScaler) pour que toutes les features aient la même importance
+    \item Sinon, les features avec grandes valeurs dominent
+\end{itemize}
+
+\textbf{5. Distances :}
+\begin{itemize}
+    \item \textbf{Euclidienne :} $d = \sqrt{\sum(x_i - y_i)^2}$ (sphérique)
+    \item \textbf{Manhattan :} $d = \sum|x_i - y_i|$ (en damier)
+    \item \textbf{Minkowski :} $d = (\sum|x_i - y_i|^p)^{1/p}$ (généralisation)
+    \item Manhattan plus robuste aux outliers
+\end{itemize}
+
+\textbf{6. Lazy learner :}
+\begin{itemize}
+    \item Pas d'étape d'entraînement (pas de modèle appris)
+    \item Tout le calcul se fait au moment de la prédiction
+    \item Opposé aux "eager learners" (SVM, arbres de décision)
+\end{itemize}
+
+\textbf{7. Malédiction de la dimensionnalité :}
+\begin{itemize}
+    \item En haute dimension, tous les points sont équidistants
+    \item La notion de "voisin proche" perd son sens
+    \item Solution : réduction de dimensionnalité (PCA, feature selection)
+\end{itemize}
+\end{solutionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 3 : K-MEANS
+% ============================================
+
+\section{K-Means Clustering}
+
+\subsection{Solution Exercice 1 : Calcul manuel}
+
+\begin{solutionbox}
+\textbf{Points :} P1(1,2), P2(2,3), P3(3,1), P4(8,7), P5(9,8), P6(7,9)
+
+\textbf{Centroïdes initiaux :} C1(2,2), C2(8,8)
+
+\textbf{Itération 1 - Assignment :}
+
+Calcul des distances de chaque point aux centroïdes :
+
+\begin{align*}
+d(P1, C1) &= \sqrt{(1-2)^2 + (2-2)^2} = 1.00 \\
+d(P1, C2) &= \sqrt{(1-8)^2 + (2-8)^2} = \sqrt{49 + 36} = 9.22 \\
+&\Rightarrow P1 \in \text{Cluster 1}
+\end{align*}
+
+\begin{align*}
+d(P2, C1) &= \sqrt{(2-2)^2 + (3-2)^2} = 1.00 \\
+d(P2, C2) &= \sqrt{(2-8)^2 + (3-8)^2} = \sqrt{36 + 25} = 7.81 \\
+&\Rightarrow P2 \in \text{Cluster 1}
+\end{align*}
+
+\begin{align*}
+d(P3, C1) &= \sqrt{(3-2)^2 + (1-2)^2} = \sqrt{1 + 1} = 1.41 \\
+d(P3, C2) &= \sqrt{(3-8)^2 + (1-8)^2} = \sqrt{25 + 49} = 8.60 \\
+&\Rightarrow P3 \in \text{Cluster 1}
+\end{align*}
+
+\begin{align*}
+d(P4, C1) &= \sqrt{(8-2)^2 + (7-2)^2} = \sqrt{36 + 25} = 7.81 \\
+d(P4, C2) &= \sqrt{(8-8)^2 + (7-8)^2} = 1.00 \\
+&\Rightarrow P4 \in \text{Cluster 2}
+\end{align*}
+
+\begin{align*}
+d(P5, C1) &= \sqrt{(9-2)^2 + (8-2)^2} = \sqrt{49 + 36} = 9.22 \\
+d(P5, C2) &= \sqrt{(9-8)^2 + (8-8)^2} = 1.00 \\
+&\Rightarrow P5 \in \text{Cluster 2}
+\end{align*}
+
+\begin{align*}
+d(P6, C1) &= \sqrt{(7-2)^2 + (9-2)^2} = \sqrt{25 + 49} = 8.60 \\
+d(P6, C2) &= \sqrt{(7-8)^2 + (9-8)^2} = \sqrt{1 + 1} = 1.41 \\
+&\Rightarrow P6 \in \text{Cluster 2}
+\end{align*}
+
+\textbf{Itération 1 - Update :}
+
+\begin{align*}
+C1_{new} &= \left(\frac{1+2+3}{3}, \frac{2+3+1}{3}\right) = (2, 2) \\
+C2_{new} &= \left(\frac{8+9+7}{3}, \frac{7+8+9}{3}\right) = (8, 8)
+\end{align*}
+
+Les centroïdes n'ont pas changé ! \textbf{Convergence atteinte.}
+
+\textbf{Clusters finaux :}
+\begin{itemize}
+    \item \textbf{Cluster 1 :} P1, P2, P3 (centroïde : (2, 2))
+    \item \textbf{Cluster 2 :} P4, P5, P6 (centroïde : (8, 8))
+\end{itemize}
+
+\textbf{Calcul de l'inertie :}
+
+\begin{align*}
+Inertie &= \sum_{i=1}^{2}\sum_{x \in C_i}||x - \mu_i||^2 \\
+        &= [d(P1,C1)^2 + d(P2,C1)^2 + d(P3,C1)^2] + [d(P4,C2)^2 + d(P5,C2)^2 + d(P6,C2)^2] \\
+        &= [1^2 + 1^2 + 1.41^2] + [1^2 + 1^2 + 1.41^2] \\
+        &= [1 + 1 + 2] + [1 + 1 + 2] \\
+        &= 4 + 4 = 8
+\end{align*}
+
+\textbf{Si $k=3$ :}
+\begin{itemize}
+    \item On aurait 3 clusters au lieu de 2
+    \item L'inertie serait probablement plus petite (meilleur ajustement)
+    \item Mais risque de surapprentissage (overfitting)
+    \item Utiliser la méthode du coude pour choisir $k$ optimal
+\end{itemize}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour K-means :}
+\begin{itemize}
+    \item L'initialisation aléatoire peut donner des résultats différents
+    \item Utilisez K-means++ pour une meilleure initialisation
+    \item Normalisez vos données avant clustering
+    \item K-means suppose des clusters sphériques et de taille similaire
+    \item L'inertie diminue toujours quand $k$ augmente (attention au surapprentissage)
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 2 : Code Python}
+
+\begin{solutionbox}
+\textbf{1. Fonction distance euclidienne :}
+
+\begin{lstlisting}
+import numpy as np
+
+def euclidean_distance(point1, point2):
+    """Calcule la distance euclidienne entre deux points"""
+    return np.sqrt(np.sum((point1 - point2) ** 2))
+\end{lstlisting}
+
+\textbf{2. Fonction d'assignment :}
+
+\begin{lstlisting}
+def assign_clusters(data, centroids):
+    """Assigne chaque point au cluster le plus proche"""
+    clusters = []
+    for point in data:
+        distances = [euclidean_distance(point, centroid) 
+                     for centroid in centroids]
+        cluster = np.argmin(distances)
+        clusters.append(cluster)
+    return np.array(clusters)
+\end{lstlisting}
+
+\textbf{3. Fonction de mise à jour des centroïdes :}
+
+\begin{lstlisting}
+def update_centroids(data, clusters, k):
+    """Update centroids as mean of points"""
+    centroids = []
+    for i in range(k):
+        cluster_points = data[clusters == i]
+        if len(cluster_points) > 0:
+            centroid = np.mean(cluster_points, axis=0)
+        else:
+            # Avoid empty clusters
+            centroid = data[np.random.randint(len(data))]
+        centroids.append(centroid)
+    return np.array(centroids)
+\end{lstlisting}
+
+\textbf{4. Algorithme K-means complet :}
+
+\begin{lstlisting}
+def kmeans(data, k, max_iter=100, tol=1e-4):
+    """Complete K-means implementation"""
+    # Random initialization
+    n_samples, n_features = data.shape
+    centroids = data[np.random.choice(n_samples, k, replace=False)]
+    
+    for iteration in range(max_iter):
+        # Assignment
+        clusters = assign_clusters(data, centroids)
+        
+        # Update
+        new_centroids = update_centroids(data, clusters, k)
+        
+        # Check convergence
+        if np.allclose(centroids, new_centroids, atol=tol):
+            print(f"Convergence after {iteration+1} iterations")
+            break
+        
+        centroids = new_centroids
+    
+    return centroids, clusters
+
+# Usage example
+data = np.array([[1, 2], [2, 3], [3, 1], [8, 7], [9, 8], [7, 9]])
+centroids, clusters = kmeans(data, k=2)
+print("Final centroids:", centroids)
+print("Clusters:", clusters)
+\end{lstlisting}
+
+\textbf{5. Comparaison avec sklearn :}
+
+\begin{lstlisting}
+from sklearn.cluster import KMeans
+
+# With sklearn
+kmeans_sklearn = KMeans(n_clusters=2, random_state=42, n_init=10)
+clusters_sklearn = kmeans_sklearn.fit_predict(data)
+centroids_sklearn = kmeans_sklearn.cluster_centers_
+
+print("Sklearn centroids:", centroids_sklearn)
+print("Sklearn clusters:", clusters_sklearn)
+print("Inertia:", kmeans_sklearn.inertia_)
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour le code :}
+\begin{itemize}
+    \item Utilisez numpy pour des calculs vectorisés (plus rapide)
+    \item Gérer les clusters vides (réinitialiser aléatoirement)
+    \item Utiliser un critère de tolérance pour la convergence
+    \item Fixer random\_state pour la reproductibilité
+    \item n\_init dans sklearn teste plusieurs initialisations
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 3 : Questions de cours}
+
+\begin{solutionbox}
+\textbf{1. Principe de K-means :}
+\begin{enumerate}
+    \item Initialiser $k$ centroïdes aléatoirement
+    \item \textbf{Assignment :} Assigner chaque point au cluster le plus proche
+    \item \textbf{Update :} Recalculer les centroïdes comme moyenne des points
+    \item Répéter 2-3 jusqu'à convergence
+\end{enumerate}
+
+\textbf{2. Avantages et inconvénients :}
+\begin{itemize}
+    \item \textbf{Avantages :}
+    \begin{itemize}
+        \item Simple et rapide
+        \item Efficace pour grands datasets
+        \item Garantit la convergence
+    \end{itemize}
+    \item \textbf{Inconvénients :}
+    \begin{itemize}
+        \item Nécessite de connaître $k$ à l'avance
+        \item Sensible à l'initialisation
+        \item Suppose des clusters sphériques
+        \item Sensible aux outliers
+    \end{itemize}
+\end{itemize}
+
+\textbf{3. Choix de $k$ - Méthode du coude :}
+\begin{itemize}
+    \item Tracer l'inertie en fonction de $k$
+    \item Le "coude" (point d'inflexion) indique le $k$ optimal
+    \item Autres méthodes : Silhouette score, Gap statistic
+\end{itemize}
+
+\textbf{4. Initialisation :}
+\begin{itemize}
+    \item Initialisation aléatoire peut donner des résultats différents
+    \item K-means++ : choisit les centroïdes initiaux intelligemment
+    \item Meilleure initialisation = convergence plus rapide et meilleurs résultats
+\end{itemize}
+
+\textbf{5. Inertie :}
+\begin{itemize}
+    \item Somme des distances au carré entre points et centroïdes
+    \item Mesure de compacité des clusters
+    \item Plus petite = meilleur clustering
+    \item Diminue toujours quand $k$ augmente
+\end{itemize}
+
+\textbf{6. Clusters vides :}
+\begin{itemize}
+    \item Peuvent apparaître si un centroïde est trop éloigné
+    \item Solutions : réinitialiser, utiliser K-means++, augmenter $k$
+\end{itemize}
+
+\textbf{7. Clustering hiérarchique vs K-means :}
+\begin{itemize}
+    \item \textbf{K-means :} $k$ fixe, partitionnement plat
+    \item \textbf{Hiérarchique :} Structure arborescente, pas besoin de $k$
+    \item Hiérarchique plus lent mais plus flexible
+\end{itemize}
+
+\textbf{8. Hypothèses de K-means :}
+\begin{itemize}
+    \item Clusters sphériques (distance euclidienne)
+    \item Clusters de taille similaire
+    \item Variance similaire dans chaque cluster
+    \item Si ces hypothèses ne sont pas respectées, K-means peut échouer
+\end{itemize}
+\end{solutionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 4 : ARBRE DE DÉCISION
+% ============================================
+
+\section{Arbre de Décision}
+
+\subsection{Solution Exercice 1 : Entropie et gain d'information}
+
+\begin{solutionbox}
+\textbf{1. Entropie initiale :}
+
+Total : 14 jours
+\begin{itemize}
+    \item Oui : 9 jours
+    \item Non : 5 jours
+\end{itemize}
+
+\begin{align*}
+\text{Entropie}(S) &= -p_{\text{Oui}} \log_2(p_{\text{Oui}}) - p_{\text{Non}} \log_2(p_{\text{Non}}) \\
+            &= -\frac{9}{14} \log_2\left(\frac{9}{14}\right) - \frac{5}{14} \log_2\left(\frac{5}{14}\right) \\
+            &= -0.643 \times (-0.637) - 0.357 \times (-1.485) \\
+            &= 0.410 + 0.530 \\
+            &= 0.940
+\end{align*}
+
+\textbf{2. Entropie pour chaque attribut :}
+
+\textbf{Attribut Outlook :}
+\begin{itemize}
+    \item \textbf{Ensoleillé :} 5 jours (2 Oui, 3 Non)
+    \begin{align*}
+    \text{Entropie}(\text{Ensoleillé}) &= -\frac{2}{5}\log_2\left(\frac{2}{5}\right) - \frac{3}{5}\log_2\left(\frac{3}{5}\right) \\
+                         &= 0.971
+    \end{align*}
+    \item \textbf{Nuageux :} 4 jours (4 Oui, 0 Non)
+    \begin{align*}
+    \text{Entropie}(\text{Nuageux}) &= -\frac{4}{4}\log_2\left(\frac{4}{4}\right) - \frac{0}{4}\log_2\left(\frac{0}{4}\right) \\
+                      &= 0 \text{ (cluster pur)}
+    \end{align*}
+    \item \textbf{Pluvieux :} 5 jours (3 Oui, 2 Non)
+    \begin{align*}
+    \text{Entropie}(\text{Pluvieux}) &= -\frac{3}{5}\log_2\left(\frac{3}{5}\right) - \frac{2}{5}\log_2\left(\frac{2}{5}\right) \\
+                       &= 0.971
+    \end{align*}
+\end{itemize}
+
+\begin{align*}
+\text{Entropie}(S, \text{Outlook}) &= \frac{5}{14} \times 0.971 + \frac{4}{14} \times 0 + \frac{5}{14} \times 0.971 \\
+                      &= 0.347 + 0 + 0.347 \\
+                      &= 0.694
+\end{align*}
+
+\textbf{Attribut Température :}
+\begin{itemize}
+    \item \textbf{Chaude :} 4 jours (2 Oui, 2 Non) → Entropie = 1.000
+    \item \textbf{Douce :} 6 jours (4 Oui, 2 Non) → Entropie = 0.918
+    \item \textbf{Fraîche :} 4 jours (3 Oui, 1 Non) → Entropie = 0.811
+\end{itemize}
+
+\begin{align*}
+\text{Entropie}(S, \text{Température}) &= \frac{4}{14} \times 1.000 + \frac{6}{14} \times 0.918 + \frac{4}{14} \times 0.811 \\
+                          &= 0.286 + 0.393 + 0.232 \\
+                          &= 0.911
+\end{align*}
+
+\textbf{Attribut Humidité :}
+\begin{itemize}
+    \item \textbf{Élevée :} 7 jours (3 Oui, 4 Non) → Entropie = 0.985
+    \item \textbf{Normale :} 7 jours (6 Oui, 1 Non) → Entropie = 0.592
+\end{itemize}
+
+\begin{align*}
+\text{Entropie}(S, \text{Humidité}) &= \frac{7}{14} \times 0.985 + \frac{7}{14} \times 0.592 \\
+                      &= 0.493 + 0.296 \\
+                      &= 0.789
+\end{align*}
+
+\textbf{3. Gain d'information :}
+
+\begin{align*}
+\text{Gain}(S, \text{Outlook}) &= \text{Entropie}(S) - \text{Entropie}(S, \text{Outlook}) \\
+                  &= 0.940 - 0.694 = 0.246
+\end{align*}
+
+\begin{align*}
+\text{Gain}(S, \text{Température}) &= 0.940 - 0.911 = 0.029
+\end{align*}
+
+\begin{align*}
+\text{Gain}(S, \text{Humidité}) &= 0.940 - 0.789 = 0.151
+\end{align*}
+
+\textbf{4. Choix de la racine :}
+
+\textbf{Outlook} a le gain d'information le plus élevé (0.246) → \textbf{Racine = Outlook}
+
+\textbf{5. Construction de l'arbre :}
+
+\begin{verbatim}
+                    Outlook
+                   /   |   \
+          Ensoleillé Nuageux Pluvieux
+             /         |         \
+          [Oui]    Température  Humidité
+                    /    \        /    \
+                 Chaude Douce  Élevée Normale
+                  /      |       |       |
+                [Non]  [Oui]   [Non]   [Oui]
+\end{verbatim}
+
+\textbf{6. Classification du nouveau jour :}
+
+Jour : (Ensoleillé, Chaude, Normale)
+\begin{enumerate}
+    \item Racine : Outlook = Ensoleillé
+    \item Sous-arbre Ensoleillé : Température = Chaude → \textbf{Jouer = Non}
+\end{enumerate}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour les arbres de décision :}
+\begin{itemize}
+    \item L'entropie est maximale (1.0) quand les classes sont équilibrées (50/50)
+    \item L'entropie est minimale (0.0) quand une classe domine (cluster pur)
+    \item Le gain d'information mesure la réduction d'incertitude
+    \item Choisir toujours l'attribut avec le gain maximum
+    \item Arrêter quand l'entropie = 0 (feuille pure) ou plus d'attributs
+\end{itemize}
+\end{tipbox}
+
+\subsection{Solution Exercice 2 : Gini Impurity}
+
+\begin{solutionbox}
+\textbf{1. Gini initial :}
+
+\begin{align*}
+Gini(S) &= 1 - p_{Oui}^2 - p_{Non}^2 \\
+        &= 1 - \left(\frac{9}{14}\right)^2 - \left(\frac{5}{14}\right)^2 \\
+        &= 1 - 0.413 - 0.128 \\
+        &= 0.459
+\end{align*}
+
+\textbf{2. Gini Gain pour chaque attribut :}
+
+\textbf{Attribut Outlook :}
+\begin{itemize}
+    \item Ensoleillé : $Gini = 1 - \left(\frac{2}{5}\right)^2 - \left(\frac{3}{5}\right)^2 = 0.480$
+    \item Nuageux : $Gini = 1 - \left(\frac{4}{4}\right)^2 - \left(\frac{0}{4}\right)^2 = 0$ (pur)
+    \item Pluvieux : $Gini = 1 - \left(\frac{3}{5}\right)^2 - \left(\frac{2}{5}\right)^2 = 0.480$
+\end{itemize}
+
+\begin{align*}
+Gini(S, Outlook) &= \frac{5}{14} \times 0.480 + \frac{4}{14} \times 0 + \frac{5}{14} \times 0.480 \\
+                  &= 0.171 + 0 + 0.171 \\
+                  &= 0.342
+\end{align*}
+
+\begin{align*}
+GiniGain(S, Outlook) &= 0.459 - 0.342 = 0.117
+\end{align*}
+
+\textbf{Attribut Humidité :}
+\begin{itemize}
+    \item Élevée : $Gini = 1 - \left(\frac{3}{7}\right)^2 - \left(\frac{4}{7}\right)^2 = 0.490$
+    \item Normale : $Gini = 1 - \left(\frac{6}{7}\right)^2 - \left(\frac{1}{7}\right)^2 = 0.245$
+\end{itemize}
+
+\begin{align*}
+Gini(S, Humidité) &= \frac{7}{14} \times 0.490 + \frac{7}{14} \times 0.245 \\
+                  &= 0.245 + 0.123 \\
+                  &= 0.368
+\end{align*}
+
+\begin{align*}
+GiniGain(S, Humidité) &= 0.459 - 0.368 = 0.091
+\end{align*}
+
+\textbf{3. Comparaison Entropie vs Gini :}
+\begin{itemize}
+    \item \textbf{Entropie :} Gain(Outlook) = 0.246, Gain(Humidité) = 0.151
+    \item \textbf{Gini :} Gain(Outlook) = 0.117, Gain(Humidité) = 0.091
+    \item Les deux critères donnent le même ordre de préférence
+    \item Gini est plus rapide à calculer (pas de logarithme)
+    \item Entropie est plus sensible aux différences
+    \item En pratique, les résultats sont souvent similaires
+\end{itemize}
+\end{solutionbox}
+
+\begin{importantbox}
+\textbf{Important - Entropie vs Gini :}
+\begin{itemize}
+    \item Les deux mesurent l'impureté
+    \item Entropie : $-\sum p_i \log_2(p_i)$ (plus coûteux)
+    \item Gini : $1 - \sum p_i^2$ (plus rapide)
+    \item Les deux donnent généralement des arbres similaires
+    \item Gini favorise légèrement les splits équilibrés
+\end{itemize}
+\end{importantbox}
+
+\subsection{Solution Exercice 3 : Questions de cours}
+
+\begin{solutionbox}
+\textbf{1. Principe de construction :}
+\begin{enumerate}
+    \item Choisir l'attribut avec le gain d'information maximum
+    \item Créer un nœud pour cet attribut
+    \item Diviser le dataset selon les valeurs de l'attribut
+    \item Répéter récursivement pour chaque sous-ensemble
+    \item Arrêter quand entropie = 0 ou plus d'attributs
+\end{enumerate}
+
+\textbf{2. Entropie vs Gini :}
+\begin{itemize}
+    \item \textbf{Entropie :} Mesure l'incertitude (information)
+    \item \textbf{Gini :} Mesure l'impureté (probabilité d'erreur)
+    \item Gini plus rapide (pas de log)
+    \item Résultats souvent similaires
+\end{itemize}
+
+\textbf{3. Gain d'information :}
+\begin{itemize}
+    \item Mesure la réduction d'incertitude
+    \item Gain = Entropie(avant) - Entropie(après)
+    \item Plus le gain est élevé, meilleur est le split
+    \item Permet de choisir le meilleur attribut à chaque étape
+\end{itemize}
+
+\textbf{4. Overfitting :}
+\begin{itemize}
+    \item L'arbre devient trop profond
+    \item Apprend par cœur les données d'entraînement
+    \item Mauvaise généralisation
+    \item Solutions : pruning, limitation de profondeur, min\_samples\_split
+\end{itemize}
+
+\textbf{5. Techniques de pruning :}
+\begin{itemize}
+    \item \textbf{Pre-pruning :} Arrêter avant (max\_depth, min\_samples)
+    \item \textbf{Post-pruning :} Construire l'arbre complet puis élaguer
+    \item Post-pruning généralement meilleur mais plus coûteux
+\end{itemize}
+
+\textbf{6. Pré vs Post-élagage :}
+\begin{itemize}
+    \item \textbf{Pre-pruning :} Plus rapide, peut sous-apprendre
+    \item \textbf{Post-pruning :} Plus précis, peut mieux généraliser
+    \item Post-pruning permet de voir l'arbre complet avant décision
+\end{itemize}
+
+\textbf{7. Valeurs manquantes :}
+\begin{itemize}
+    \item Utiliser la valeur la plus fréquente
+    \item Utiliser la valeur moyenne (régression)
+    \item Créer une branche "manquante"
+    \item Utiliser des algorithmes comme C4.5 qui gèrent les valeurs manquantes
+\end{itemize}
+
+\textbf{8. Avantages et inconvénients :}
+\begin{itemize}
+    \item \textbf{Avantages :}
+    \begin{itemize}
+        \item Facile à interpréter
+        \item Pas besoin de normalisation
+        \item Gère les features non-linéaires
+        \item Gère les valeurs manquantes
+    \end{itemize}
+    \item \textbf{Inconvénients :}
+    \begin{itemize}
+        \item Sujet au surapprentissage
+        \item Instable (petit changement → grand changement)
+        \item Biais vers les features avec beaucoup de valeurs
+    \end{itemize}
+\end{itemize}
+
+\textbf{9. Random Forest :}
+\begin{itemize}
+    \item Ensemble de plusieurs arbres de décision
+    \item Chaque arbre entraîné sur un sous-échantillon (bootstrap)
+    \item Vote majoritaire pour la prédiction finale
+    \item Réduit le surapprentissage et améliore la robustesse
+    \item Plus précis mais moins interprétable qu'un seul arbre
+\end{itemize}
+\end{solutionbox}
+
+\begin{tipbox}
+\textbf{Tips pour les arbres de décision :}
+\begin{itemize}
+    \item Utilisez max\_depth pour limiter la profondeur
+    \item min\_samples\_split pour éviter les splits sur peu de données
+    \item min\_samples\_leaf pour garantir un minimum dans chaque feuille
+    \item Utilisez la validation croisée pour choisir les hyperparamètres
+    \item Visualisez l'arbre pour comprendre les décisions
+    \item Random Forest est souvent meilleur qu'un seul arbre
+\end{itemize}
+\end{tipbox}
+
+\newpage
+
+% ============================================
+% CONCLUSION
+% ============================================
+
+\section{Conclusion}
+
+Ces solutions couvrent les concepts fondamentaux du Machine Learning avec des explications détaillées :
+
+\begin{itemize}
+    \item \textbf{Régression Linéaire} : Calculs manuels, MSE, Gradient Descent avec itérations
+    \item \textbf{KNN} : Distances, classification, matrice de confusion complète avec toutes les métriques
+    \item \textbf{K-means} : Algorithme itératif, calculs de distances et centroïdes, code Python
+    \item \textbf{Arbre de Décision} : Entropie, gain d'information, construction complète de l'arbre
+\end{itemize}
+
+\textbf{Points clés à retenir :}
+\begin{enumerate}
+    \item Toujours vérifier vos calculs étape par étape
+    \item Comprendre l'interprétation des métriques dans le contexte
+    \item Pratiquer les calculs manuels pour bien comprendre les algorithmes
+    \item Utiliser les tips pour éviter les erreurs courantes
+\end{enumerate}
+
+\textbf{Bon courage pour vos révisions et examens !}
+
+\end{document}
+

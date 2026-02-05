@@ -1,0 +1,516 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Exercices Machine Learning}
+\fancyfoot[C]{\thepage}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={np, pd, sklearn, plt, sns},
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{questionbox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Question
+}
+
+\newtcolorbox{databox}{
+    colback=green!5,
+    colframe=green!50,
+    breakable,
+    title=Données
+}
+
+% Métadonnées
+\title{Exercices Machine Learning\\
+\large Régression Linéaire, KNN, K-means, Arbre de Décision}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ============================================
+% PARTIE 1 : RÉGRESSION LINÉAIRE
+% ============================================
+
+\section{Régression Linéaire}
+
+\subsection{Exercice 1 : Calcul de la MSE et des paramètres}
+
+\begin{questionbox}
+On considère le dataset suivant pour prédire le salaire (Y) en fonction des années d'expérience (X) :
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Années d'expérience (X)} & \textbf{Salaire (Y)} \\
+\hline
+1 & 45000 \\
+2 & 50000 \\
+3 & 60000 \\
+4 & 80000 \\
+5 & 110000 \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Questions :}
+\begin{enumerate}
+    \item Calculez manuellement les paramètres $a$ (pente) et $b$ (ordonnée à l'origine) de la régression linéaire $\hat{Y} = aX + b$ en utilisant les formules :
+    \begin{align*}
+    a &= \frac{n\sum XY - \sum X \sum Y}{n\sum X^2 - (\sum X)^2} \\
+    b &= \frac{\sum Y - a\sum X}{n}
+    \end{align*}
+    
+    \item Calculez les prédictions $\hat{Y}$ pour chaque point.
+    
+    \item Calculez la MSE (Mean Squared Error) :
+    $$MSE = \frac{1}{n}\sum_{i=1}^{n}(Y_i - \hat{Y}_i)^2$$
+    
+    \item Interprétez les valeurs de $a$ et $b$ dans le contexte du problème.
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 2 : Gradient Descent}
+
+\begin{questionbox}
+On souhaite entraîner un modèle de régression linéaire avec le Gradient Descent.
+
+\textbf{Données initiales :}
+\begin{itemize}
+    \item $a_0 = 0$ (pente initiale)
+    \item $b_0 = 0$ (biais initial)
+    \item Taux d'apprentissage $\alpha = 0.01$
+    \item Dataset : $(X_1=2, Y_1=4)$, $(X_2=3, Y_2=6)$, $(X_3=4, Y_3=8)$
+\end{itemize}
+
+\textbf{Questions :}
+\begin{enumerate}
+    \item Calculez les dérivées partielles de la fonction de coût MSE par rapport à $a$ et $b$ :
+    \begin{align*}
+    \frac{\partial MSE}{\partial a} &= \frac{2}{n}\sum_{i=1}^{n}X_i(\hat{Y}_i - Y_i) \\
+    \frac{\partial MSE}{\partial b} &= \frac{2}{n}\sum_{i=1}^{n}(\hat{Y}_i - Y_i)
+    \end{align*}
+    
+    \item Effectuez une itération du Gradient Descent :
+    \begin{align*}
+    a_{new} &= a_{old} - \alpha \frac{\partial MSE}{\partial a} \\
+    b_{new} &= b_{old} - \alpha \frac{\partial MSE}{\partial b}
+    \end{align*}
+    
+    \item Calculez la nouvelle valeur de la MSE après cette itération.
+    
+    \item Expliquez pourquoi le Gradient Descent converge vers les valeurs optimales.
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 3 : Questions de cours}
+
+\begin{questionbox}
+\textbf{Questions théoriques :}
+\begin{enumerate}
+    \item Quelle est la différence entre la régression linéaire simple et la régression linéaire multiple ?
+    
+    \item Expliquez ce qu'est la MSE et pourquoi on l'utilise comme fonction de coût.
+    
+    \item Qu'est-ce que le Gradient Descent et comment fonctionne-t-il ?
+    
+    \item Quelle est la différence entre le Gradient Descent batch, stochastique et mini-batch ?
+    
+    \item Qu'est-ce que le coefficient de détermination $R^2$ et comment l'interpréter ?
+    
+    \item Expliquez le problème du surapprentissage (overfitting) dans le contexte de la régression linéaire.
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 2 : KNN (K-Nearest Neighbors)
+% ============================================
+
+\section{K-Nearest Neighbors (KNN)}
+
+\subsection{Exercice 1 : Calcul manuel avec petit dataset}
+
+\begin{databox}
+On considère un dataset de classification binaire avec 2 caractéristiques (X1, X2) :
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Point} & \textbf{X1} & \textbf{X2} & \textbf{Classe} \\
+\hline
+A & 1 & 2 & Rouge \\
+B & 2 & 3 & Rouge \\
+C & 3 & 1 & Bleu \\
+D & 4 & 2 & Bleu \\
+E & 5 & 3 & Bleu \\
+\hline
+\end{tabular}
+\end{center}
+
+On souhaite classifier le point de test $T = (3, 2)$.
+\end{databox}
+
+\begin{questionbox}
+\textbf{Questions :}
+\begin{enumerate}
+    \item Calculez la distance euclidienne entre le point T et tous les points du dataset :
+    $$d(T, P_i) = \sqrt{(X1_T - X1_i)^2 + (X2_T - X2_i)^2}$$
+    
+    \item Pour $k=1$, quelle est la classe prédite pour T ? Justifiez.
+    
+    \item Pour $k=3$, quels sont les 3 plus proches voisins ? Quelle est la classe prédite ?
+    
+    \item Pour $k=5$, quelle est la classe prédite ? Que remarquez-vous ?
+    
+    \item Discutez de l'influence du choix de $k$ sur les résultats.
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 2 : Matrice de confusion et métriques}
+
+\begin{databox}
+On a testé un modèle KNN ($k=3$) sur un dataset de test et obtenu les résultats suivants :
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Point} & \textbf{Classe réelle} & \textbf{Classe prédite} \\
+\hline
+1 & Positif & Positif \\
+2 & Positif & Positif \\
+3 & Positif & Négatif \\
+4 & Négatif & Positif \\
+5 & Négatif & Négatif \\
+6 & Négatif & Négatif \\
+7 & Négatif & Négatif \\
+8 & Positif & Positif \\
+9 & Positif & Négatif \\
+10 & Négatif & Négatif \\
+\hline
+\end{tabular}
+\end{center}
+\end{databox}
+
+\begin{questionbox}
+\textbf{Questions :}
+\begin{enumerate}
+    \item Construisez la matrice de confusion (2x2) avec les valeurs de TP, TN, FP, FN.
+    
+    \item Expliquez la signification de chaque métrique :
+    \begin{itemize}
+        \item TP (True Positive)
+        \item TN (True Negative)
+        \item FP (False Positive)
+        \item FN (False Negative)
+    \end{itemize}
+    
+    \item Calculez les métriques suivantes :
+    \begin{align*}
+    \text{Accuracy} &= \frac{TP + TN}{TP + TN + FP + FN} \\
+    \text{Precision} &= \frac{TP}{TP + FP} \\
+    \text{Recall (Sensitivity)} &= \frac{TP}{TP + FN} \\
+    \text{Specificity} &= \frac{TN}{TN + FP} \\
+    \text{F1-Score} &= \frac{2 \times Precision \times Recall}{Precision + Recall}
+    \end{align*}
+    
+    \item Interprétez chaque métrique dans le contexte d'un problème médical (détection de maladie).
+    
+    \item Dans quel cas privilégieriez-vous la Precision plutôt que le Recall ?
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 3 : Questions de cours}
+
+\begin{questionbox}
+\textbf{Questions théoriques :}
+\begin{enumerate}
+    \item Expliquez le principe de l'algorithme KNN.
+    
+    \item Quels sont les avantages et inconvénients de KNN ?
+    
+    \item Comment choisir la valeur optimale de $k$ ?
+    
+    \item Quelle est l'influence de la normalisation des données sur KNN ?
+    
+    \item Quelle distance utiliser avec KNN ? Comparez la distance euclidienne, manhattan et minkowski.
+    
+    \item Pourquoi KNN est-il considéré comme un algorithme "lazy learner" ?
+    
+    \item Expliquez le problème de la malédiction de la dimensionnalité avec KNN.
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 3 : K-MEANS
+% ============================================
+
+\section{K-Means Clustering}
+
+\subsection{Exercice 1 : Calcul manuel de l'algorithme}
+
+\begin{databox}
+On considère 6 points dans un espace 2D :
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Point} & \textbf{Coordonnées (X, Y)} \\
+\hline
+P1 & (1, 2) \\
+P2 & (2, 3) \\
+P3 & (3, 1) \\
+P4 & (8, 7) \\
+P5 & (9, 8) \\
+P6 & (7, 9) \\
+\hline
+\end{tabular}
+\end{center}
+
+On souhaite effectuer un clustering avec $k=2$ clusters.
+\end{databox}
+
+\begin{questionbox}
+\textbf{Questions :}
+\begin{enumerate}
+    \item Initialisez aléatoirement 2 centroïdes : $C1 = (2, 2)$ et $C2 = (8, 8)$.
+    
+    \item \textbf{Étape 1 - Assignment :} Assignez chaque point au cluster le plus proche en calculant les distances euclidiennes.
+    
+    \item \textbf{Étape 2 - Update :} Recalculez les centroïdes comme la moyenne des points de chaque cluster.
+    
+    \item Répétez les étapes 1 et 2 jusqu'à convergence (les centroïdes ne changent plus).
+    
+    \item Calculez l'inertie (within-cluster sum of squares) :
+    $$Inertie = \sum_{i=1}^{k}\sum_{x \in C_i}||x - \mu_i||^2$$
+    où $\mu_i$ est le centroïde du cluster $C_i$.
+    
+    \item Que se passe-t-il si on choisit $k=3$ au lieu de $k=2$ ?
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 2 : Code Python}
+
+\begin{questionbox}
+\textbf{Questions de programmation :}
+\begin{enumerate}
+    \item Écrivez une fonction Python qui calcule la distance euclidienne entre deux points.
+    
+    \item Écrivez une fonction qui assigne chaque point au cluster le plus proche.
+    
+    \item Écrivez une fonction qui met à jour les centroïdes.
+    
+    \item Implémentez l'algorithme K-means complet avec un critère d'arrêt (nombre max d'itérations ou convergence).
+    
+    \item Utilisez sklearn pour comparer vos résultats avec l'implémentation standard.
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 3 : Questions de cours}
+
+\begin{questionbox}
+\textbf{Questions théoriques :}
+\begin{enumerate}
+    \item Expliquez le principe de l'algorithme K-means étape par étape.
+    
+    \item Quels sont les avantages et inconvénients de K-means ?
+    
+    \item Comment choisir le nombre optimal de clusters $k$ ? Mentionnez la méthode du coude (elbow method).
+    
+    \item Pourquoi l'initialisation aléatoire des centroïdes peut-elle affecter les résultats ?
+    
+    \item Qu'est-ce que l'inertie (within-cluster sum of squares) ?
+    
+    \item Expliquez le problème des clusters vides dans K-means.
+    
+    \item Quelle est la différence entre le clustering hiérarchique et K-means ?
+    
+    \item Pourquoi K-means suppose-t-il que les clusters sont sphériques et de taille similaire ?
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================
+% PARTIE 4 : ARBRE DE DÉCISION
+% ============================================
+
+\section{Arbre de Décision}
+
+\subsection{Exercice 1 : Calcul de l'entropie et du gain d'information}
+
+\begin{databox}
+On considère un dataset de classification pour décider si on joue au tennis :
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Jour} & \textbf{Outlook} & \textbf{Température} & \textbf{Humidité} & \textbf{Jouer} \\
+\hline
+1 & Ensoleillé & Chaude & Élevée & Non \\
+2 & Ensoleillé & Chaude & Élevée & Non \\
+3 & Nuageux & Chaude & Élevée & Oui \\
+4 & Pluvieux & Douce & Élevée & Oui \\
+5 & Pluvieux & Fraîche & Normale & Oui \\
+6 & Pluvieux & Fraîche & Normale & Non \\
+7 & Nuageux & Fraîche & Normale & Oui \\
+8 & Ensoleillé & Douce & Élevée & Non \\
+9 & Ensoleillé & Fraîche & Normale & Oui \\
+10 & Pluvieux & Douce & Normale & Oui \\
+11 & Ensoleillé & Douce & Normale & Oui \\
+12 & Nuageux & Douce & Élevée & Oui \\
+13 & Nuageux & Chaude & Normale & Oui \\
+14 & Pluvieux & Douce & Élevée & Non \\
+\hline
+\end{tabular}
+\end{center}
+\end{databox}
+
+\begin{questionbox}
+\textbf{Questions :}
+\begin{enumerate}
+    \item Calculez l'entropie initiale du dataset :
+    $$Entropie(S) = -\sum_{i=1}^{c}p_i \log_2(p_i)$$
+    où $p_i$ est la proportion de la classe $i$ dans l'ensemble $S$.
+    
+    \item Calculez l'entropie pour chaque attribut (Outlook, Température, Humidité) :
+    $$Entropie(S, A) = \sum_{v \in Values(A)}\frac{|S_v|}{|S|}Entropie(S_v)$$
+    où $S_v$ est le sous-ensemble de $S$ où l'attribut $A$ a la valeur $v$.
+    
+    \item Calculez le gain d'information pour chaque attribut :
+    $$Gain(S, A) = Entropie(S) - Entropie(S, A)$$
+    
+    \item Quel attribut doit être choisi comme racine de l'arbre ? Justifiez.
+    
+    \item Construisez l'arbre de décision complet en répétant le processus pour chaque nœud.
+    
+    \item Utilisez l'arbre pour classifier un nouveau jour : (Ensoleillé, Chaude, Normale).
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 2 : Calcul du Gini Impurity}
+
+\begin{questionbox}
+\textbf{Questions :}
+\begin{enumerate}
+    \item Calculez l'impureté de Gini initiale du dataset de l'exercice 1 :
+    $$Gini(S) = 1 - \sum_{i=1}^{c}p_i^2$$
+    
+    \item Calculez le Gini Gain pour chaque attribut :
+    $$Gini(S, A) = \sum_{v \in Values(A)}\frac{|S_v|}{|S|}Gini(S_v)$$
+    $$GiniGain(S, A) = Gini(S) - Gini(S, A)$$
+    
+    \item Comparez les résultats obtenus avec l'entropie et le Gini. Quel critère choisiriez-vous et pourquoi ?
+\end{enumerate}
+\end{questionbox}
+
+\subsection{Exercice 3 : Questions de cours}
+
+\begin{questionbox}
+\textbf{Questions théoriques :}
+\begin{enumerate}
+    \item Expliquez le principe de construction d'un arbre de décision.
+    
+    \item Quelle est la différence entre l'entropie et l'impureté de Gini ?
+    
+    \item Qu'est-ce que le gain d'information et comment l'utilise-t-on ?
+    
+    \item Expliquez le problème du surapprentissage (overfitting) avec les arbres de décision.
+    
+    \item Quelles sont les techniques d'élagage (pruning) pour éviter le surapprentissage ?
+    
+    \item Quelle est la différence entre le pré-élagage (pre-pruning) et le post-élagage (post-pruning) ?
+    
+    \item Comment gérer les valeurs manquantes dans un arbre de décision ?
+    
+    \item Quels sont les avantages et inconvénients des arbres de décision ?
+    
+    \item Expliquez le concept de forêt aléatoire (Random Forest) et son lien avec les arbres de décision.
+\end{enumerate}
+\end{questionbox}
+
+\newpage
+
+% ============================================
+% CONCLUSION
+% ============================================
+
+\section{Conclusion}
+
+Ces exercices couvrent les concepts fondamentaux du Machine Learning :
+\begin{itemize}
+    \item \textbf{Régression Linéaire} : Calcul des paramètres, MSE, Gradient Descent
+    \item \textbf{KNN} : Classification avec calculs manuels, matrice de confusion, métriques
+    \item \textbf{K-means} : Clustering avec calculs itératifs et implémentation
+    \item \textbf{Arbre de Décision} : Entropie, gain d'information, construction d'arbre
+\end{itemize}
+
+\textbf{Bon courage pour vos révisions !}
+
+\end{document}
+
