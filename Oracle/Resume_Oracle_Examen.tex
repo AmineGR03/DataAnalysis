@@ -1,0 +1,1567 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tcolorbox}
+\usepackage{listings}
+
+% Configuration de la page
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Oracle Database - Examen}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+
+% Configuration des titres
+\titleformat{\section}
+{\Large\bfseries\color{blue!70!black}}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!50!black}}
+{}
+{0em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries\color{blue!40!black}}
+{}
+{0em}
+{}
+
+% Configuration pour le code SQL
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    morekeywords={ALTER, SYSTEM, DATABASE, MOUNT, OPEN, NOMOUNT, SHUTDOWN, IMMEDIATE, TRANSACTIONAL, NORMAL, ABORT, SCOPE, SPFILE, MEMORY, BOTH, ADD, DROP, RESIZE, RENAME, TO, FILE, LOGFILE, GROUP, MEMBER, ARCHIVELOG, NOARCHIVELOG, TABLESPACE, DATAFILE, OFFLINE, ONLINE},
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+             {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1 {ô}{{\^o}}1 {ç}{{\c c}}1
+             {À}{{\`A}}1 {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1 {Ë}{{\"E}}1
+             {Ù}{{\`U}}1 {Û}{{\^U}}1 {Ü}{{\"U}}1 {Ô}{{\^O}}1 {Ç}{{\c C}}1
+}
+
+% Configuration pour les zones importantes
+\tcbuselibrary{breakable}
+\newtcolorbox{importantbox}{
+    colback=yellow!5,
+    colframe=yellow!50,
+    breakable,
+    title=Important
+}
+
+\newtcolorbox{tipbox}{
+    colback=green!5,
+    colframe=green!50,
+    breakable,
+    title=Conseil Examen
+}
+
+\newtcolorbox{dangerbox}{
+    colback=red!5,
+    colframe=red!50,
+    breakable,
+    title=Attention / Piège
+}
+
+\newtcolorbox{definitionbox}{
+    colback=blue!5,
+    colframe=blue!50,
+    breakable,
+    title=Définition
+}
+
+\newtcolorbox{commandebox}{
+    colback=purple!5,
+    colframe=purple!50,
+    breakable,
+    title=Commande SQL
+}
+
+% Métadonnées
+\title{Résumé Oracle Database - Structure d'Examen\\
+\large Architecture, Fichiers, Tablespaces, Modes de Démarrage/Arrêt}
+\author{AmineGR03}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Architecture Oracle}
+
+\subsection{Les Composants Principaux}
+
+\begin{definitionbox}
+L'architecture Oracle se compose de deux éléments fondamentaux :
+\begin{itemize}
+    \item \textbf{Instance} : Ensemble de processus en mémoire et de structures mémoire
+    \item \textbf{Base de données} : Ensemble de fichiers physiques sur disque
+\end{itemize}
+\end{definitionbox}
+
+\textbf{Composants principaux :}
+
+\begin{enumerate}
+    \item \textbf{Instance Oracle}
+    \begin{itemize}
+        \item SGA (System Global Area) : Mémoire partagée
+        \item Processus d'arrière-plan (Background Processes)
+        \item PGA (Program Global Area) : Mémoire privée par processus
+    \end{itemize}
+    
+    \item \textbf{Base de données}
+    \begin{itemize}
+        \item Fichiers de données (Datafiles)
+        \item Fichiers de contrôle (Control Files)
+        \item Fichiers de journalisation (Redo Log Files)
+        \item Fichiers de paramètres (SPFILE/PFILE)
+        \item Fichiers d'archive (Archive Log Files) - si ARCHIVELOG activé
+    \end{itemize}
+\end{enumerate}
+
+\begin{tipbox}
+\textbf{À retenir pour l'examen} : Distinguez bien l'Instance (mémoire + processus) de la Base de données (fichiers). L'instance démarre, la base de données est montée puis ouverte.
+\end{tipbox}
+
+\subsection{Les Composantes de la SGA}
+
+\begin{definitionbox}
+La \textbf{SGA (System Global Area)} est une zone de mémoire partagée par tous les processus serveur et utilisateur d'une instance Oracle.
+\end{definitionbox}
+
+\textbf{Composantes principales de la SGA :}
+
+\begin{enumerate}
+    \item \textbf{Database Buffer Cache}
+    \begin{itemize}
+        \item Stocke les blocs de données récemment utilisés
+        \item Réduit les accès disque (I/O)
+        \item Utilise l'algorithme LRU (Least Recently Used)
+        \item Taille configurée par \texttt{DB\_CACHE\_SIZE}
+    \end{itemize}
+    
+    \item \textbf{Redo Log Buffer}
+    \begin{itemize}
+        \item Stocke temporairement les enregistrements de redo (modifications)
+        \item Taille fixe, configurée par \texttt{LOG\_BUFFER}
+        \item Écrit périodiquement dans les Redo Log Files par LGWR
+    \end{itemize}
+    
+    \item \textbf{Shared Pool}
+    \begin{itemize}
+        \item \textbf{Library Cache} : Plans d'exécution SQL et PL/SQL
+        \item \textbf{Data Dictionary Cache} : Métadonnées de la base
+        \item Taille configurée par \texttt{SHARED\_POOL\_SIZE}
+    \end{itemize}
+    
+    \item \textbf{Large Pool} (optionnel)
+    \begin{itemize}
+        \item Pour opérations de grande taille (backup, UGA pour MTS)
+        \item Taille configurée par \texttt{LARGE\_POOL\_SIZE}
+    \end{itemize}
+    
+    \item \textbf{Java Pool} (optionnel)
+    \begin{itemize}
+        \item Pour code Java dans la base
+        \item Taille configurée par \texttt{JAVA\_POOL\_SIZE}
+    \end{itemize}
+    
+    \item \textbf{Streams Pool} (optionnel)
+    \begin{itemize}
+        \item Pour Oracle Streams
+        \item Taille configurée par \texttt{STREAMS\_POOL\_SIZE}
+    \end{itemize}
+\end{enumerate}
+
+\begin{importantbox}
+\textbf{Structure SGA} : La SGA est allouée au démarrage de l'instance et ne peut pas être modifiée dynamiquement (sauf avec certaines versions et certaines composantes). Utilisez \texttt{ALTER SYSTEM} avec \texttt{SCOPE=SPFILE} pour modifier les tailles.
+\end{importantbox}
+
+\subsection{Les Processus d'Arrière-Plan (Background Processes)}
+
+\begin{definitionbox}
+Les \textbf{processus d'arrière-plan} sont des processus Oracle qui effectuent des tâches spécifiques pour gérer l'instance et la base de données.
+\end{definitionbox}
+
+\textbf{Processus obligatoires :}
+
+\subsubsection{DBWn (Database Writer)}
+
+\textbf{Rôle :}
+\begin{itemize}
+    \item Écrit les blocs modifiés du Database Buffer Cache vers les Datafiles
+    \item Assure la cohérence des données
+    \item S'exécute de manière asynchrone
+\end{itemize}
+
+\textbf{Quand DBWn écrit :}
+\begin{itemize}
+    \item Quand le buffer cache est plein
+    \item Quand un checkpoint se produit
+    \item Toutes les 3 secondes (timeout)
+    \item Quand un dirty buffer doit être réutilisé
+\end{itemize}
+
+\textbf{Explication :} DBWn utilise l'écriture groupée (batch writes) pour optimiser les performances. Il écrit plusieurs blocs en une seule opération I/O, ce qui est plus efficace que d'écrire chaque bloc individuellement.
+
+\begin{tipbox}
+\textbf{Examen} : DBWn écrit de manière asynchrone (non bloquant) pour ne pas ralentir les transactions utilisateur. Les commits sont rapides car ils n'attendent pas l'écriture disque.
+\end{tipbox}
+
+\subsubsection{LGWR (Log Writer)}
+
+\textbf{Rôle :}
+\begin{itemize}
+    \item Écrit le contenu du Redo Log Buffer vers les Redo Log Files
+    \item Garantit la durabilité des transactions (ACID)
+    \item S'exécute de manière synchrone lors des commits
+\end{itemize}
+
+\textbf{Quand LGWR écrit :}
+\begin{itemize}
+    \item À chaque commit
+    \item Quand le Redo Log Buffer est rempli au tiers (1/3)
+    \item Toutes les 3 secondes
+    \item Avant que DBWn n'écrive des blocs modifiés (Write-Ahead Logging)
+\end{itemize}
+
+\textbf{Explication :} LGWR utilise le principe du Write-Ahead Logging (WAL) : toutes les modifications sont d'abord enregistrées dans les redo logs avant d'être écrites dans les datafiles. Cela permet la récupération en cas de panne.
+
+\begin{importantbox}
+\textbf{Write-Ahead Logging} : LGWR doit toujours écrire avant DBWn. Si une panne survient, Oracle peut rejouer les redo logs pour récupérer les modifications non encore écrites dans les datafiles.
+\end{importantbox}
+
+\subsubsection{SMON (System Monitor)}
+
+\textbf{Rôle :}
+\begin{itemize}
+    \item Récupération au démarrage (instance recovery)
+    \item Nettoyage des segments temporaires
+    \item Coalescence des extents libres dans les tablespaces
+    \item Maintenance générale de la base
+\end{itemize}
+
+\textbf{Explication :} SMON effectue la récupération automatique lors du démarrage de l'instance. Si l'instance s'est arrêtée de manière anormale (crash), SMON utilise les redo logs pour réappliquer les transactions commitées mais non encore écrites dans les datafiles, et annule les transactions non commitées.
+
+\begin{tipbox}
+\textbf{Examen} : SMON s'exécute automatiquement au démarrage et en arrière-plan. Il est essentiel pour la récupération après un crash.
+\end{tipbox}
+
+\textbf{Autres processus importants :}
+\begin{itemize}
+    \item \textbf{PMON (Process Monitor)} : Nettoie les processus utilisateur défaillants
+    \item \textbf{CKPT (Checkpoint)} : Met à jour les en-têtes de fichiers lors des checkpoints
+    \item \textbf{ARCn (Archiver)} : Archive les redo logs en mode ARCHIVELOG
+\end{itemize}
+
+\subsection{Les Composantes de la PGA}
+
+\begin{definitionbox}
+La \textbf{PGA (Program Global Area)} est une zone de mémoire privée allouée à chaque processus serveur pour stocker des données de session.
+\end{definitionbox}
+
+\textbf{Composantes de la PGA :}
+
+\begin{enumerate}
+    \item \textbf{Private SQL Area}
+    \begin{itemize}
+        \item Plans d'exécution SQL
+        \item Variables de liaison (bind variables)
+        \item Zones de travail pour opérations (tri, hash join)
+    \end{itemize}
+    
+    \item \textbf{Session Memory}
+    \begin{itemize}
+        \item Variables de session
+        \item Informations de connexion
+    \end{itemize}
+    
+    \item \textbf{Work Area}
+    \begin{itemize}
+        \item Pour opérations de tri (ORDER BY, GROUP BY)
+        \item Pour opérations de hash join
+        \item Pour opérations de bitmap merge
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Mode Dédié (Dedicated Server)}
+
+\begin{definitionbox}
+En \textbf{mode dédié}, chaque session utilisateur a son propre processus serveur dédié.
+\end{definitionbox}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Une PGA par processus serveur
+    \item PGA = mémoire privée du processus
+    \item Pas de partage de mémoire entre sessions
+    \item Configuration par défaut
+\end{itemize}
+
+\textbf{Avantages :}
+\begin{itemize}
+    \item Simplicité
+    \item Pas de contention mémoire
+    \item Isolation des sessions
+\end{itemize}
+
+\textbf{Inconvénients :}
+\begin{itemize}
+    \item Plus de processus = plus de mémoire
+    \item Limité par le nombre de processus système
+\end{itemize}
+
+\subsubsection{Mode Partagé (Shared Server / MTS)}
+
+\begin{definitionbox}
+En \textbf{mode partagé} (Multi-Threaded Server), plusieurs sessions partagent un pool de processus serveurs.
+\end{definitionbox}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Pool de processus serveurs partagés
+    \item UGA (User Global Area) dans la Large Pool (SGA)
+    \item Dispatcher pour router les requêtes
+    \item Queue de requêtes partagée
+\end{itemize}
+
+\textbf{Structure :}
+\begin{itemize}
+    \item \textbf{Dispatcher} : Reçoit les requêtes des clients
+    \item \textbf{Shared Server Process} : Traite les requêtes
+    \item \textbf{UGA dans Large Pool} : Stocke les données de session (au lieu de PGA)
+    \item \textbf{Request Queue} : File d'attente des requêtes
+    \item \textbf{Response Queue} : File d'attente des réponses
+\end{itemize}
+
+\textbf{Avantages :}
+\begin{itemize}
+    \item Moins de processus = moins de mémoire
+    \item Supporte plus de connexions simultanées
+    \item Meilleure utilisation des ressources
+\end{itemize}
+
+\textbf{Inconvénients :}
+\begin{itemize}
+    \item Plus complexe
+    \item Contention possible sur les serveurs partagés
+    \item Pas adapté aux longues transactions
+\end{itemize}
+
+\begin{importantbox}
+\textbf{Différence clé} : En mode dédié, la PGA contient toutes les données de session. En mode partagé, seule la Work Area reste dans la PGA, le reste (UGA) est dans la Large Pool de la SGA.
+\end{importantbox}
+
+\begin{tipbox}
+\textbf{Examen} : Retenez que le mode partagé utilise la Large Pool de la SGA pour stocker l'UGA, ce qui permet de supporter plus de connexions avec moins de mémoire.
+\end{tipbox}
+
+\section{Fichier de Contrôle (Control File)}
+
+\subsection{Le Rôle}
+
+\begin{definitionbox}
+Le \textbf{fichier de contrôle} est un fichier binaire contenant les métadonnées essentielles de la base de données Oracle.
+\end{definitionbox}
+
+\textbf{Rôles du fichier de contrôle :}
+
+\begin{enumerate}
+    \item \textbf{Identification de la base}
+    \begin{itemize}
+        \item Nom de la base de données
+        \item Timestamp de création
+        \item DBID (Database Identifier)
+    \end{itemize}
+    
+    \item \textbf{Informations sur les fichiers}
+    \begin{itemize}
+        \item Liste et emplacement des datafiles
+        \item Liste et emplacement des redo log files
+        \item Informations sur les tablespaces
+    \end{itemize}
+    
+    \item \textbf{Informations de récupération}
+    \begin{itemize}
+        \item Numéro de séquence de redo log actuel
+        \item Informations de checkpoint
+        \item SCN (System Change Number) actuel
+    \end{itemize}
+    
+    \item \textbf{Informations d'archive}
+    \begin{itemize}
+        \item Historique des archives
+        \item Mode ARCHIVELOG/NOARCHIVELOG
+    \end{itemize}
+    
+    \item \textbf{Backup information}
+    \begin{itemize}
+        \item Informations sur les backups RMAN
+        \item Historique des backups
+    \end{itemize}
+\end{enumerate}
+
+\begin{importantbox}
+\textbf{Criticité} : Le fichier de contrôle est ESSENTIEL. Sans lui, Oracle ne peut pas démarrer la base de données. C'est pourquoi le multiplexage est OBLIGATOIRE.
+\end{importantbox}
+
+\subsection{Multiplexage}
+
+\begin{definitionbox}
+Le \textbf{multiplexage} consiste à maintenir plusieurs copies identiques du fichier de contrôle sur des disques différents pour assurer la redondance.
+\end{definitionbox}
+
+\textbf{Principe :}
+\begin{itemize}
+    \item Oracle écrit simultanément dans tous les fichiers de contrôle
+    \item Tous les fichiers doivent être identiques
+    \item Si un fichier est corrompu, Oracle peut utiliser les autres
+    \item Recommandation : 2 à 3 copies sur des disques différents
+\end{itemize}
+
+\textbf{Configuration :}
+
+Le multiplexage est configuré dans le paramètre \texttt{CONTROL\_FILES} :
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Voir les fichiers de contrôle actuels
+SELECT name FROM v$controlfile;
+
+-- Modifier dans SPFILE
+ALTER SYSTEM SET CONTROL_FILES = 
+    '/u01/oracle/control01.ctl',
+    '/u02/oracle/control02.ctl',
+    '/u03/oracle/control03.ctl'
+SCOPE=SPFILE;
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{Procédure pour ajouter un fichier de contrôle :}
+
+\begin{enumerate}
+    \item Modifier \texttt{CONTROL\_FILES} dans SPFILE
+    \item Arrêter la base de données
+    \item Copier le fichier de contrôle existant vers le nouvel emplacement
+    \item Redémarrer la base de données
+\end{enumerate}
+
+\begin{dangerbox}
+\textbf{Attention} : Tous les fichiers de contrôle doivent être identiques. Si vous modifiez \texttt{CONTROL\_FILES}, vous devez copier manuellement les fichiers existants vers les nouveaux emplacements avant de redémarrer.
+\end{dangerbox}
+
+\begin{tipbox}
+\textbf{Examen} : Le multiplexage est OBLIGATOIRE pour les fichiers de contrôle. Oracle recommande au moins 2 copies sur des disques différents pour éviter la perte de données en cas de panne disque.
+\end{tipbox}
+
+\section{Fichiers de Journalisation (Redo Log Files)}
+
+\subsection{L'Intérêt}
+
+\begin{definitionbox}
+Les \textbf{Redo Log Files} (fichiers de journalisation) enregistrent toutes les modifications apportées aux données pour permettre la récupération.
+\end{definitionbox}
+
+\textbf{Intérêts des Redo Log Files :}
+
+\begin{enumerate}
+    \item \textbf{Récupération après panne}
+    \begin{itemize}
+        \item Permettent de rejouer les transactions commitées
+        \item Récupération automatique au démarrage (instance recovery)
+        \item Récupération de média (media recovery) si nécessaire
+    \end{itemize}
+    
+    \item \textbf{Durabilité des transactions (ACID)}
+    \begin{itemize}
+        \item Garantissent que les commits sont durables
+        \item Write-Ahead Logging : écriture dans redo avant datafiles
+    \end{itemize}
+    
+    \item \textbf{Performance}
+    \begin{itemize}
+        \item Écriture séquentielle rapide (LGWR)
+        \item Pas besoin d'attendre l'écriture dans les datafiles pour commit
+    \end{itemize}
+    
+    \item \textbf{Archivage}
+    \begin{itemize}
+        \item En mode ARCHIVELOG, permettent la récupération point-in-time
+        \item Historique complet des modifications
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Structure :}
+
+\begin{itemize}
+    \item Les redo logs sont organisés en \textbf{groupes}
+    \item Chaque groupe peut avoir plusieurs \textbf{membres} (multiplexage)
+    \item Oracle écrit de manière circulaire : Groupe 1 → Groupe 2 → Groupe 3 → Groupe 1...
+    \item Minimum 2 groupes requis
+    \item Recommandation : 3 groupes minimum
+\end{itemize}
+
+\begin{importantbox}
+\textbf{Write-Ahead Logging} : Toutes les modifications sont d'abord écrites dans les redo logs par LGWR avant d'être écrites dans les datafiles par DBWn. C'est le principe fondamental de la récupération Oracle.
+\end{importantbox}
+
+\subsection{Augmenter la Taille d'un Groupe de Journalisation}
+
+\textbf{Procédure :}
+
+\begin{enumerate}
+    \item Vérifier l'état actuel des groupes
+    \begin{commandebox}
+\begin{lstlisting}
+SELECT group#, bytes, status, members 
+FROM v$log;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item Vérifier que le groupe n'est pas actif
+    \begin{itemize}
+        \item Le groupe doit être \texttt{INACTIVE} (pas \texttt{CURRENT} ou \texttt{ACTIVE})
+    \end{itemize}
+    
+    \item Ajouter un nouveau groupe avec la taille souhaitée
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE ADD LOGFILE GROUP 4 
+    ('/u01/oracle/redo04a.log',
+     '/u02/oracle/redo04b.log') 
+    SIZE 100M;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item Attendre que tous les groupes soient INACTIVE
+    \item Supprimer l'ancien groupe
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE DROP LOGFILE GROUP 1;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item Supprimer physiquement les fichiers
+    \begin{commandebox}
+\begin{lstlisting}
+-- Après avoir supprimé le groupe, supprimer les fichiers
+-- depuis le système d'exploitation
+\end{lstlisting}
+    \end{commandebox}
+\end{enumerate}
+
+\textbf{Méthode alternative : Redimensionner un groupe existant}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- 1. Vérifier que le groupe est INACTIVE
+SELECT group#, status FROM v$log WHERE group# = 1;
+
+-- 2. Ajouter un nouveau groupe avec la nouvelle taille
+ALTER DATABASE ADD LOGFILE GROUP 4 
+    ('/u01/oracle/redo04a.log',
+     '/u02/oracle/redo04b.log') 
+    SIZE 200M;
+
+-- 3. Forcer un log switch pour rendre l'ancien groupe INACTIVE
+ALTER SYSTEM SWITCH LOGFILE;
+
+-- 4. Répéter jusqu'à ce que le groupe 1 soit INACTIVE
+-- 5. Supprimer l'ancien groupe
+ALTER DATABASE DROP LOGFILE GROUP 1;
+\end{lstlisting}
+\end{commandebox}
+
+\begin{dangerbox}
+\textbf{Attention} : Vous ne pouvez pas redimensionner directement un groupe existant. Vous devez créer un nouveau groupe avec la taille souhaitée, puis supprimer l'ancien.
+\end{dangerbox}
+
+\subsection{Réduire la Taille d'un Groupe de Journalisation}
+
+\textbf{Procédure :}
+
+La procédure est identique à l'augmentation, mais vous créez un nouveau groupe avec une taille plus petite :
+
+\begin{enumerate}
+    \item Vérifier que vous avez au moins 3 groupes (pour pouvoir en supprimer un)
+    \item Créer un nouveau groupe avec la taille réduite souhaitée
+    \item Attendre que l'ancien groupe soit INACTIVE
+    \item Supprimer l'ancien groupe
+    \item Supprimer physiquement les fichiers
+\end{enumerate}
+
+\begin{importantbox}
+\textbf{Contrainte} : Vous devez toujours avoir au minimum 2 groupes de redo logs. Oracle ne vous laissera pas supprimer un groupe si cela ferait tomber le nombre de groupes en dessous de 2.
+\end{importantbox}
+
+\subsection{Suppression d'un Membre de Groupe}
+
+\textbf{Cas POSSIBLES :}
+
+\begin{enumerate}
+    \item \textbf{Groupe INACTIVE avec plusieurs membres}
+    \begin{itemize}
+        \item Vous pouvez supprimer un membre si le groupe a au moins 2 membres
+        \item Le groupe doit rester avec au moins 1 membre
+    \end{itemize}
+    
+    \item \textbf{Multiplexage redondant}
+    \begin{itemize}
+        \item Si vous avez 3 membres et voulez en garder 2
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Commande :}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Supprimer un membre d'un groupe INACTIVE
+ALTER DATABASE DROP LOGFILE MEMBER 
+    '/u01/oracle/redo01b.log';
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{Cas IMPOSSIBLES :}
+
+\begin{enumerate}
+    \item \textbf{Groupe CURRENT ou ACTIVE}
+    \begin{itemize}
+        \item Impossible de supprimer un membre d'un groupe actuellement utilisé
+        \item Solution : Attendre un log switch ou forcer un switch
+    \end{itemize}
+    
+    \item \textbf{Dernier membre du groupe}
+    \begin{itemize}
+        \item Impossible de supprimer le dernier membre d'un groupe
+        \item Chaque groupe doit avoir au moins 1 membre
+        \item Solution : Supprimer tout le groupe si vous voulez le supprimer
+    \end{itemize}
+    
+    \item \textbf{Groupe avec un seul membre}
+    \begin{itemize}
+        \item Si le groupe n'a qu'un seul membre, vous ne pouvez pas le supprimer
+        \item Vous devez d'abord ajouter un autre membre, ou supprimer tout le groupe
+    \end{itemize}
+\end{enumerate}
+
+\begin{tipbox}
+\textbf{Examen} : Pour supprimer un membre, le groupe doit être INACTIVE et avoir au moins 2 membres. Le groupe CURRENT ou ACTIVE ne peut pas être modifié.
+\end{tipbox}
+
+\subsection{Suppression d'un Groupe}
+
+\textbf{Cas POSSIBLES :}
+
+\begin{enumerate}
+    \item \textbf{Groupe INACTIVE}
+    \begin{itemize}
+        \item Le groupe doit être dans l'état \texttt{INACTIVE}
+        \item Vous devez avoir au moins 2 groupes restants après suppression
+    \end{itemize}
+    
+    \item \textbf{Au moins 3 groupes existants}
+    \begin{itemize}
+        \item Pour supprimer 1 groupe, vous devez en avoir au moins 3
+        \item Minimum 2 groupes requis par Oracle
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Commande :}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- 1. Vérifier l'état du groupe
+SELECT group#, status FROM v$log WHERE group# = 1;
+
+-- 2. Si le groupe est CURRENT ou ACTIVE, forcer un log switch
+ALTER SYSTEM SWITCH LOGFILE;
+
+-- 3. Répéter jusqu'à ce que le groupe soit INACTIVE
+-- 4. Supprimer le groupe
+ALTER DATABASE DROP LOGFILE GROUP 1;
+
+-- 5. Supprimer physiquement les fichiers depuis l'OS
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{Cas IMPOSSIBLES :}
+
+\begin{enumerate}
+    \item \textbf{Groupe CURRENT}
+    \begin{itemize}
+        \item Impossible de supprimer le groupe actuellement utilisé par LGWR
+        \item Solution : Forcer un log switch avec \texttt{ALTER SYSTEM SWITCH LOGFILE}
+    \end{itemize}
+    
+    \item \textbf{Groupe ACTIVE}
+    \begin{itemize}
+        \item Impossible de supprimer un groupe contenant des données nécessaires pour la récupération
+        \item Le groupe est encore nécessaire pour instance recovery
+        \item Solution : Attendre qu'il devienne INACTIVE (après checkpoint)
+    \end{itemize}
+    
+    \item \textbf{Seulement 2 groupes}
+    \begin{itemize}
+        \item Impossible de supprimer un groupe si cela laisserait moins de 2 groupes
+        \item Oracle exige un minimum de 2 groupes
+        \item Solution : Créer un nouveau groupe avant de supprimer l'ancien
+    \end{itemize}
+    
+    \item \textbf{Groupe nécessaire pour media recovery}
+    \begin{itemize}
+        \item Si la base est en récupération, certains groupes peuvent être protégés
+    \end{itemize}
+\end{enumerate}
+
+\begin{importantbox}
+\textbf{Règle d'or} : Vous ne pouvez supprimer un groupe que s'il est INACTIVE et que vous aurez au moins 2 groupes après suppression. Le groupe CURRENT ne peut JAMAIS être supprimé.
+\end{importantbox}
+
+\begin{tipbox}
+\textbf{Examen} : Pour supprimer un groupe CURRENT, vous devez d'abord faire un \texttt{ALTER SYSTEM SWITCH LOGFILE} pour passer au groupe suivant. Attendez ensuite que l'ancien groupe devienne INACTIVE.
+\end{tipbox}
+
+\section{ARCHIVELOG}
+
+\subsection{Mode de Démarrage pour Activer ARCHIVELOG}
+
+\begin{definitionbox}
+Le mode \textbf{ARCHIVELOG} permet de conserver une copie des redo log files avant qu'ils ne soient réutilisés, permettant ainsi la récupération point-in-time.
+\end{definitionbox}
+
+\textbf{Procédure pour activer le mode ARCHIVELOG :}
+
+\begin{enumerate}
+    \item \textbf{Arrêter la base de données}
+    \begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN IMMEDIATE;
+-- ou
+SHUTDOWN NORMAL;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Démarrer en mode MOUNT}
+    \begin{commandebox}
+\begin{lstlisting}
+STARTUP MOUNT;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \begin{importantbox}
+    \textbf{CRUCIAL} : Le mode ARCHIVELOG ne peut être activé qu'en mode MOUNT, pas en mode OPEN. C'est pourquoi vous devez d'abord arrêter la base, puis la démarrer en MOUNT.
+    \end{importantbox}
+    
+    \item \textbf{Activer le mode ARCHIVELOG}
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE ARCHIVELOG;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Ouvrir la base de données}
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE OPEN;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Vérifier l'activation}
+    \begin{commandebox}
+\begin{lstlisting}
+-- Vérifier le mode
+SELECT log_mode FROM v$database;
+
+-- Vérifier que l'archivage fonctionne
+ARCHIVE LOG LIST;
+\end{lstlisting}
+    \end{commandebox}
+\end{enumerate}
+
+\textbf{Procédure complète :}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- 1. Arrêter la base
+SHUTDOWN IMMEDIATE;
+
+-- 2. Démarrer en MOUNT (pas OPEN !)
+STARTUP MOUNT;
+
+-- 3. Activer ARCHIVELOG
+ALTER DATABASE ARCHIVELOG;
+
+-- 4. Ouvrir la base
+ALTER DATABASE OPEN;
+
+-- 5. Vérifier
+SELECT log_mode FROM v$database;
+-- Doit retourner : ARCHIVELOG
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{Pour désactiver ARCHIVELOG (retour en NOARCHIVELOG) :}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Même procédure mais avec NOARCHIVELOG
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+ALTER DATABASE NOARCHIVELOG;
+ALTER DATABASE OPEN;
+\end{lstlisting}
+\end{commandebox}
+
+\begin{dangerbox}
+\textbf{Attention} : En mode NOARCHIVELOG, vous ne pouvez faire que des backups à froid (base arrêtée). La récupération point-in-time n'est pas possible. Activez ARCHIVELOG pour les bases de production.
+\end{dangerbox}
+
+\begin{tipbox}
+\textbf{Examen} : Retenez bien la séquence : SHUTDOWN → STARTUP MOUNT → ALTER DATABASE ARCHIVELOG → ALTER DATABASE OPEN. Le mode MOUNT est OBLIGATOIRE pour changer le mode d'archivage.
+\end{tipbox}
+
+\section{Tablespaces}
+
+\subsection{Définition}
+
+\begin{definitionbox}
+Un \textbf{tablespace} est un conteneur logique qui regroupe un ou plusieurs fichiers de données (datafiles) pour stocker les objets de la base de données (tables, index, etc.).
+\end{definitionbox}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Unité logique de stockage
+    \item Peut contenir plusieurs datafiles
+    \item Les objets (tables, index) sont créés dans des tablespaces
+    \item Permet de gérer l'espace disque de manière organisée
+\end{itemize}
+
+\subsection{Types de Tablespaces}
+
+\subsubsection{Tablespaces Permanents}
+
+\textbf{SYSTEM}
+\begin{itemize}
+    \item Contient le dictionnaire de données (data dictionary)
+    \item Créé automatiquement à la création de la base
+    \item Ne doit JAMAIS être supprimé
+    \item Contient les tables système (SYS, SYSTEM)
+\end{itemize}
+
+\textbf{SYSAUX}
+\begin{itemize}
+    \item Contient les composants optionnels d'Oracle
+    \item Créé automatiquement
+    \item Réduit la charge sur SYSTEM
+    \item Contient AWR, Statspack, etc.
+\end{itemize}
+
+\textbf{UNDO}
+\begin{itemize}
+    \item Stocke les données de rollback (undo data)
+    \item Permet la lecture cohérente et la récupération de transactions
+    \item Géré automatiquement (Automatic Undo Management)
+\end{itemize}
+
+\textbf{Tablespaces Utilisateur}
+\begin{itemize}
+    \item Créés par le DBA pour les données utilisateur
+    \item Exemples : USERS, DATA, INDEX, TEMP\_DATA
+    \item Organisent les données par fonction ou application
+\end{itemize}
+
+\subsubsection{Tablespaces Temporaires}
+
+\begin{itemize}
+    \item Stockent les données temporaires (tri, hash join)
+    \item Partagés entre toutes les sessions
+    \item Généralement nommé TEMP
+    \item Améliorent les performances des opérations de tri
+\end{itemize}
+
+\subsubsection{Bigfile Tablespaces}
+
+\begin{itemize}
+    \item Contiennent un seul datafile très grand (jusqu'à 32 TB)
+    \item Simplifient la gestion pour les très grandes bases
+    \item Créés avec \texttt{BIGFILE}
+\end{itemize}
+
+\begin{tipbox}
+\textbf{Examen} : Retenez que SYSTEM et SYSAUX sont obligatoires et créés automatiquement. UNDO est nécessaire pour les transactions. Les tablespaces temporaires sont pour les opérations de tri.
+\end{tipbox}
+
+\subsection{Renommer un Fichier de Données}
+
+\begin{importantbox}
+\textbf{État de la base de données} : Pour renommer un datafile, la base doit être en mode MOUNT (pas OPEN, pas NOMOUNT).
+\end{importantbox}
+
+\textbf{Procédure :}
+
+\begin{enumerate}
+    \item \textbf{Arrêter la base de données}
+    \begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN IMMEDIATE;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Démarrer en mode MOUNT}
+    \begin{commandebox}
+\begin{lstlisting}
+STARTUP MOUNT;
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Renommer le fichier dans Oracle}
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE RENAME FILE 
+    '/ancien/chemin/datafile01.dbf'
+TO 
+    '/nouveau/chemin/datafile01.dbf';
+\end{lstlisting}
+    \end{commandebox}
+    
+    \item \textbf{Renommer physiquement le fichier}
+    \begin{itemize}
+        \item Depuis le système d'exploitation, déplacer ou copier le fichier vers le nouvel emplacement
+        \item Si déplacement : \texttt{mv /ancien/chemin/datafile01.dbf /nouveau/chemin/}
+        \item Si copie : \texttt{cp /ancien/chemin/datafile01.dbf /nouveau/chemin/}
+    \end{itemize}
+    
+    \item \textbf{Ouvrir la base de données}
+    \begin{commandebox}
+\begin{lstlisting}
+ALTER DATABASE OPEN;
+\end{lstlisting}
+    \end{commandebox}
+\end{enumerate}
+
+\textbf{Procédure complète :}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- 1. Arrêter la base
+SHUTDOWN IMMEDIATE;
+
+-- 2. Démarrer en MOUNT
+STARTUP MOUNT;
+
+-- 3. Renommer dans Oracle (met à jour le contrôle file)
+ALTER DATABASE RENAME FILE 
+    '/u01/oracle/datafile01.dbf'
+TO 
+    '/u02/oracle/datafile01.dbf';
+
+-- 4. Renommer physiquement depuis l'OS
+-- (depuis un autre terminal)
+-- mv /u01/oracle/datafile01.dbf /u02/oracle/datafile01.dbf
+
+-- 5. Ouvrir la base
+ALTER DATABASE OPEN;
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{Explication :}
+
+\begin{itemize}
+    \item En mode MOUNT, Oracle a accès au fichier de contrôle mais pas aux datafiles
+    \item La commande \texttt{ALTER DATABASE RENAME FILE} met à jour le fichier de contrôle
+    \item Vous devez ensuite déplacer physiquement le fichier
+    \item Au démarrage en OPEN, Oracle vérifie que le fichier existe au nouvel emplacement
+\end{itemize}
+
+\begin{dangerbox}
+\textbf{Attention} : L'ordre est CRUCIAL :
+\begin{enumerate}
+    \item D'abord renommer dans Oracle (met à jour le contrôle file)
+    \item Ensuite renommer physiquement le fichier
+    \item Si vous faites l'inverse, Oracle ne trouvera pas le fichier au démarrage
+\end{enumerate}
+\end{dangerbox}
+
+\begin{tipbox}
+\textbf{Examen} : Pour renommer un datafile, la base doit être en MOUNT. La commande \texttt{ALTER DATABASE RENAME FILE} met à jour le contrôle file, puis vous devez déplacer physiquement le fichier.
+\end{tipbox}
+
+\section{Les Modes d'Arrêt}
+
+\subsection{SHUTDOWN NORMAL}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item N'accepte plus de nouvelles connexions
+    \item Attend que toutes les sessions existantes se déconnectent
+    \item Attend que toutes les transactions en cours se terminent
+    \item Effectue un checkpoint complet
+    \item Ferme les fichiers et démonte la base
+    \item Arrête l'instance
+\end{itemize}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Mode le plus sûr
+    \item Pas de perte de données
+    \item Peut prendre du temps (attente des utilisateurs)
+    \item Pas de récupération nécessaire au redémarrage
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN NORMAL;
+-- ou simplement
+SHUTDOWN;
+\end{lstlisting}
+\end{commandebox}
+
+\subsection{SHUTDOWN TRANSACTIONAL}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item N'accepte plus de nouvelles connexions
+    \item Attend que toutes les transactions en cours se terminent (commit ou rollback)
+    \item Déconnecte toutes les sessions une fois les transactions terminées
+    \item Effectue un checkpoint complet
+    \item Ferme les fichiers et démonte la base
+    \item Arrête l'instance
+\end{itemize}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Plus rapide que NORMAL (ne force pas les utilisateurs à se déconnecter)
+    \item Attends seulement la fin des transactions
+    \item Pas de perte de données
+    \item Pas de récupération nécessaire
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN TRANSACTIONAL;
+\end{lstlisting}
+\end{commandebox}
+
+\subsection{SHUTDOWN IMMEDIATE}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item N'accepte plus de nouvelles connexions
+    \item Annule toutes les transactions en cours (rollback)
+    \item Déconnecte toutes les sessions immédiatement
+    \item Effectue un checkpoint complet
+    \item Ferme les fichiers et démonte la base
+    \item Arrête l'instance
+\end{itemize}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Rapide (pas d'attente)
+    \item Rollback des transactions non commitées
+    \item Pas de perte de données commitées
+    \item Pas de récupération nécessaire (checkpoint effectué)
+    \item Mode le plus utilisé en production
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN IMMEDIATE;
+\end{lstlisting}
+\end{commandebox}
+
+\subsection{SHUTDOWN ABORT}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Arrêt immédiat sans aucune vérification
+    \item Pas de checkpoint
+    \item Pas de fermeture propre des fichiers
+    \item Similaire à un crash
+    \item Instance arrêtée immédiatement
+\end{itemize}
+
+\textbf{Caractéristiques :}
+\begin{itemize}
+    \item Le plus rapide
+    \item \textbf{DANGEREUX} : Pas de fermeture propre
+    \item Récupération automatique nécessaire au redémarrage (instance recovery)
+    \item SMON effectue la récupération au démarrage suivant
+    \item À utiliser uniquement en cas d'urgence
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+SHUTDOWN ABORT;
+\end{lstlisting}
+\end{commandebox}
+
+\begin{dangerbox}
+\textbf{Attention} : SHUTDOWN ABORT est équivalent à un crash. Utilisez-le uniquement si les autres modes ne fonctionnent pas. Une récupération sera nécessaire au redémarrage.
+\end{dangerbox}
+
+\textbf{Comparaison des modes :}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Mode} & \textbf{Vitesse} & \textbf{Récupération} & \textbf{Utilisation} \\
+\hline
+NORMAL & Lente & Non & Maintenance planifiée \\
+TRANSACTIONAL & Moyenne & Non & Production normale \\
+IMMEDIATE & Rapide & Non & Production (recommandé) \\
+ABORT & Immédiate & Oui & Urgence uniquement \\
+\hline
+\end{tabular}
+\caption{Comparaison des modes d'arrêt}
+\end{table}
+
+\begin{tipbox}
+\textbf{Examen} : Retenez que seul ABORT nécessite une récupération. IMMEDIATE est le mode recommandé en production car il est rapide et sûr.
+\end{tipbox}
+
+\section{Les Modes de Démarrage}
+
+\subsection{NOMOUNT}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Démarre uniquement l'instance
+    \item Lit le fichier de paramètres (SPFILE ou PFILE)
+    \item Alloue la SGA en mémoire
+    \item Démarre les processus d'arrière-plan
+    \item \textbf{Ne monte PAS la base de données}
+    \item \textbf{Ne lit PAS le fichier de contrôle}
+\end{itemize}
+
+\textbf{Utilisations :}
+\begin{itemize}
+    \item Création d'une nouvelle base de données
+    \item Modification de paramètres nécessitant un redémarrage
+    \item Récupération du fichier de contrôle
+    \item Diagnostic de problèmes d'instance
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+STARTUP NOMOUNT;
+-- ou
+STARTUP FORCE NOMOUNT;
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{État de la base :}
+\begin{itemize}
+    \item Instance : Démarrée
+    \item Base de données : Non montée
+    \item Fichier de contrôle : Non lu
+    \item Datafiles : Non ouverts
+\end{itemize}
+
+\begin{tipbox}
+\textbf{Examen} : En NOMOUNT, seul l'instance démarre. Le fichier de contrôle n'est pas encore lu, donc Oracle ne connaît pas encore la structure de la base.
+\end{tipbox}
+
+\subsection{MOUNT}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Instance déjà démarrée (ou démarre l'instance)
+    \item Lit le fichier de contrôle
+    \item Obtient la liste des datafiles et redo logs
+    \item \textbf{Ne ouvre PAS les datafiles}
+    \item Base de données montée mais non accessible
+\end{itemize}
+
+\textbf{Utilisations :}
+\begin{itemize}
+    \item Renommer des datafiles
+    \item Activer/désactiver ARCHIVELOG
+    \item Récupération de média (media recovery)
+    \item Renommer la base de données
+    \item Opérations de maintenance nécessitant l'accès au contrôle file
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Si instance déjà démarrée en NOMOUNT
+ALTER DATABASE MOUNT;
+
+-- Ou directement
+STARTUP MOUNT;
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{État de la base :}
+\begin{itemize}
+    \item Instance : Démarrée
+    \item Base de données : Montée
+    \item Fichier de contrôle : Lu
+    \item Datafiles : Non ouverts (mais Oracle connaît leur emplacement)
+\end{itemize}
+
+\begin{importantbox}
+\textbf{CRUCIAL} : En mode MOUNT, Oracle connaît la structure de la base (via le contrôle file) mais les datafiles ne sont pas encore ouverts. C'est le mode nécessaire pour activer ARCHIVELOG et renommer des fichiers.
+\end{importantbox}
+
+\subsection{OPEN}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Instance démarrée
+    \item Base montée
+    \item Ouvre tous les datafiles
+    \item Vérifie la cohérence des fichiers
+    \item Effectue la récupération si nécessaire (instance recovery)
+    \item Base de données accessible aux utilisateurs
+\end{itemize}
+
+\textbf{Étapes d'ouverture :}
+\begin{enumerate}
+    \item Vérifie que tous les datafiles sont accessibles
+    \item Vérifie la cohérence (SCN dans les en-têtes de fichiers)
+    \item Si nécessaire, effectue l'instance recovery (SMON)
+    \item Ouvre les datafiles et redo logs
+    \item Base accessible
+\end{enumerate}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Si base déjà montée
+ALTER DATABASE OPEN;
+
+-- Ou directement depuis l'arrêt
+STARTUP;
+-- ou
+STARTUP OPEN;
+\end{lstlisting}
+\end{commandebox}
+
+\textbf{État de la base :}
+\begin{itemize}
+    \item Instance : Démarrée
+    \item Base de données : Montée et ouverte
+    \item Fichier de contrôle : Lu
+    \item Datafiles : Ouverts et accessibles
+    \item Utilisateurs : Peuvent se connecter
+\end{itemize}
+
+\textbf{Problèmes possibles à l'ouverture :}
+
+\begin{itemize}
+    \item \textbf{Datafile manquant} : Erreur, base ne s'ouvre pas
+    \item \textbf{Datafile incohérent} : Instance recovery nécessaire
+    \item \textbf{Redo log corrompu} : Peut nécessiter media recovery
+\end{itemize}
+
+\begin{tipbox}
+\textbf{Examen} : Retenez la séquence : NOMOUNT → MOUNT → OPEN. Chaque étape ajoute une fonctionnalité :
+\begin{itemize}
+    \item NOMOUNT : Instance seulement
+    \item MOUNT : + Fichier de contrôle lu
+    \item OPEN : + Datafiles ouverts et accessibles
+\end{itemize}
+\end{tipbox}
+
+\textbf{Tableau récapitulatif :}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Mode} & \textbf{Instance} & \textbf{Contrôle File} & \textbf{Datafiles} \\
+\hline
+NOMOUNT & Démarrée & Non lu & Non ouverts \\
+MOUNT & Démarrée & Lu & Non ouverts \\
+OPEN & Démarrée & Lu & Ouverts \\
+\hline
+\end{tabular}
+\caption{États selon le mode de démarrage}
+\end{table}
+
+\section{La Clause SCOPE}
+
+\subsection{Définition}
+
+\begin{definitionbox}
+La clause \textbf{SCOPE} spécifie la portée d'une modification de paramètre Oracle : où la modification doit être appliquée et si elle doit être persistante.
+\end{definitionbox}
+
+\textbf{Utilisation :}
+
+La clause SCOPE est utilisée avec la commande \texttt{ALTER SYSTEM SET} pour modifier les paramètres d'initialisation.
+
+\subsection{Les Trois Valeurs de SCOPE}
+
+\subsubsection{SCOPE = MEMORY}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Modification appliquée uniquement en mémoire (instance courante)
+    \item Modification temporaire
+    \item Perdue au redémarrage de l'instance
+    \item SPFILE/PFILE non modifiés
+\end{itemize}
+
+\textbf{Utilisation :}
+\begin{itemize}
+    \item Tests de paramètres
+    \item Modifications temporaires
+    \item Paramètres dynamiques uniquement
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+ALTER SYSTEM SET sga_target = 2G SCOPE = MEMORY;
+\end{lstlisting}
+\end{commandebox}
+
+\subsubsection{SCOPE = SPFILE}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Modification écrite dans le SPFILE uniquement
+    \item Modification persistante (survit au redémarrage)
+    \item \textbf{Non appliquée à l'instance courante}
+    \item Prend effet au prochain redémarrage
+\end{itemize}
+
+\textbf{Utilisation :}
+\begin{itemize}
+    \item Paramètres statiques (nécessitent un redémarrage)
+    \item Modifications pour le prochain démarrage
+    \item Quand l'instance ne peut pas être modifiée dynamiquement
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+ALTER SYSTEM SET db_block_size = 8192 SCOPE = SPFILE;
+-- Nécessite un redémarrage pour prendre effet
+\end{lstlisting}
+\end{commandebox}
+
+\subsubsection{SCOPE = BOTH}
+
+\textbf{Fonctionnement :}
+\begin{itemize}
+    \item Modification appliquée immédiatement en mémoire
+    \item Modification écrite dans le SPFILE
+    \item Modification immédiate ET persistante
+    \item Prend effet maintenant et survit au redémarrage
+\end{itemize}
+
+\textbf{Utilisation :}
+\begin{itemize}
+    \item Paramètres dynamiques
+    \item Modification immédiate souhaitée
+    \item Modification permanente souhaitée
+    \item Mode par défaut si SCOPE non spécifié (pour paramètres dynamiques)
+\end{itemize}
+
+\begin{commandebox}
+\begin{lstlisting}
+ALTER SYSTEM SET sga_target = 2G SCOPE = BOTH;
+-- Modification immédiate + persistante
+\end{lstlisting}
+\end{commandebox}
+
+\subsection{Tableau Récapitulatif}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{SCOPE} & \textbf{Instance} & \textbf{SPFILE} & \textbf{Persistance} \\
+\hline
+MEMORY & Modifié & Non modifié & Temporaire \\
+SPFILE & Non modifié & Modifié & Permanent (après restart) \\
+BOTH & Modifié & Modifié & Immédiat + Permanent \\
+\hline
+\end{tabular}
+\caption{Comparaison des valeurs de SCOPE}
+\end{table}
+
+\subsection{Règles Importantes}
+
+\begin{enumerate}
+    \item \textbf{Paramètres dynamiques}
+    \begin{itemize}
+        \item Peuvent être modifiés avec SCOPE = MEMORY ou BOTH
+        \item SCOPE = BOTH est le défaut si non spécifié
+    \end{itemize}
+    
+    \item \textbf{Paramètres statiques}
+    \begin{itemize}
+        \item Ne peuvent être modifiés qu'avec SCOPE = SPFILE
+        \item Nécessitent un redémarrage pour prendre effet
+        \item Exemples : \texttt{db\_block\_size}, \texttt{db\_name}
+    \end{itemize}
+    
+    \item \textbf{PFILE vs SPFILE}
+    \begin{itemize}
+        \item Si vous utilisez PFILE, SCOPE = SPFILE n'est pas possible
+        \item SCOPE = MEMORY fonctionne avec PFILE
+        \item SCOPE = BOTH nécessite SPFILE
+    \end{itemize}
+\end{enumerate}
+
+\begin{importantbox}
+\textbf{Règle importante} : Pour les paramètres statiques, vous DEVEZ utiliser SCOPE = SPFILE. Pour les paramètres dynamiques, utilisez SCOPE = BOTH pour une modification immédiate et permanente.
+\end{importantbox}
+
+\begin{tipbox}
+\textbf{Examen} : 
+\begin{itemize}
+    \item SCOPE = MEMORY : Temporaire, perdu au redémarrage
+    \item SCOPE = SPFILE : Permanent, prend effet au redémarrage
+    \item SCOPE = BOTH : Immédiat + Permanent (défaut pour paramètres dynamiques)
+\end{itemize}
+\end{tipbox}
+
+\section{Conseils et Consignes pour l'Examen}
+
+\subsection{Points Clés à Retenir}
+
+\begin{enumerate}
+    \item \textbf{Architecture}
+    \begin{itemize}
+        \item Distinguer Instance (mémoire + processus) et Base de données (fichiers)
+        \item SGA : Buffer Cache, Redo Log Buffer, Shared Pool
+        \item Processus : DBWn (écrit datafiles), LGWR (écrit redo), SMON (récupération)
+        \item PGA : Mode dédié (privé) vs Mode partagé (UGA dans Large Pool)
+    \end{itemize}
+    
+    \item \textbf{Fichier de contrôle}
+    \begin{itemize}
+        \item Multiplexage OBLIGATOIRE (2-3 copies)
+        \item Contient métadonnées essentielles
+        \item Modifié avec SCOPE = SPFILE puis redémarrage
+    \end{itemize}
+    
+    \item \textbf{Redo Logs}
+    \begin{itemize}
+        \item Minimum 2 groupes
+        \item Suppression membre : Groupe INACTIVE + au moins 2 membres
+        \item Suppression groupe : Groupe INACTIVE + au moins 3 groupes au total
+        \item Groupe CURRENT ne peut pas être modifié
+    \end{itemize}
+    
+    \item \textbf{ARCHIVELOG}
+    \begin{itemize}
+        \item Activation : SHUTDOWN → STARTUP MOUNT → ALTER DATABASE ARCHIVELOG → OPEN
+        \item Mode MOUNT obligatoire
+    \end{itemize}
+    
+    \item \textbf{Tablespaces}
+    \begin{itemize}
+        \item Renommer datafile : SHUTDOWN → STARTUP MOUNT → ALTER DATABASE RENAME FILE → déplacer fichier → OPEN
+        \item Mode MOUNT obligatoire
+    \end{itemize}
+    
+    \item \textbf{Modes d'arrêt}
+    \begin{itemize}
+        \item NORMAL : Attente utilisateurs (lent)
+        \item TRANSACTIONAL : Attente transactions (moyen)
+        \item IMMEDIATE : Rollback + arrêt (rapide, recommandé)
+        \item ABORT : Crash (récupération nécessaire)
+    \end{itemize}
+    
+    \item \textbf{Modes de démarrage}
+    \begin{itemize}
+        \item NOMOUNT : Instance seulement
+        \item MOUNT : + Contrôle file lu
+        \item OPEN : + Datafiles ouverts
+    \end{itemize}
+    
+    \item \textbf{SCOPE}
+    \begin{itemize}
+        \item MEMORY : Temporaire
+        \item SPFILE : Permanent (après restart)
+        \item BOTH : Immédiat + Permanent
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Pièges Courants}
+
+\begin{dangerbox}
+\textbf{Pièges à éviter} :
+\begin{enumerate}
+    \item Essayer de modifier un groupe CURRENT de redo logs
+    \item Supprimer un groupe si cela laisserait moins de 2 groupes
+    \item Activer ARCHIVELOG en mode OPEN (doit être en MOUNT)
+    \item Renommer un datafile en mode OPEN (doit être en MOUNT)
+    \item Utiliser SCOPE = BOTH pour un paramètre statique (doit être SPFILE)
+    \item Oublier de déplacer physiquement un fichier après RENAME FILE
+\end{enumerate}
+\end{dangerbox}
+
+\subsection{Commandes Essentielles}
+
+\begin{commandebox}
+\begin{lstlisting}
+-- Vérifier l'état des redo logs
+SELECT group#, status, bytes FROM v$log;
+
+-- Forcer un log switch
+ALTER SYSTEM SWITCH LOGFILE;
+
+-- Vérifier le mode d'archivage
+SELECT log_mode FROM v$database;
+ARCHIVE LOG LIST;
+
+-- Vérifier les fichiers de contrôle
+SELECT name FROM v$controlfile;
+
+-- Vérifier les datafiles
+SELECT name FROM v$datafile;
+
+-- Vérifier l'état de la base
+SELECT instance_name, status FROM v$instance;
+SELECT name, open_mode FROM v$database;
+\end{lstlisting}
+\end{commandebox}
+
+\begin{tipbox}
+\textbf{Stratégie d'examen} : 
+\begin{enumerate}
+    \item Lisez attentivement chaque question
+    \item Identifiez l'état requis (NOMOUNT, MOUNT, OPEN)
+    \item Vérifiez les prérequis (groupe INACTIVE, nombre de groupes, etc.)
+    \item Rappelez-vous les séquences obligatoires (SHUTDOWN → MOUNT → commande → OPEN)
+    \item Attention aux pièges (CURRENT, minimum 2 groupes, etc.)
+\end{enumerate}
+\end{tipbox}
+
+\end{document}
+
+
