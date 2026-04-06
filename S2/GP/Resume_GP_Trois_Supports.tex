@@ -1,0 +1,216 @@
+% Résumé consolidé — 3 supports du dossier GP
+% Sources : Cours GP Belasla | COURS GL VOLUME 0 | Étapes développement logiciel
+% Compilation : pdflatex Resume_GP_Trois_Supports.tex (×2)
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\geometry{margin=2cm}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!65!black}
+
+\newcommand{\consigne}[1]{\par\noindent\fcolorbox{blue!30}{blue!5}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Consigne :} #1}}\par\medskip}
+\newcommand{\conseil}[1]{\par\noindent\fcolorbox{green!45!black}{green!9}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Conseil :} #1}}\par\medskip}
+\newcommand{\indice}[1]{\par\noindent\fcolorbox{violet!32}{violet!7}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Indice :} #1}}\par\medskip}
+
+\title{\textbf{Résumé complet — Gestion de projet \& cycle de développement}\\[0.3em]\large Synthèse des trois supports \texorpdfstring{(dossier \texttt{GP})}{(dossier GP)}}
+\author{D'après Belasla (GP), \emph{Génie logiciel} Vol.\,0, et \emph{Étapes de développement} (2020)}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Ce document fusionne trois supports pédagogiques du même corpus : le cours de \textbf{gestion de projets}, le module \textbf{Génie logiciel — Volume\,0} (découpage en phases et rôles), et la fiche \textbf{Étapes et métiers du développement logiciel}. Il propose un résumé détaillé, des tableaux de correspondance, puis des \textbf{consignes} de travail, \textbf{conseils} méthodologiques et \textbf{indices} de mémorisation.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Sources et complémentarité}
+
+\begin{description}[style=nextline]
+  \item[\emph{Cours GP BELASLA El Mehdi}] Cadre général de la gestion de projet : définitions, processus, acteurs organisationnels, cahier des charges, identification (MIP), risques (PMBOK), planification (SFT, WBS), estimation, PERT/Gantt, suivi (tableau de bord, CBTP/CRTE/CBTE), MS\,Project.
+  \item[\emph{COURS GL VOLUME 0}] Parcours \textbf{métier} d'un projet informatique type : enchaînement des \textbf{phases} (avant-projet à production), \textbf{livrables} et \textbf{responsabilités} par profil (MOA, MOE, architecte, IMQ, etc.), tâches \textbf{transversales}.
+  \item[\emph{Étapes de développement d'un logiciel} (01-12-2020)] Vue \textbf{opérationnelle} numérotée : pré-projet, kickoff, analyse/conception, usine de développement, intégration continue, recette, documentation, mise en production, \textbf{TMA} et maintenance corrective/évolutive.
+\end{description}
+
+\consigne{Pour chaque examen ou entretien, entraînez-vous à placer un livrable ou une activité sur les \textbf{trois} vues : phase (Vol.\,0), étape numérotée (fiche 2020), et outil GP (plan, risque, PERT\ldots).}
+
+%=====================================================================
+\section{Génie logiciel — Volume\,0 : phases et responsabilités}
+
+\subsection{Découpage global (support GL)}
+Phases successives énoncées : \textbf{Avant-projet} ; \textbf{Étude préalable} ; \textbf{Étude des besoins} ; \textbf{Étude détaillée} ; \textbf{Réalisation} ; \textbf{Livraison} ; \textbf{Mise en production} ; plus les \textbf{tâches transversales}.
+
+\subsection{Avant-projet}
+Activités typiques : étude d'\textbf{opportunité}, étude de \textbf{faisabilité}, \textbf{cahier des charges} (MOA / chef de projet MOA) ; rédaction et présentation de la \textbf{proposition} : ingénieur commercial (aspects juridique et financier), chef de projet (organisation, fonctionnel, estimation, planning), ingénieur d'étude-développement, consultant métier/technique ; mission d'avant-vente.
+
+\subsection{Étude préalable}
+\begin{itemize}[nosep]
+  \item Définition \textbf{méthodologique} : plan d'assurance qualité, comité de pilotage — chefs de projet MOE/MOA, ingénieur méthode \& qualité.
+  \item \textbf{Équipes} et planning — chef de projet, directeur de projet MOE.
+  \item \textbf{Normes} et chartes (développement, présentation) — IMQ, ingénieur senior.
+  \item \textbf{Architecture} : dossier d'architecture — architecte, urbaniste, ingénieur réseau/système, DBA.
+  \item \textbf{Synthèse} des solutions — chef de projet MOE ; chiffrage, planning, avantages/inconvénients.
+\end{itemize}
+Détail des normes : règles de nommage (variables, fonctions, écrans), programmation, présentation ; \textbf{charte graphique} : ergonome/graphiste (couleurs, polices, icônes, navigation).
+
+\subsection{Étude des besoins}
+Spécification \textbf{fonctionnelle générale} — ingénieur fonctionnel ; spécifications des \textbf{traitements} — ingénieur d'étude (concepteur) ; définition des \textbf{plans de tests et de recette} — IMQ et concepteur.
+
+\subsection{Étude détaillée}
+\textbf{Conception générale} et \textbf{détaillée} — architecte ; \textbf{modélisation des données} — DBA logique, concepteur (MCD, MPD, scripts, droits) ; \textbf{maquettes} statiques/dynamiques — analyste-programmeur, designer ; dossiers de spécifications générale/détaillée ; jeux de données et cas de tests — IMQ.
+
+\subsection{Réalisation}
+Développements et \textbf{tests unitaires} — analyste-programmeur ; \textbf{intégration} et tests d'intégration — intégrateur (homogénéisation, effets de bord, liens, perfs) ; \textbf{revue de code} — IMQ (respect normes, lisibilité, rapport) ; \textbf{tests fonctionnels} — testeur.
+
+\subsection{Livraison}
+Intégration sur site de \textbf{recette} : analyste-programmeur, ingénieur système, réseau, DBA ; \textbf{recette utilisateur} — chefs de projet MOE et MOA ; \textbf{transfert de compétences} et \textbf{formation} — formateurs (profils étude / fonctionnel).
+
+\subsection{Mise en production}
+Intégration site de \textbf{production} : intégrateur d'exploitation, ingénieur système, réseau, DBA ; \textbf{tierce maintenance applicative} — chef de projet MOE, analyste-programmeur ; \textbf{exploitation} — technicien (batchs, montée en charge, admin BDD).
+
+\subsection{Tâches transversales}
+\textbf{Suivi de projet} : réalisations, planning, suivi commercial, comité de pilotage ; \textbf{management d'équipe} : chef/directeur de projet MOE (bilan individuel, conflits, formation, recadrage, lien RH).
+
+Le détail du support précise les missions du chef de projet MOE : points projet, bilans, documentation, planification ressources, risques, livrables, réunions (initialisation, suivi, bilan), comptes rendus, veille sur l'avancement.
+
+\indice{Mémoriser l'ordre des \textbf{7 phases opérationnelles} + transversal : « \textbf{A-P-B-D-R-L-P-T} » — Avant-projet, Préalable, Besoins, Détaillée, Réalisation, Livraison, Production, Transversal.}
+
+%=====================================================================
+\section{Étapes et métiers — développement logiciel (fiche 2020)}
+
+Le document liste une progression (avec numéros de référence dans le support) articulée autour du \textbf{kickoff}, de l'usine logicielle et de la maintenance.
+
+\subsection{Phase préliminaire (avant projet)}
+\begin{enumerate}[nosep]
+  \item \textbf{Cahier des charges / collecte des besoins} — ingénieur, CP ou AMOA côté MOA.
+  \item \textbf{Étude de faisabilité} — chef de projet.
+  \item \textbf{Planification} — chef/directeur de projet : découpage en tâches, affectation, dates.
+  \item \textbf{Préparation d'offre} — ingénieur commercial (avant-vente, négociation technique, estimation, POC).
+\end{enumerate}
+
+\subsection{Démarrage et conception}
+\textbf{Kickoff} : validation du cahier des charges et du plan de projet.
+
+\begin{enumerate}[resume, nosep]
+  \item \textbf{Étude technique} : CP ou référent technique ; architecture (technique, outils, frameworks) ; architecture de \textbf{déploiement} (serveurs, OS, SGBD, matrice de flux IP/protocoles).
+  \item \textbf{Normes / nomenclature code} — IMQ (attributs, tables, méthodes, classes, fichiers ; sécurité des commandes typées).
+  \item \textbf{Analyse (spécification)} — CP fonctionnel / ingénieur fonctionnel.
+  \item \textbf{Planification des tests} — testeur (conception, automatisation).
+  \item \textbf{Conception} — architecte : objets logiciels ; conception générale (modules) et détaillée (objets par module).
+\end{enumerate}
+
+\subsection{Réalisation}
+\begin{enumerate}[resume, nosep]
+  \item \textbf{Environnement / usine de développement} — intégrateur \emph{build} : machines, outils, serveur de configuration, versioning.
+  \item \textbf{Programmation et tests unitaires} : boucle recevoir spécification/conception $\rightarrow$ coder module $\rightarrow$ tests unitaires (batteries exécutables) ; en cas d'échec : analyse cause (spéc, code, logs) $\rightarrow$ correction $\rightarrow$ \textbf{test de non-régression} ; déploiement incrémental (patch).
+  \item \textbf{Intégration et tests d'intégration} — intégrateurs : intégration classique ou \textbf{intégration continue} (Jenkins, TFS, GitLab\ldots).
+  \item \textbf{Test de spécification} après assemblage — testeur.
+\end{enumerate}
+
+\subsection{Déploiement et exploitation}
+Livraison (équipe d'intégration, fichiers sur serveur partagé) ; \textbf{recette} client (MOA/MOE, plan ou scripts) ; \textbf{documentation} (manuel utilisateur, manuel technique) ; \textbf{formation et transfert} ; \textbf{mise en production} : pré-prod, agence pilote, données réelles, feedback utilisateur ; tests \textbf{charge/stress} — IMQ.
+
+\subsection{Maintenance}
+\textbf{TMA} (tierce maintenance applicative) : ingénieur support/production. \\
+\textbf{Corrective} : exploitation $\rightarrow$ ticket $\rightarrow$ affectation $\rightarrow$ récupération module $\rightarrow$ diagnostic $\rightarrow$ correction $\rightarrow$ non-régression $\rightarrow$ déploiement / facturation. \\
+\textbf{Evolutive} : demande $\rightarrow$ étude d'impact (faisabilité) $\rightarrow$ développement $\rightarrow$ déploiement $\rightarrow$ facturation.
+
+\conseil{Retenez la chaîne \textbf{bug $\rightarrow$ cause $\rightarrow$ correctif $\rightarrow$ non-régression $\rightarrow$ livraison} : elle figure explicitement dans la fiche 2020 et colle aux pratiques du Vol.\,0 (revue, qualité).}
+
+%=====================================================================
+\section{Cours GP — synthèse détaillée (Belasla)}
+
+\subsection{Module et objectifs}
+Plan : intro GP, CDC et identification, planification, estimation, délais/coûts/risques, organisation, suivi/contrôle (écarts, correctifs, tableau de bord), \textbf{Microsoft Project}. Objectifs : nécessité de la GP, différenciation vs autres managements, activités (ordonnancement, risques, configuration, qualité, estimation\ldots), capacité à \textbf{élaborer un plan} et à \textbf{évaluer, organiser, planifier, suivre}. Modalités : cours + TP planification/surveillance ; cas \textbf{PFE}. Bibliographie Dunod, Wysocki, ouvrages Project ; certifications \textbf{PMP}, IIL, CMMI.
+
+\subsection{Définitions (partie I)}
+\textbf{Projet} : organisation \emph{temporaire} de ressources pour objectifs à \textbf{coût}, \textbf{délai}, \textbf{performance} ; sept facettes (objectif, acteurs, contexte, délai, budget, démarche, outils). Distinction \textbf{projet / production} : non répétitif vs répétitif, incertitude, exogène vs endogène. Triangle : \textbf{périmètre}, \textbf{délais}, \textbf{coûts}, \textbf{ressources}. Projet SI : périmètre, deadline, livrables, planning, ressources, gouvernance.
+
+\subsection{Processus (partie II)}
+\textbf{Tâche} et \textbf{jalon} (durée nulle) ; \textbf{ressources}. Macro-processus : \textbf{initialisation}, \textbf{planification}, \textbf{exécution}, \textbf{contrôle}, \textbf{clôture} (processus qui se chevauchent).
+
+\subsection{Acteurs (partie III)}
+\textbf{Mandant}, \textbf{MOA} (objectifs, budget), \textbf{MOE} (réalisation), \textbf{comité de pilotage}, \textbf{direction de projet}, \textbf{project office}, \textbf{chef de projet}, \textbf{équipe}.
+
+\subsection{Cahier des charges}
+Document \textbf{contractuel} MOE/MOA ; besoins fonctionnels prioritaires ; évolutif avec avenants. Contenu type : contexte (besoin, existant), objectifs, vocabulaire, calendrier, clauses juridiques, expression fonctionnelle/non fonctionnelle, contraintes. Recueil : questionnaires, entretiens, modélisation existant.
+
+\subsection{Identification — MIP (partie IV)}
+Identité projet ; \textbf{problématique} ; \textbf{but} ; \textbf{objectifs} ; \textbf{contraintes} ; \textbf{options} ; choix de solution ; \textbf{extrants} / \textbf{intrants} ; risques (cause, probabilité, conséquence) ; \textbf{phasing}.
+
+\subsection{Risques (formules et PMBOK)}
+$\mathrm{Risque} \approx P \times I$ ; six processus : planification, identification, analyse qualitative/quantitative, réponses, suivi-contrôle. Matrice probabilité-impact ; stratégies \textbf{éviter, transférer, réduire, accepter}. Signes vitaux (sponsor, clients, chemin critique, écarts, earned value, qualité, issues, moral\ldots).
+
+\subsection{Planification (partie V)}
+Objectifs mesurables ; jalons et livrables tangibles ; découpage en tâches « traitables ». \textbf{SFT} : lister, regrouper en lots, séquencer, codifier. \textbf{PBS} produit ; \textbf{WBS} travail. Rapport de plan : intro, organisation, risques, ressources, répartition travail, horaire, surveillance/révision.
+
+\subsection{Estimation (partie VI)}
+Causes de sous-estimation ; besoin de méthode et de périmètre clair. Familles : Parkinson ; imposée marché ; \textbf{experts} et \textbf{Delphes} ; \textbf{analogie} ; \textbf{algorithmique} (points de fonction $\mathrm{FB}=\sum C_{ij}K_{ij}$, \textbf{COCOMO}).
+
+\subsection{PERT et Gantt (partie VII)}
+PERT USA 1957 ; dépendances fin-début et variantes ; dates au plus tôt/tard ; \textbf{marges} ; \textbf{chemin critique}. Gantt ; \textbf{nivellement} et \textbf{lissage} des ressources.
+
+\subsection{Suivi et pilotage}
+Tableau de bord : produit consommé, écarts, causes, reste à faire. Suivi individuel : charges initiale/affectée/actualisée ; temps $T$, reste $R$ ; utilisation, performance. \textbf{CBTP}, \textbf{CRTE}, \textbf{CBTE} (valeur acquise). Chef de projet : cohésion ($\sim$15 pers.), compétences, décisions ouvertes, conduite du changement. Pratiques MS\,Project : baseline, mise à jour, comparaison.
+
+\indice{Côté GP pur, retenir \textbf{I-P-E-C-C} (init, plan, exec, contrôle, clôture) en parallèle du cycle GL \textbf{A-P-B-D-R-L-P}.}
+
+%=====================================================================
+\section{Tableau de correspondance (vue intégrée)}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.28\linewidth}p{0.32\linewidth}p{0.34\linewidth}@{}}
+\toprule
+\textbf{Vol.\,0 (phase)} & \textbf{Fiche étapes 2020} & \textbf{Outils / concepts GP} \\
+\midrule
+Avant-projet & CDC, faisabilité, offre & CDC contractuel ; identification ; risques initiaux \\
+Étude préalable & Kickoff, archi, normes & Plan d'assurance qualité ; équipe ; WBS amorce \\
+Étude des besoins & Analyse / specs & Expression besoins ; risques fonctionnels \\
+Étude détaillée & Conception, tests (conception) & PBS/WBS ; estimation charges \\
+Réalisation & Dev, TU, intégration & Ordonnancement ; suivi charges ; revues \\
+Livraison & Recette, doc, formation & Validation livrables ; tableau de bord \\
+Mise en prod & Production, TMA & Exploitation ; maintenance ; risques résiduels \\
+Transversal & (continu) & Pilotage, comité, planning, MS Project \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=====================================================================
+\section{Consignes globales}
+\begin{enumerate}
+  \item Associer à chaque phase du Vol.\,0 au moins \textbf{un livrable} et \textbf{un métier} cité dans la fiche 2020.
+  \item Refaire un \textbf{PERT} minimal (6 tâches) et un calcul \textbf{CBTP/CRTE/CBTE} sur un mini-cas chiffré.
+  \item Pour le PFE : vérifier que votre planning contient \textbf{jalons} alignés sur recette et mise en production (comme les deux supports SI).
+  \item Préparer une fiche \textbf{MOA vs MOE} : qui valide le CDC, qui signe la recette, qui porte le risque budget.
+\end{enumerate}
+
+\section{Conseils méthodologiques}
+\begin{itemize}[nosep]
+  \item Les trois documents sont cohérents : utilisez le Vol.\,0 pour les \textbf{rôles}, la fiche 2020 pour les \textbf{flux techniques} (build, CI, non-régression), Belasla pour la \textbf{formalisation} (risques, coûts, délais).
+  \item En cas de question « qui fait quoi » à l'examen, répondez par \textbf{phase + titre de poste} plutôt que par prénom de rôle générique.
+  \item La \textbf{TMA} et la maintenance figurent surtout dans Vol.\,0 et la fiche 2020 ; reliez-les au \textbf{suivi} et à la \textbf{clôture} du cours GP.
+\end{itemize}
+
+\section{Indices de synthèse}
+\begin{itemize}[nosep]
+  \item \textbf{3C} : Contrat (CDC), Cadre (plan/rôles), Contrôle (recette + tableau de bord).
+  \item \textbf{Livrer} = conforme au CDC + validé en recette (double critère MOA/MOE).
+  \item \textbf{CI} : intégration continue = lien direct entre réalisation (fiche 2020) et pilotage des délais (GP).
+\end{itemize}
+
+\vfill
+\noindent\textit{Document généré pour compilation PDF. Les extraits textuels des PDF peuvent contenir de légères imperfections OCR ; se référer aux fichiers sources pour citations exactes.}
+
+\end{document}

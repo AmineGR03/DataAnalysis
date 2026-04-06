@@ -1,0 +1,633 @@
+% Résumé très détaillé — Cours Gestion de projet (Belasla El Mehdi uniquement)
+% pdflatex Resume_GP_Belasla_Detaille.tex (×2 pour table des matières)
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\geometry{margin=2.05cm}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!60!black}
+
+\title{\textbf{Résumé détaillé intégral}\\[0.2em]\large Gestion de projets — Belasla El Mehdi\\\normalsize(support cours PDF, toutes les parties)}
+\author{Synthèse pédagogique}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Ce document reconstitue de façon \textbf{synthétique mais exhaustive} le cours \emph{Gestion de projets} de \textbf{Belasla El Mehdi} (\texttt{mehdi.belasla.04@gmail.com}), tel que structuré dans le diaporama : présentation du module, définitions, processus, acteurs, cahier des charges, identification (MIP), gestion des risques (référence PMBOK), planification (SFT, PBS, WBS), estimation, ordonnancement PERT/Gantt, puis suivi, pilotage, valeur acquise et introduction à la qualité. Aucun autre support que celui de Belasla n'est utilisé.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Présentation du module}
+
+\subsection{Plan général}
+Le module est organisé autour des thèmes suivants :
+\begin{itemize}[nosep]
+  \item Introduction à la gestion de projet ;
+  \item Cahier des charges et identification ;
+  \item Techniques de planification ;
+  \item Estimation des coûts ;
+  \item Gestion des délais, des coûts et des risques ;
+  \item Organisation du travail ;
+  \item Suivi et contrôle : mesures d'avancement, détection des écarts, mesures correctives, tableau de bord ;
+  \item Gestion informatisée des projets (\textbf{Microsoft Project}).
+\end{itemize}
+
+\subsection{Objectifs pédagogiques}
+\begin{itemize}[nosep]
+  \item Comprendre la \textbf{nécessité} de la gestion de projets ;
+  \item Comprendre les \textbf{différences} avec d'autres types de gestion ;
+  \item Apprendre les différentes \textbf{activités} : planification, ordonnancement, gestion des risques, gestion de configuration, gestion de la qualité, estimation des coûts, amélioration du processus, etc. ;
+  \item Être capable de \textbf{réaliser et utiliser un plan de projet} ;
+  \item Savoir \textbf{évaluer, organiser, planifier, suivre} et assurer la qualité des projets.
+\end{itemize}
+
+\subsection{Enseignement}
+\subsubsection{Modalités}
+Cours magistral + \textbf{travaux pratiques} portant sur la planification et la surveillance d'un projet réalisé dans le contexte du cours. \textbf{Cas pratique : PFE} (Projet de fin d'études).
+
+\subsubsection{Bibliographie indiquée}
+\begin{itemize}[nosep]
+  \item \emph{La Conduite de projets} (Dunod, 2003) — ouvrage de référence couvrant les étapes de la conduite de projet (français) ;
+  \item Robert K.\ Wysocki, \emph{Effective Project Management}, 3\textsuperscript{e}~éd. (Wiley, 2003) — approfondissement possible (anglais) ;
+  \item \emph{Project 2003} (Éditions ENI, 2004) — initiation à Microsoft Project (français) ;
+  \item \emph{Microsoft Office Project 2003 Step by Step} (Microsoft Press, 2003) — manuel complet Project (anglais).
+\end{itemize}
+
+\subsubsection{Certifications mentionnées}
+\textbf{PMP} (Project Management Professional) ; \textbf{IIL} (\url{https://www.iil.com}) ; \textbf{CMMI}.
+
+%=============================================================================
+\section{Partie I — Définitions et terminologie}
+
+\subsection{Définition du projet}
+Un \textbf{projet} est une articulation de ressources \textbf{humaines}, \textbf{intellectuelles} et \textbf{matérielles}, agencées dans une organisation \emph{temporaire}, en vue d'atteindre un objectif caractérisé par un \textbf{coût}, un \textbf{délai} et des \textbf{performances}.
+
+\subsection{Les sept facettes du projet}
+\begin{enumerate}[nosep]
+  \item Un \textbf{objectif} à réaliser ;
+  \item Des \textbf{acteurs} ;
+  \item Un \textbf{contexte} précis ;
+  \item Un \textbf{délai} donné ;
+  \item Un \textbf{budget} défini ;
+  \item Une \textbf{démarche} adaptée ;
+  \item Des \textbf{outils} appropriés.
+\end{enumerate}
+
+\subsection{Exemples de projets cités}
+Aller sur la Lune ; construction d'un barrage hydroélectrique ; campagne électorale ; construction d'une maison ; monter une pièce de théâtre ; viaduc ; programme militaire/industriel ; livre, spectacle, disque ; campagne publicitaire ; organisation d'un congrès ; etc.
+
+\subsection{Objet d'un projet — caractères généraux}
+\begin{itemize}[nosep]
+  \item Adaptable à des modifications fréquentes ;
+  \item Équilibre entre contraintes \textbf{techniques}, \textbf{économiques} et \textbf{temporelles} ;
+  \item S'oppose à la \textbf{structure permanente} de l'entreprise.
+\end{itemize}
+
+\subsection{Distinction projet / production}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.42\linewidth}>{\raggedright\arraybackslash}p{0.42\linewidth}@{}}
+\toprule
+\textbf{Activité projet} & \textbf{Activité production} \\
+\midrule
+Non répétitive & Répétitive \\
+Décisions souvent irréversibles & Décisions périodiques récurrentes \\
+Incertitude forte & Incertitude faible \\
+Influence marquée des variables \emph{exogènes} & Influence marquée des variables \emph{endogènes} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{De l'idée au projet}
+Étapes logiques :
+\begin{itemize}[nosep]
+  \item Transformer une idée en \textbf{objectifs} : techniques (\emph{quoi ?}), délais (\emph{en combien de temps ?}), coûts (\emph{à quel budget ?}) ;
+  \item Définir les \textbf{moyens} nécessaires ;
+  \item Prévoir une \textbf{organisation} et la \textbf{gestion} du projet.
+\end{itemize}
+
+\subsection{Caractéristiques d'un projet (typologie)}
+Le cours énumère notamment : \textbf{taille} (budget, durée, nombre de décideurs et d'acteurs) ; \textbf{nature} (industriel, artistique, humaine\ldots) ; \textbf{collectif} ou individuel ; \textbf{pluridisciplinaire} ou spécialisé ; projet \textbf{ouvert} (études de méthodes, concepts, technologies) vs \textbf{fermé} (contrainte de développement très précise) ; objectif \textbf{unitaire} (un utilisateur) vs \textbf{réutilisation} (série).
+
+\subsection{Pourquoi la gestion de projet ?}
+Les projets \textbf{n'atteignent pas touvent leurs objectifs} : dépassements de délais, surcoûts importants, qualité technique insuffisante. Ils évoluent dans un milieu \textbf{complexe} : multiples acteurs internes (études, production, marketing) ; environnement externe difficile à maîtriser (marché, social, politique, concurrence).
+
+\subsection{Le triangle revisité (périmètre, temps, coûts, ressources)}
+\begin{itemize}[nosep]
+  \item \textbf{Délais} : fenêtre temporelle dans laquelle le projet doit être réalisé ;
+  \item \textbf{Frontières / périmètre (scope)} : ce qui sera ou ne sera pas réalisé ; base du contrat de résultats ;
+  \item \textbf{Coûts} : budget disponible ;
+  \item \textbf{Ressources} : personnes et équipements mobilisables.
+\end{itemize}
+Ces dimensions sont liées : toute décision sur l'une affecte les autres.
+
+\subsection{Définition d'un projet informatique}
+Objectif : mener à bien le développement d'une \textbf{nouvelle} application ou l'\textbf{adaptation} d'une application existante. Un tel projet est caractérisé par :
+\begin{itemize}[nosep]
+  \item Un \textbf{périmètre} : besoins clients à satisfaire ;
+  \item Un \textbf{deadline} : date de fin imposée ;
+  \item Des \textbf{livrables} : produits finis ;
+  \item Un \textbf{planning} : quand chaque livrable est fourni ; répartition de la charge dans le temps ;
+  \item Des \textbf{ressources} dédiées (totalement ou partiellement) ;
+  \item Une structure de \textbf{gouvernance}.
+\end{itemize}
+
+%=============================================================================
+\section{Partie II — Processus de gestion de projet}
+
+\subsection{Définition de la gestion de projet}
+Consiste à \textbf{maintenir l'équilibre} entre objectifs, prévisions et ressources : en général, \textbf{planifier}, \textbf{organiser} et \textbf{suivre} les tâches ; \textbf{identifier} et \textbf{prévoir} les ressources nécessaires.
+
+\subsection{Tâche et jalon}
+\textbf{Tâche} : travail avec un début et une fin ; l'achèvement des tâches conduit à l'achèvement du projet ; le projet est composé de tâches.
+
+Une tâche de \textbf{durée nulle} est appelée \textbf{jalon} (\emph{milestone}).
+
+\subsection{Ressource}
+Élément nécessaire pour accomplir les tâches : \textbf{personnel}, \textbf{équipement}, \textbf{argent}.
+
+\subsection{Résolution de problème (référence Giard)}
+« La principale difficulté consiste à formuler un problème \textbf{pertinent} que l'on puisse résoudre, car cette formulation est indissociable de la recherche de la solution. »
+
+\subsection{Macro-processus de gestion de projet}
+Le cours distingue cinq grands ensembles d'activités, avec chevauchement temporel (\emph{superposition des processus}) :
+
+\begin{description}[style=nextline]
+  \item[Initialisation] Définir le but et les objectifs ; identifier les risques (amorçage).
+  \item[Planification] Découper le travail ; définir les dépendances ; définir les ressources ; établir le plan d'action.
+  \item[Exécution] Coordonner les ressources ; suivre le plan d'action ; produire les livrables ; rapporter.
+  \item[Contrôle] Surveiller ; mesurer ; définir les \textbf{actions correctives}.
+  \item[Clôture] Révision formelle ; décision formelle de fin ; documentation / transfert.
+\end{description}
+
+Graphiquement, l'intensité de chaque processus varie selon la phase du projet (courbes du cours : initialisation et clôture en pics, planification et contrôle soutenus, exécution centrale).
+
+%=============================================================================
+\section{Partie III — Acteurs d'un projet}
+
+\subsection{Périmètre de l'analyse}
+Personnes ou organisations \textbf{activement impliquées}, ou dont les intérêts \textbf{peuvent influencer} le projet.
+
+\subsection{Acteurs clés (liste)}
+Chef de projet ; clients directs ou indirects ; ressources chargées de la réalisation ; \textbf{sponsor}.
+
+\subsection{Rôles détaillés}
+
+\subsubsection{Commanditaire (mandant)}
+Définit le cadre financier ; \textbf{garant} du projet ; en général membre du comité de pilotage.
+
+\subsubsection{Maître d'ouvrage (MOA)}
+Personne physique ou morale \textbf{propriétaire de l'ouvrage} ; détermine objectifs, budget et délais.
+
+\subsubsection{Maître d'\oe uvre (MOE)}
+Reçoit une mission du MOA ; assure \textbf{conception} et \textbf{réalisation}.
+
+\subsubsection{Comité de pilotage}
+Donneur d'ordre du projet ; \textbf{décision} finale sur la solution proposée par la direction de projet ; validation aux niveaux \textbf{budgétaire} et \textbf{stratégique} ; décisions de fin de phase ; représentatif des principaux intéressés.
+
+\subsubsection{Direction de projet}
+« Tête » du projet ; vérifie l'adéquation solution / besoins entreprise (technique et stratégique) ; valide la proposition du \textbf{chef de projet} avant soumission au comité.
+
+\subsubsection{Project office}
+Soutien \textbf{logistique} au chef de projet ; garant de la \textbf{méthodologie} de gestion de projet.
+
+\subsubsection{Chef de projet}
+Responsable des \textbf{résultats} ; définit buts et objectifs (avec le client) ; élabore la planification ; s'assure d'une exécution efficace.
+
+\subsubsection{Équipe projet}
+Doit livrer un produit satisfaisant pour le client ; \textbf{complémentarité} des talents et compétences.
+
+\subsection{Organisation d'un projet type (échelles temporelles)}
+Schéma du cours : \textbf{Mandant} ; \textbf{Comité de pilotage} (vision mois) ; \textbf{Project office} ; \textbf{Direction de projet} ; \textbf{Chef de projet} (semaine / jour) ; groupes techniques ; équipe projet.
+
+\subsection{Conduite de projet : mission et fonctions}
+\textbf{Deux dimensions} : manager \emph{et} porteur d'un projet. \textbf{Six fonctions} en synergie : prévoir, gérer, animer, structurer, coordonner, échanger, piloter, mobiliser — articulées avec l'équipe et partenaires d'une part, le système de tâches d'autre part, pour \textbf{assurer la bonne fin du projet}.
+
+%=============================================================================
+\section{Cahier des charges (section dédiée du cours)}
+
+\subsection{Place dans le projet}
+La réussite impose une définition \textbf{écrite}, \textbf{détaillée}, \textbf{précise}, \textbf{exhaustive} et \textbf{évaluable} de :
+\begin{itemize}[nosep]
+  \item objectifs mesurables ;
+  \item ressources requises ;
+  \item planification de la mise en \oe uvre ;
+  \item outils d'évaluation ;
+  \item méthodes de contrôle.
+\end{itemize}
+
+\subsection{MOA, MOE et nécessité du document}
+La réussite dépend de la compréhension et de la collaboration étroite entre client (\textbf{MOA}) et fournisseur (\textbf{MOE}), malgré cultures et activités souvent différentes. Le cahier des charges \textbf{consigne} l'accord entre parties.
+
+\subsection{Définition}
+Document \textbf{contractuel} décrivant ce qui est attendu du \textbf{MOE} par le \textbf{MOA}, le plus précisément possible, avec vocabulaire simple : les \textbf{besoins} à satisfaire.
+
+\subsection{Rôle fonctionnel et dimensionnement}
+\begin{itemize}[nosep]
+  \item Faire apparaître le besoin de manière \textbf{fonctionnelle}, indépendamment d'une solution technique imposée ;
+  \item Permettre au MOE d'estimer \textbf{taille}, \textbf{complexité}, et de proposer une offre adaptée en \textbf{coût}, \textbf{délai}, \textbf{ressources humaines} et \textbf{assurance qualité}.
+\end{itemize}
+
+\subsection{Référence, dialogue et évolutivité}
+Outil pour lever les \textbf{ambiguïtés} et pour le \textbf{dialogue} (le MOE interroge le MOA). Le CDC n'est pas nécessairement \textbf{statique} : révisions possibles pendant le projet, idéalement via \textbf{avenant} accepté des deux côtés.
+
+\subsection{Deux approches (souvent combinées)}
+\begin{itemize}[nosep]
+  \item Imposer une \textbf{solution}, spécifications détaillées, outil ou produit ;
+  \item Décrire uniquement les \textbf{fonctionnalités} souhaitées et laisser le choix de la solution au prestataire.
+\end{itemize}
+Le mélange dépend des besoins, de l'état des connaissances, des compétences disponibles pour rédiger et analyser les offres.
+
+\subsection{Recueil des besoins}
+\begin{itemize}[nosep]
+  \item Compréhension du \textbf{métier} ; règles de gestion (domaines types : logistique, RH, monétique\ldots) ;
+  \item \textbf{Questionnaires} ;
+  \item \textbf{Entretiens} : préparés, ciblés, planifiés ;
+  \item \textbf{Modélisation de l'existant} et des flux : processus, documents, acteurs.
+\end{itemize}
+
+\subsubsection{Règles pour les questionnaires}
+Une question doit être \textbf{précise}, simple (type « Est-ce que\ldots ? »), se terminer par un point d'interrogation ; ne poser une question que si la réponse sert l'évaluation ; privilégier les réponses \textbf{quantifiées} ; volume \textbf{manipulable} (formulaires informatiques souhaitables) ; processus d'évaluation \textbf{informatisé} si possible.
+
+\subsection{Éléments principaux du cahier des charges}
+
+\subsubsection{a — Contexte}
+Positionnement politique et stratégique : \textbf{a.1 Analyse du besoin} (but du projet : appropriation, enjeux, reformulation synthétique) ; \textbf{a.2 Analyse de l'existant} (environnement technique et logiciel, nombre de personnes/ressources impactées).
+
+\subsubsection{b — Objectifs}
+Comprendre rapidement le \textbf{but recherché} et le sens pour le MOE.
+
+\subsubsection{c — Vocabulaire}
+Beaucoup d'échecs viennent d'un vocabulaire non partagé entre MOA et MOE (même mot, sens différent).
+
+\subsubsection{d — Calendrier}
+Échéances claires ; date impérative de fin ; \textbf{jalons} pour éviter l'« effet tunnel ».
+
+\subsubsection{e — Clauses juridiques}
+Document cosigné : propriété intellectuelle, pénalités de retard, tribunaux compétents, etc.
+
+\subsubsection{f — Expression fonctionnelle des besoins}
+Après analyse du besoin : décomposition en \textbf{fonctionnalités} ; pour chacune, mise en \oe uvre du point de vue utilisateur (« comment une fonction X satisfait un besoin Y »). Complété par : acteurs ; fonctionnalités (écrans) ; règles de gestion.
+
+\subsubsection{g — Besoins techniques (non fonctionnels)}
+Caractéristiques techniques (ex.\ sécurité, fiabilité) ; le cours recommande d'identifier des \textbf{métriques de mesure} pour chaque besoin.
+
+\subsubsection{h — Contraintes}
+\textbf{Coûts} (budget) ; \textbf{délais} (livraison, jalons intermédiaires) ; autres (normes, clauses, etc.).
+
+\subsection{Conclusion du chapitre CDC}
+Le CDC garantit au MOA la \textbf{conformité} des livrables à l'écrit ; il limite les demandes de \textbf{nouvelles fonctionnalités} non prévues initialement.
+
+\subsection{Bibliographie (section CDC du cours)}
+Référence web \texttt{gestionprojet.org} ; ouvrage Collignon \& Schöpfel sur le cahier des charges documentaire.
+
+%=============================================================================
+\section{Partie IV — Identification des projets}
+
+\subsection{Importance}
+Phase « l'une des plus importantes » ; outils : \textbf{MIP} (méthode d'identification présentée) et prise en compte des \textbf{facteurs externes et internes}.
+
+\subsection{MIP — Identité / page titre}
+« Photographie » des intervenants décisionnels : titre du projet ; responsable d'élaboration (gérant de projet) ; promoteur ; mandataire ; date d'élaboration de la MIP.
+
+\subsection{Problématique}
+Le(s) besoin(s) motive(nt) le projet : formulé de façon \textbf{structurée}, \textbf{faisable}, \textbf{solvable}.
+
+\subsection{But du projet}
+Réponse à la problématique ; \textbf{finalité} concrète obtenue en fin de projet.
+
+\subsection{Objectifs du projet}
+Résultats désirés une fois le but atteint ; détail descriptif ; caractéristiques ou composantes du résultat final.
+
+\subsection{Contraintes}
+Obstacles majeurs pouvant faire échouer le projet : financières (budget max), délais (livraison), contraintes de l'existant (charte, héritage technique\ldots), autres — en principe \textbf{documentées}.
+
+\subsection{Options (solutions)}
+Scénarios pour atteindre le but, dans le cadre des contraintes : choix techniques, performance estimée, délais, coût.
+
+\subsection{Choix de solution}
+Intervenants typiques : directeur de projet, chef de projet ; choix \textbf{justifié}, souvent \textbf{interne}.
+
+\subsection{Extrants}
+\textbf{Livrables} et sorties : auteur ; date de livraison ; date de validation ; destinataire ; rôle ; phase.
+
+\subsection{Intrants}
+Ressources : \textbf{financières} (budget de lancement) ; \textbf{humaines} (nombre, profils, expérience) ; \textbf{matérielles et logicielles}.
+
+\subsection{Identification des risques (fiche projet)}
+Risque : condition ou événement \textbf{incertain} ; s'il se réalise, impact \textbf{positif ou négatif} sur un objectif. Un risque a une \textbf{cause}, une \textbf{probabilité}, une \textbf{conséquence}.
+
+Fiche : \textbf{description} ; \textbf{impact} ; \textbf{actions préventives} ; \textbf{actions correctives}.
+
+\subsection{Stratégie de réalisation (\emph{phasing})}
+Grandes étapes ou jalons vers le but et les objectifs ; pour chaque phase ou grand jalon : \textbf{nom}, \textbf{description}, \textbf{date}.
+
+%=============================================================================
+\section{Gestion des risques (développement PMBOK du cours)}
+
+\subsection{Définitions selon les domaines}
+Le risque se définit différemment selon qu'on est en finance, gestion de projet, contrat, sécurité industrielle, santé (référence Aubert \& Bernard, 2004).
+
+\subsection{Risque en gestion de projet (Kerzner)}
+\textit{« Risk is a measure of the probability and consequence of not achieving a defined project goal »} (Kerzner, 2000).
+
+\subsection{Formulation quantitative}
+Forme générale (somme sur les conséquences indésirables) :
+\[
+\mathrm{Risque} = \sum_{i=1}^{n} P(CN_i) \times A(CN_i)
+\]
+où $P(CN_i)$ est la probabilité de la conséquence $i$ et $A(CN_i)$ l'ampleur de la perte.
+
+\textbf{Forme simplifiée du cours :}
+\[
+\mathrm{Risque} = \mathrm{Probabilité} \times \mathrm{Impact}.
+\]
+
+\subsection{Définition du management des risques}
+Processus \textbf{systématique} d'\textbf{identification}, d'\textbf{analyse} et de \textbf{réponse} aux risques ; vise à minimiser probabilité et conséquences d'événements défavorables (ou l'inverse pour les opportunités).
+
+\subsection{Références de modèles}
+Boehm (1991) ; Kwak \& Stoddard (2004) ; RM CMMI 1.2 (niveau 3) ; RM PMBOK ; RM ITIL.
+
+\subsection{Les six processus (PMBOK)}
+\begin{enumerate}[nosep]
+  \item \textbf{Planification} du management des risques ;
+  \item \textbf{Identification} ;
+  \item Analyse \textbf{qualitative} ;
+  \item Analyse \textbf{quantitative} ;
+  \item \textbf{Développement des réponses} ;
+  \item \textbf{Suivi et contrôle}.
+\end{enumerate}
+
+\subsection{Planification des risques}
+Décider \textbf{qui} (rôles), \textbf{comment} (notations, priorités, seuils, méthode de suivi), \textbf{quand} (fréquence), en s'adaptant à la criticité du projet pour l'organisation.
+
+\subsection{Identification}
+Questions : quels risques peuvent affecter le projet ? quelles caractéristiques ? Revoir contraintes et hypothèses ; identifier risques, déclencheurs, symptômes, signes avant-coureurs ; ne pas se précipiter sur les réponses ; itérer avec équipe, client, project office, métier.
+
+\subsubsection{Exemples sectoriels SI / télécoms}
+Stratégies business fluides ; clients multiples et reorganisations fréquentes ; contenu du projet qui grossit ; délais très serrés ; budget inadapté ; nouvelles technologies ; utilisateurs dispersés géographiquement.
+
+\subsection{Analyse qualitative}
+Classer les risques par importance des impacts sur les objectifs.
+
+\subsubsection{Matrice minimale $3\times 3$}
+Scores = produit probabilité $\times$ impact (échelles 1 à 3). Cellules du tableau du cours : de 1 à 9 ; établir un plan de réponse pour les risques majeurs.
+
+\subsubsection{Matrice optimale}
+Impact \textbf{1 à 5} ; probabilités \textbf{0{,}1 à 0{,}9} (non nécessairement linéaire selon « allergie » au risque).
+
+\subsection{Analyse quantitative}
+Définir échelles numériques ; quantifier probabilités et impacts (délais, pertes, ressources supplémentaires\ldots) ; utiliser scénarios \textbf{optimiste}, \textbf{probable}, \textbf{pessimiste} (exemple chiffré 2{,}6{,}2 cité comme illustration) ; \textbf{analyse de sensibilité} : quels risques influent le plus sur les objectifs.
+
+\subsection{Développement des réponses}
+\begin{description}[style=nextline]
+  \item[Rejeter (\emph{éviter})] Changer le plan pour supprimer le risque ou ses conditions (autre fournisseur, sous-traitants connus\ldots).
+  \item[Transférer] Assurance, caution, clauses contractuelles.
+  \item[Réduire] Baisser la probabilité ou l'impact (formation, tests, pilotes, contrôles renforcés\ldots).
+  \item[Accepter] Passivement (ne rien faire) ou activement (plan de secours).
+\end{description}
+
+Critères de qualité d'une réponse : personne \textbf{assignée} ; adéquation impact/probabilité ; \textbf{coût}-efficacité ; \textbf{acceptation} ; \textbf{réalisme} ; \textbf{actualisation} dans le temps.
+
+\subsection{Suivi et contrôle}
+Suivre risques identifiés et \textbf{résiduels} ; détecter nouveaux risques ; exécuter et évaluer les plans de réponse. Moyens : revues \textbf{au moins mensuelles} ; déclencheurs et signes avant-coureurs ; \textbf{valeur acquise} ; revues de performance ; comparaison à la \textbf{baseline} ; audits ; adaptation ; capitalisation.
+
+\subsubsection{Signes vitaux (liste du cours)}
+Implication du sponsor ; satisfaction et participation clients ; \textbf{chemin critique} ; déviation vs plan de référence ($\pm10\,\%$) ; dépenses consommé/planifié ; livrables livré/planifié (\textbf{Earned Value}) ; qualité (\# bugs, tests, support) ; \emph{open issues} et ancienneté ; moral de l'équipe ; \textbf{tendance} des indicateurs.
+
+\subsection{Conclusion sur les risques}
+Le management des risques commence \textbf{tôt} et peut se prolonger \textbf{après} la fin du projet ; surveillance permanente des signes vitaux ; ne pas croire que tous les risques sont identifiés ni que les plans fonctionneront à $100\,\%$ ; ce n'est « pas un art » mais un \textbf{processus} exigeant \textbf{rigueur}.
+
+%=============================================================================
+\section{Partie V — Planification des projets}
+
+\subsection{Intérêt de la planification}
+\begin{itemize}[nosep]
+  \item \textbf{Objectif} : prévoir le déroulement futur de la réalisation ;
+  \item \textbf{Personnes} : chef de projet, MOE, MOA ;
+  \item Identifier : objectifs, contraintes, tâches, maîtrise des moyens, coordination, réduction des risques, \textbf{étapes clés}, \textbf{livrables}.
+\end{itemize}
+
+\subsection{Objectifs et contraintes}
+Les objectifs doivent être \textbf{bien définis}, \textbf{mesurables} (pour juger le succès du projet logiciel), \textbf{acceptés} par toutes les parties prenantes.
+
+\subsection{Tâches, jalons, livrables}
+\textbf{Jalons} : accomplissements importants. \textbf{Livrables} : produits tangibles des étapes (ex.\ cahier des charges, prototype d'interface, diagrammes UML, spécification d'architecture, code source).
+
+Le projet se décompose en tâches \textbf{traitables} : résultat facile à juger (succès/échec) ; facile à réaliser ; durée, ressources et coûts \textbf{faciles à estimer}.
+
+\subsection{Structure du travail — approche descendante}
+Le chef de projet décompose : (1) le projet en \textbf{lots} ; (2) les lots en \textbf{tâches} simples ; (3) bloc de travail dont un membre est \textbf{responsable}.
+
+\subsection{SFT — étapes}
+\begin{enumerate}[nosep]
+  \item Dresser la liste de \textbf{toutes} les tâches ;
+  \item Regrouper celles qui ont des points communs : les \textbf{lots} (niveau 2) ;
+  \item Mettre les lots dans un \textbf{ordre logique séquentiel} ;
+  \item \textbf{Codifier} pour compatibilité avec l'outil de gestion de projet.
+\end{enumerate}
+
+Permet de mesurer les tâches en termes de ressources et de coordonner : localisation, affectation, fonction, responsabilité.
+
+\subsection{PBS et WBS}
+\textbf{PBS} (\emph{Product Breakdown Structure}) : vue hiérarchique des \textbf{composants du produit} et sous-parties nécessaires à sa construction.
+
+\textbf{WBS} (\emph{Work Breakdown Structure}) : identification des \textbf{activités} / travail à réaliser.
+
+\subsection{Horaire et fiabilité de l'estimation}
+Une estimation bonne et fiable repose en grande partie sur l'\textbf{intuition} et l'\textbf{expérience} du gestionnaire de projet.
+
+\subsection{Rapport de plan de projet — contenu}
+\begin{itemize}[nosep]
+  \item \textbf{Introduction} : objectifs, contraintes ;
+  \item \textbf{Organisation} : membres, rôles, autres parties prenantes ;
+  \item \textbf{Analyse des risques} : inconnus, risques, stratégies ;
+  \item \textbf{Ressources} : matériel, logiciel, coûts, délais pour ressources additionnelles ;
+  \item \textbf{Répartition du travail} : découpage en tâches, jalons, contenu des livrables ;
+  \item \textbf{Horaire} : dépendances, durées, affectation de l'équipe aux tâches ;
+  \item \textbf{Surveillance et révision} : fréquence des rapports, mécanisme de révision des tâches accomplies.
+\end{itemize}
+\textbf{Note du cours :} le plan de projet est lui-même \textbf{révisé} au besoin.
+
+\subsection{Cycle de vie}
+« Il n'existe pas une façon unique pour gérer un projet » — pluralité des modèles selon contexte.
+
+\subsection{Annonce de séance (23/03/2022)}
+Suite du processus : \textbf{estimation} des projets ; \textbf{ordonnancement} (PERT) ; ateliers \textbf{MS Project}.
+
+%=============================================================================
+\section{Partie VI — Estimation des charges}
+
+\subsection{Thèmes abordés}
+Estimation ; causes de sous-estimation ; processus ; conditions d'une estimation sérieuse ; précision ; méthodes ; \textbf{points de fonction} ; \textbf{COCOMO} ; passage des charges aux coûts.
+
+\subsection{Pourquoi la sous-estimation ?}
+Soucis de plaire ; besoin d'emporter le contrat ; optimisme ; expérience limitée de \emph{tout} le projet ; focalisation sur les fonctions principales oubliant doc et finitions ; sous-estimation de la mise au point ; raisons personnelles ; absence de méthodes et standards.
+
+\textbf{Message clé :} le dérapage est souvent dû à une \textbf{mauvaise estimation initiale} plutôt qu'à une mauvaise réalisation seule.
+
+\subsection{Processus d'estimation}
+Refuser l'estimation \textbf{arbitraire} ; \textbf{borner} les ambitions du client — sinon retards assurés, coûts réels qui explosent, manque de temps pour tests et documentation, atteinte à l'image.
+
+\subsection{Conditions d'une estimation sérieuse}
+\begin{itemize}[nosep]
+  \item Définition assez précise des \textbf{fonctions} à réaliser ;
+  \item Bonne connaissance des \textbf{contraintes} ;
+  \item \textbf{Standards} de méthode ;
+  \item Choix d'une \textbf{méthode} : à partir de quelle phase est-elle valable ? quelles unités d'\oe uvre (écrans, états, lignes source, unités produites, homme-mois\ldots) ? précision attendue ?
+\end{itemize}
+
+\subsection{Schéma général des méthodes}
+Construire une \textbf{base de connaissances} (projets antérieurs) ; estimer la \textbf{taille} avec une unité de mesure ; \textbf{ajuster} aux spécificités ; \textbf{répartir} la charge entre les phases.
+
+\subsection{Cinq classes de méthodes}
+\begin{enumerate}[nosep]
+  \item \textbf{Loi de Parkinson} — efficace disponible $\times$ durée $\approx$ charge (ex.\ 5 personnes $\times$ 12 mois) ; avantages : aucun ; inconvénients : tous (cours).
+  \item \textbf{Imposé par le marché} — pour remporter le contrat ; avantage : chances de contrat ; inconvénients : écarts, pertes financières, risque pour le client.
+  \item \textbf{Jugement d'experts / consensus} — avis individuels puis consensus ; avantages : contexte, circonstances exceptionnelles ; inconvénients : dépendance à la qualité des experts, influence. \textbf{Méthode Delphes} (5 étapes) : le coordinateur présente les spécifications ; chaque expert répond en \textbf{anonymat} ; synthèse ; nouvelle passe avec justification ; itération jusqu'à consensus.
+  \item \textbf{Par analogie} : historique de projets, différences, écarts ; avantages : expérience, contexte de l'entreprise ; inconvénients : comparabilité limitée, situations exceptionnelles oubliées.
+  \item \textbf{Méthodes algorithmiques} : ex.\ \textbf{points de fonction} avec forme rappelée $\mathrm{FB} = \sum (C_{ij} \times K_{ij})$ ; \textbf{COCOMO} (\emph{Constructive Cost Model}) ; puis passage \textbf{charges $\rightarrow$ coûts}.
+\end{enumerate}
+
+%=============================================================================
+\section{Partie VII — Ordonnancement (PERT et Gantt)}
+
+\subsection{Rappel historique et objet}
+\textbf{PERT} : \emph{Program Evaluation and Review Technique}, 1957, US Navy. Graphe orienté modélisant les contraintes d'enchaînement temporel ; plusieurs niveaux de granularité. Deux formalismes : \textbf{potentiels-événements} (jalons instantanés, moins utilisé) ; \textbf{potentiels-tâches} (parallélisme fort, flèches = dépendances).
+
+\subsection{Types de liens entre tâches}
+\textbf{Fin A -- début B} (succession classique ; décalage possible « à l'avance ») ; \textbf{fin A -- fin B} (fin simultanée : la fin de A commande celle de B) ; \textbf{début A -- début B} (démarrage coordonné) ; \textbf{début A -- fin B} (le début de A marque la fin de B).
+
+\subsection{Objectifs du calcul PERT}
+Recherche du \textbf{chemin critique} : tâches qui retarderaient la fin du projet si elles prennent du retard. Pour chaque tâche de durée estimée : calcul des dates de début et fin \textbf{au plus tôt} et \textbf{au plus tard} ; calcul des \textbf{marges}.
+
+\subsection{Dates au plus tôt}
+À partir de la date de début du projet $t_0$ : pour une tâche initiale, début au plus tôt $= t_0$, fin au plus tôt $= t_0 + d$. Pour les suivantes : début au plus tôt $= \max$ des fins au plus tôt des prédécesseurs ; fin au plus tôt $=$ début au plus tôt $+\,d$.
+
+\subsection{Dates au plus tard}
+Hypothèse d'une \textbf{date limite} de fin de projet. Parcours \textbf{inverse} : pour les dernières tâches, fin au plus tard $=$ date limite ; pour les autres : fin au plus tard $= \min$ des débuts au plus tard des successeurs ; début au plus tard $=$ fin au plus tard $-\,d$.
+
+\subsection{Marges et chemin critique}
+\textbf{Marge} = écart entre dates au plus tôt et au plus tard (non négative). \textbf{Chemin critique} : marges \textbf{nulles} ou les plus faibles ; avec des liens uniquement fin-début, c'est souvent le chemin \textbf{le plus long} en durée.
+
+\subsection{Calendrier et ressources (Gantt)}
+Utiliser les marges pour des chargements \textbf{au plus tôt} / \textbf{au plus tard}. Affecter ressources humaines (pourcentage d'occupation, coûts salariaux, diagramme de Gantt) et physiques (machines, matières, logiciels). Techniques : \textbf{nivellement} — maintenir les ressources sous un plafond ; \textbf{lissage} — répartir la charge pour éviter surcharges et sous-charges.
+
+\subsection{Illustrations du support}
+Le cours illustre par un réseau PERT example (liste de tâches type analyse, conception, codage, tests\ldots) et par un \textbf{diagramme de Gantt}.
+
+%=============================================================================
+\section{Suivi des projets (« Partie VI : suivi » dans le diaporama)}
+
+\subsection{Plan de la section}
+Pilotage de projet : tableau de bord, suivi individuel et collectif, rôle du chef de projet ; maîtrise de la qualité : problématique, vocabulaire, normalisation et certification (ouverte en fin de support).
+
+\subsection{Pourquoi piloter ?}
+Les systèmes d'information ne sont pas \textbf{déterministes} : entrées et sorties partiellement inconnues, effets de retour, processus sous-déterminés, environnement non totalement connu. Le \textbf{pilotage} modifie le déroulement pour préserver la possibilité d'obtenir les \textbf{sorties désirées}.
+
+\subsection{Schéma de pilotage (concepts)}
+\textbf{Variables essentielles} (sorties mesurant la réussite) ; \textbf{variables d'action} (levier sur les règles de transformation) ; \textbf{tableau de bord} ; système de pilotage en boucle.
+
+\subsection{Vocabulaire}
+\textbf{Tableau de bord} : variables essentielles choisies. \textbf{Pilotage} : maîtriser et guider l'évolution — repose sur \textbf{contrôle} et \textbf{régulation}. \textbf{Contrôle} : seuils admissibles, moyens d'action. \textbf{Régulation} : maintenir le système dans les limites fixées.
+
+\subsection{Difficultés : variété et complexité}
+\textbf{Loi de la variété requise} : autant de réponses que d'états possibles. Contournements : \textbf{adaptation} (réponse à un état nouveau dans un délai raisonnable) ; \textbf{apprentissage} (mémoriser les adaptations, en faire des règles).
+
+\subsection{Tableau de bord du chef de projet}
+Produit lorsque le projet est décomposé, les risques diagnostiqués, planifié et organisé ; la planification sert de \textbf{référence} de suivi.
+
+\subsubsection{Questions types}
+Qu'est-ce qui a été \textbf{produit} ? \textbf{consommé} ? Écarts plan/réel ? \textbf{Causes} ? \textbf{Reste à faire} ?
+
+\subsubsection{Propriétés}
+Informe la MOA ; supporte les décisions de pilotage ; \textbf{minimum} d'information nécessaire ; a un \textbf{coût} ; formalisation \textbf{proportionnelle} à la taille de l'équipe ; fréquence des mesures liée à la capacité de \textbf{réaction} (semaines ou mois).
+
+\subsubsection{Contenu}
+\textbf{Suivi individuel} (difficultés par personne ou tâche) et \textbf{suivi du projet} (synthèse pour la MOA).
+
+\subsection{Suivi individuel}
+Liste de tâches affectées ; par tâche : \textbf{charge initiale} (estimée), \textbf{charge affectée} (personnalisée), \textbf{charge actualisée} (en cours). \textbf{Compte rendu d'activité} : régulier ; pour chaque intervenant et tâche : temps passé \textbf{T} (consommation imputée), \textbf{reste à faire R}.
+
+\subsubsection{Récaps mensuels}
+Avancement fin de période $n$ lié à l'évolution de $R$ (méthode du support : comparaison reste à faire période $n-1$ vs $n$).
+
+\subsubsection{Indicateurs individuels}
+\textbf{Coefficient d'utilisation} : $T_n\,/\,$ jours ouvrables du mois (comparer au Gantt initial). \textbf{Vitesse d'avancement} : $A_n\,/\,T_n$.
+
+\subsubsection{Performance individuelle}
+Mesure le degré d'atteinte des objectifs sur tâches en cours ou achevées ; formule du cours : \[\text{performance} = \frac{\text{charge affectée} \times 100}{\text{temps total passé} + \text{reste à faire (tâches ouvertes)}}.\]
+Le suivi individuel agrège notamment temps total, coefficient d'utilisation et performance.
+
+\subsection{Suivi du projet}
+\textbf{Tableau d'avancement} : variables \textbf{T} et \textbf{R} sur deux mois, avancement du mois, évolution charge restante, récapitulatif depuis le début ; \textbf{charge initiale}, temps total passé, évolution globale et avancement en \%.
+
+\subsection{Organisation du travail — administration des données}
+Objectif : \textbf{référentiel}. Quatre formes : données \textbf{techniques}, \textbf{projet}, \textbf{coordination}, \textbf{pilotage}.
+
+\subsection{Tableau d'avancement (alimentation et tendances)}
+Alimenté par récaps mensuels. Tendance récente : \textbf{évolution charge restante} $= T(n) - A(n)$ ; si négatif, la charge \textbf{s'allège}.
+
+\subsubsection{Indicateurs récapitulatifs}
+\textbf{Évolution globale de la charge} $=$ temps total passé $+\, R(n)\,-$ charge initiale. Si $>0$, dépassement de charge prévu à la planification.
+
+\[\%\,\text{évolution globale} = \frac{\text{évolution globale} \times 100}{\text{charge initiale}}.\]
+
+\[\%\,\text{avancement} = \frac{(\text{charge initiale} - R(n)) \times 100}{\text{charge initiale}}.\]
+\textit{(Formulation tirée du support ; interprétation : part de charge initiale déjà « brûlée » via consommation et réduction du reste.)}
+
+\subsection{Suivi économique : CBTP, CRTE, CBTE}
+\begin{description}[style=nextline]
+  \item[CBTP] Coût \textbf{budgété} du travail \emph{prévu} — budget initial basé sur charges et ressources estimées.
+  \item[CRTE] Coût \textbf{réel} du travail \emph{effectué} à la date $t$.
+  \item[CBTE] Coût \textbf{budgété} du travail \emph{effectué} — travaux réalisés valorisés au coût standard ayant servi au CBTP (socle de l'\textbf{earned value} / valeur acquise).
+\end{description}
+
+\subsection{Capitalisation et bilan}
+Profiter de l'expérience : \textbf{bilan de projet} (nom, dates, nombre d'intervenants, domaine) ; tableaux de \textbf{ratios} (slides du cours).
+
+\subsection{Pratiques de pilotage en projets informatiques}
+
+\subsubsection{Réduire la durée}
+Modifier les relations pour plus de \textbf{parallélisme} ; étendre les calendriers disponibles ; réduire le \textbf{périmètre} ou fusionner des tâches ; réduire durée ou charge d'une tâche ; \textbf{ajouter des ressources} ; augmenter disponibilité (calendrier) ; heures supplémentaires ; modifier la séquence ; \textbf{décomposer} une grande tâche en plus petites.
+
+\subsubsection{Contrôle des coûts}
+Remplacer une ressource par une autre moins/moins chère selon besoin ; supprimer des tâches ; modifier coût unitaire d'une ressource ; ajuster les affectations de coûts ; etc.
+
+\subsection{Suivi outillé (MS Project)}
+\begin{enumerate}[nosep]
+  \item Planification initiale (baseline) ;
+  \item Mises à jour périodiques : durées, dates début/fin, pourcentage d'achèvement\ldots
+  \item Comparaison des prévisions actualisées à la planification initiale.
+\end{enumerate}
+
+\subsubsection{Variables typiques de suivi}
+Dates début/fin des tâches ; \% achevé ; durées ; coûts projet/tâches/ressources ; heures réalisées par ressource.
+
+\subsection{Rôle du chef de projet (synthèse approfondie)}
+Responsable du \textbf{groupe} (au-delà d'une quinzaine de personnes, cohésion affaiblie) ; des \textbf{individus} (affectation selon compétences et souhaits) ; de l'\textbf{avancement} (tableau de bord précis) ; \textbf{acteur du changement} auprès des utilisateurs ; \textbf{pilote des décisions} (décisions en suspens répertoriées dans le tableau de bord) ; propose des solutions \textbf{flexibles} si les décideurs n'arrivent pas à trancher. Schéma du cours reliant début $\rightarrow$ décideurs $\rightarrow$ production, groupe/individus, avancement, changement utilisateurs, fin.
+
+\subsection{Maîtrise de la qualité — ouverture}
+Problématique historique (corps de métiers au Moyen Âge ; éclipse avec l'industrialisation au XIX\textsuperscript{e} siècle ; retour au XX\textsuperscript{e} avec concurrence et exigences des consommateurs). Diapo « Développement de la qualité au XX\textsuperscript{e} siècle » (à compléter par le support graphique).
+
+\vfill
+\noindent\textit{Document élaboré exclusivement à partir du cours \textbf{Belasla El Mehdi} — Gestion de projets. Les formules et listes reflètent le diaporama ; en cas de divergence, le PDF original fait foi.}
+
+\end{document}

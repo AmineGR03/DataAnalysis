@@ -1,0 +1,261 @@
+% Résumé détaillé — Sécurité des applications (Chapitres 1 & 2)
+% Compilation : pdflatex Resume_Chapitres_1_2.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\geometry{margin=2.2cm}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!70!black}
+
+\newcommand{\consigne}[1]{\par\noindent\fcolorbox{blue!30}{blue!5}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Consigne :} #1}}\par\medskip}
+\newcommand{\conseil}[1]{\par\noindent\fcolorbox{green!40!black}{green!8}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Conseil :} #1}}\par\medskip}
+\newcommand{\info}[1]{\par\noindent\fcolorbox{orange!60}{orange!6}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{Info + :} #1}}\par\medskip}
+
+\title{\textbf{Résumé détaillé — Chapitres 1 \& 2}\\[0.3em]\large Sécurité des applications (2025/2026)}
+\author{Synthèse pédagogique (module SEC APP)}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Introduction}
+Ce document résume les \textbf{Chapitre 1 : Bases de la sécurité} et \textbf{Chapitre 2 : Sécurité du client web} du cours \emph{Sécurité des applications}. Il ajoute des \textbf{consignes de travail}, des \textbf{conseils méthodologiques} et des \textbf{informations complémentaires} pour la révision et la mise en pratique (TP).
+
+%----------------------------------------------------------------------
+\section{Chapitre 1 — Bases de la sécurité}
+
+\subsection{Contexte du module et outils TP}
+Le module couvre ensuite la sécurité réseau, l'architecture des serveurs web, etc. Les \textbf{liens utiles} du cours incluent notamment :
+\begin{itemize}[nosep]
+  \item ASVS OWASP : \url{https://owasp.org/www-project-application-security-verification-standard/}
+  \item TLS côté serveur (Mozilla) : \url{https://wiki.mozilla.org/Security/Server_Side_TLS}
+  \item HTTPS / handshake TLS (Cloudflare)
+  \item OAuth 2 simplifié, hardening Nginx, \emph{Logging Cheat Sheet} OWASP
+\end{itemize}
+
+\textbf{Environnement TP (à installer)} : Wireshark, Nmap, OWASP ZAP, Docker ; VMs Ubuntu, Kali, Metasploitable~2, DVWA ; option Apache + ModSecurity.
+
+\textbf{Outils clés} : Docker Desktop, OWASP Juice Shop (cible vulnérable), Burp Suite Community, Firefox + DevTools, WebGoat, SQLMap, Python~3 + \texttt{bcrypt}, et outils en ligne (CrackStation, jwt.io, webhook.site).
+
+\consigne{Installez l'environnement \emph{avant} les séances : une VM attaquante (Kali) et une cible (Ubuntu + Docker / Juice Shop). Vérifiez que Burp intercepte bien le trafic HTTP(S) avec le certificat importé dans le navigateur.}
+
+\conseil{Notez dans un carnet les ports par défaut cités en cours : Juice Shop (3000), WebGoat (8080), WebWolf (9090), DVWA (8081) — cela accélère le débogage des TP.}
+
+\subsection{Pourquoi la sécurité applicative ?}
+Indicateurs (ordre de grandeur, sources du cours) : coût moyen d'une violation $\approx$~4{,}88~M USD (IBM~2024) ; détection d'intrusion $\approx$~194~jours ; forte hausse des cyberattaques ; $\approx$~43\,\% des attaques ciblent le web (Verizon DBIR) ; part importante des failles liées au code applicatif (statistiques OWASP/NIST).
+
+\subsection{Surface d'attaque d'une application web}
+\begin{itemize}[nosep]
+  \item \textbf{Présentation} : formulaires, URLs, GET/POST, uploads, cookies, en-têtes HTTP.
+  \item \textbf{Logique métier} : APIs, autorisation, sessions, règles métier.
+  \item \textbf{Données} : SQL/NoSQL, ORM, configuration, logs.
+  \item \textbf{Infrastructure} : serveurs, fichiers, tiers, dépendances.
+  \item \textbf{Authentification} : login, reset MDP, 2FA, tokens, SSO.
+\end{itemize}
+
+\subsection{Niveaux de sécurité}
+\begin{description}[style=nextline]
+  \item[Réseau] Périmètre réseau ; pare-feu, NIPS, IDS, VPN.
+  \item[Système] OS et services ; antivirus, HIPS/HIDS, patchs.
+  \item[Applicative] Une application précise ; correctifs, WAF, IPS applicatif, validation des entrées.
+\end{description}
+Extensions évoquées : embarqué (IoT), Big Data, IA/ML.
+
+\subsection{Triade CIA et modèle AAA}
+\textbf{CIA} (référence depuis les années 1970) :
+\begin{description}[style=nextline]
+  \item[Confidentialité] Accès aux données réservé aux entités autorisées. Menaces : écoute, vol de credentials, exposition en clair. Mesures : chiffrement (AES, TLS), auth forte, RBAC, moindre privilège. Ex. : dossier médical visible seulement par le médecin traitant.
+  \item[Intégrité] Exactitude et absence de modification non autorisée. Menaces : falsification, injection SQL, MitM. Mesures : signatures, hachage (ex.\ SHA-256), journaux, validation des entrées. Ex. : montant de virement non altéré en transit.
+  \item[Disponibilité] Services utilisables quand nécessaire. Menaces : DDoS, pannes, ransomware, mauvaise config. Mesures : redondance, sauvegardes, PRA/PCA, load balancing. Ex. : dossiers patients accessibles 24h/24.
+\end{description}
+
+\textbf{AAA} complète CIA pour la gestion des accès :
+\begin{itemize}[nosep]
+  \item \textbf{Authentication} — « Qui êtes-vous ? » (MFA, certificats, etc.) ; faiblesse fréquente des incidents.
+  \item \textbf{Authorization} — « Que pouvez-vous faire ? » (RBAC, ABAC, ACL) ; moindre privilège.
+  \item \textbf{Accounting} — « Qu'avez-vous fait ? » (logs, SIEM, audit).
+\end{itemize}
+
+\textbf{Propriétés complémentaires} (ISO~27001, NIST) : non-répudiation, authenticité, fiabilité, résilience, vie privée (RGPD, loi algérienne 18-07 citée en cours).
+
+\subsection{Menace, vulnérabilité, attaque, risque}
+\begin{itemize}[nosep]
+  \item \textbf{Menace} : acteur ou événement pouvant causer un dommage (potentiel).
+  \item \textbf{Vulnérabilité} : faiblesse exploitable (interne au système).
+  \item \textbf{Attaque} : exploitation concrète d'une vulnérabilité par une menace.
+  \item \textbf{Risque} : combinaison probabilité $\times$ impact ; guide les priorités.
+  \item \textbf{Contre-mesure} : réduit la probabilité ou l'impact.
+  \item \textbf{Actif} : ce qui a de la valeur à protéger.
+\end{itemize}
+
+\subsection{Taxonomie des attaques}
+\begin{itemize}[nosep]
+  \item \textbf{Passives} : observation (sniffing, OSINT) — discrètes.
+  \item \textbf{Actives} : modification, destruction — plus visibles.
+  \item \textbf{Origine} : externes, internes (souvent dangereuses), par rebond (pivot).
+\end{itemize}
+
+\subsection{Vecteurs d'attaque fréquents (web)}
+Injections (SQL, NoSQL, OS, LDAP) ; XSS ; authentification faible ; phishing / ingénierie sociale ; MitM ; supply chain ; DoS/DDoS ; exploitation de CVE.
+
+\subsection{Cyber Kill Chain (Lockheed Martin)}
+Phases : reconnaissance $\rightarrow$ armement $\rightarrow$ livraison $\rightarrow$ exploitation $\rightarrow$ installation $\rightarrow$ C\&C $\rightarrow$ actions sur objectifs — avec exemples de détection/blocage par phase (patch, WAF, SIEM, DLP, etc.).
+
+\subsection{OWASP Top 10 — 2021 (synthèse)}
+OWASP : fondation à but non lucratif ; Top~10 mis à jour tous les 3--4 ans. La version 2021 met l'accent sur la \textbf{conception non sécurisée} (A04) et la \textbf{chaîne d'approvisionnement} (A08).
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{ID} & \textbf{Famille (résumé)} & \textbf{Protection clé} \\
+\midrule
+A01 & Contrôle d'accès défaillant & Vérifier autorisations serveur \\
+A02 & Défaillances cryptographiques & HTTPS, bcrypt, AES-256 \\
+A03 & Injection & Requêtes préparées, validation \\
+A04 & Conception non sécurisée & Threat modeling, SDL \\
+A05 & Mauvaise configuration & Hardening, pas de défauts \\
+A06 & Composants vulnérables & SBOM, scan CVE \\
+A07 & Authentification défaillante & MFA, politique MDP \\
+A08 & Intégrité logicielle/données & Signatures, CI/CD sûr \\
+A09 & Journalisation insuffisante & SIEM, logs complets \\
+A10 & SSRF & Whitelist d'URL, firewall \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Huit principes de Salter et Schroeder (1975)}
+\begin{enumerate}[nosep]
+  \item \textbf{Moindre privilège} — droits minimaux nécessaires.
+  \item \textbf{Défense en profondeur} — plusieurs couches indépendantes.
+  \item \textbf{Échec sécurisé (\emph{fail secure})} — en cas de doute, refuser l'accès.
+  \item \textbf{Économie des mécanismes} — simplicité auditable.
+  \item \textbf{Médiation complète} — revérifier chaque accès aux ressources.
+  \item \textbf{Conception ouverte} — pas de sécurité par l'obscurité ; secret = clés (Kerckhoffs).
+  \item \textbf{Séparation des privilèges} — opérations critiques multi-conditions.
+  \item \textbf{Mécanismes peu intrusifs} — limiter le partage (fuite latérale).
+\end{enumerate}
+
+\subsection{SDL et DevSecOps}
+\textbf{SDL (Secure Development Lifecycle)} : formation $\rightarrow$ exigences (menaces STRIDE, PIA) $\rightarrow$ conception $\rightarrow$ implémentation (SAST, normes) $\rightarrow$ vérification (DAST, pentest, ZAP, Burp) $\rightarrow$ déploiement (hardening, secrets) $\rightarrow$ maintenance (SIEM, CVE).
+
+\textbf{DevSecOps} : SAST (SonarQube, Semgrep, Bandit\ldots), DAST (ZAP, Burp), SCA (Snyk, Dependabot), détection de secrets (GitLeaks, TruffleHog), sécurité IaC (Checkov, tfsec), sécurité conteneurs (Trivy, Clair).
+
+\subsection{Bonnes pratiques de codage (rappel)}
+Validation \textbf{côté serveur} et listes blanches ; pas de secrets dans le code ; messages d'erreur génériques côté client ; sessions robustes (tokens aléatoires, invalidation) ; dépendances à jour et audit ; revues de code avec checklist sécurité.
+
+\consigne{Pour chaque principe CIA/AAA ou Salter--Schroeder, préparez \emph{un} exemple concret tiré d'une appli web (e-commerce, forum, banque) — c'est la forme de question la plus fréquente à l'oral ou à l'écrit.}
+
+\info{Le \textbf{Threat Modeling} (STRIDE, diagrammes de flux de données) est le passage obligé entre « idée fonctionnelle » et architecture qui résiste aux abus métier (A04). OWASP propose des guides et modèles gratuits.}
+
+%----------------------------------------------------------------------
+\section{Chapitre 2 — Sécurité du client web}
+
+\subsection{Objectifs pédagogiques}
+Comprendre le navigateur comme surface d'attaque ; maîtriser XSS (réfléchi, stocké, DOM), CSRF, IDOR ; relier aux en-têtes HTTP, CORS et clickjacking ; appliquer CSP, tokens CSRF, validation/encodage.
+
+\subsection{Architecture du navigateur}
+Moteur de rendu (DOM/CSSOM), moteur JS (V8, SpiderMonkey\ldots), pile réseau (HTTP/S, cache, cookies, certificats), UI, stockage (cookies, \texttt{localStorage}, \texttt{IndexedDB}), \textbf{sandbox} par onglet.
+
+\subsection{DOM et Same-Origin Policy (SOP)}
+Le \textbf{DOM} est l'arbre d'objets manipulable par JavaScript — point d'entrée majeur des XSS.
+
+\textbf{SOP} : un script d'origine A ne lit pas les données de l'origine B. \textbf{Origine} = schéma + hôte + port. Exemples du cours : même site/port OK ; changement de protocole, domaine, port ou sous-domaine $\Rightarrow$ blocage.
+
+\subsection{API JavaScript à risque}
+\texttt{innerHTML}, \texttt{document.write}, \texttt{eval}, \texttt{outerHTML} — exécutent ou interprètent des contenus contrôlables par un attaquant si alimentés par des entrées non sûres.
+
+\subsection{Cross-Site Scripting (XSS)}
+\textbf{Définition} : injection de JS exécuté par le navigateur de la victime dans le contexte du site légitime.
+
+\textbf{Impacts} : vol de session (\texttt{document.cookie}), phishing de page, keylogging, défacement (surtout XSS stocké).
+
+\textbf{Réfléchi} : payload dans l'URL ; non persistant ; flux attaquant $\rightarrow$ lien $\rightarrow$ victime $\rightarrow$ réponse reflétant le payload.
+
+\textbf{Stocké} : payload en base (ex.\ commentaire) ; affecte tous les visiteurs ; très impactant.
+
+\textbf{DOM-based} : le serveur ne voit pas le payload ; injection via JS client (ex.\ \texttt{innerHTML} avec paramètre URL) ; corriger avec \texttt{textContent} ou équivalent sûr.
+
+\textbf{CSP} : en-tête listant les sources autorisées pour scripts, styles, images\ldots\ ; limite l'exécution des scripts inline non autorisés. Directives typiques : \texttt{default-src 'self'}, \texttt{script-src}, \texttt{report-uri} / reporting moderne.
+
+\subsection{Cross-Site Request Forgery (CSRF)}
+Le serveur fait confiance au cookie de session : un site tiers peut déclencher une requête authentifiée.
+
+\textbf{Protections} : token CSRF (non lisible cross-origin grâce à la SOP) ; cookies \texttt{SameSite=Strict} ou \texttt{Lax} ; vérification \texttt{Origin}/\texttt{Referer} (attention aux en-têtes parfois absents).
+
+\subsection{Injection SQL (SQLi)}
+Concaténation de requêtes = danger. \textbf{Requêtes préparées} / paramètres liés : l'entrée ne modifie pas la structure SQL. Types évoqués : in-band/UNION, boolean blind, time-based, error-based, OOB. Moindre privilège en base.
+
+\subsection{IDOR (Insecure Direct Object Reference)}
+Accès à des objets par ID prévisible sans vérifier la \textbf{propriété} ou le \textbf{rôle} : IDOR horizontal (données d'un pair) vs vertical (fonctions admin). Correction : toujours filtrer par \texttt{userId} (ou équivalent) côté serveur.
+
+\subsection{En-têtes HTTP de sécurité (rappel)}
+\begin{itemize}[nosep]
+  \item CSP (Content-Security-Policy)
+  \item HSTS (\texttt{Strict-Transport-Security})
+  \item Anti-clickjacking : \texttt{X-Frame-Options: DENY} ou CSP \texttt{frame-ancestors}
+  \item \texttt{X-Content-Type-Options: nosniff}
+  \item \texttt{Referrer-Policy}, \texttt{Permissions-Policy}
+  \item Supprimer \texttt{X-Powered-By}
+\end{itemize}
+
+\subsection{CORS}
+Mécanisme d'\textbf{assouplissement contrôlé} de la SOP.
+
+\noindent Configuration dangereuse : origine \texttt{*} avec envoi des identifiants (\texttt{Allow-Credentials: true}). Sécurisé : liste blanche d'origines. Préflight \texttt{OPTIONS} pour requêtes « non simples ».
+
+\subsection{Clickjacking}
+Iframe transparente superposée pour détourner les clics. Protection : \texttt{X-Frame-Options: DENY} ou CSP \texttt{frame-ancestors 'none'}.
+
+\subsection{Synthèse (matrice cours)}
+Le cours relie chaque faille à un vecteur, un impact OWASP et une contre-mesure principale (voir tableau récapitulatif du support).
+
+\consigne{TP1 (SOP + CORS) : reproduisez le blocage dans la console réseau, puis documentez \emph{en une page} pourquoi la réponse préflight ou l'absence d'en-tête CORS empêche la lecture cross-origin — schéma requête/réponse obligatoire.}
+
+\conseil{Pour XSS : entraînez-vous à distinguer les trois types sans lire le code serveur (question : « le payload est-il dans la réponse HTML ? dans la base ? uniquement dans l'URL et le DOM ? »).}
+
+\info{Les cookies de session doivent idéalement combiner \texttt{HttpOnly} (réduit vol par XSS), \texttt{Secure} (HTTPS seulement), \texttt{SameSite}, et durée de vie limitée — le cours insiste sur la session comme clé du compte.}
+
+%----------------------------------------------------------------------
+\section{Consignes globales de révision}
+
+\begin{enumerate}
+  \item \textbf{Maîtriser les définitions} : menace vs vulnérabilité vs risque ; origine ; CIA/AAA.
+  \item \textbf{Savoir placer} chaque attaque du ch.~2 sur la surface d'attaque (présentation, logique, données).
+  \item \textbf{Associer systématiquement} : vulnérabilité $\rightarrow$ OWASP Top~10 $\rightarrow$ contre-mesure principale.
+  \item \textbf{Pratiquer} sur Juice Shop / DVWA : une vulnérabilité comprise vaut mieux que dix slides relues.
+  \item \textbf{Rédiger} des fiches « une page » par famille : XSS, CSRF, SQLi, IDOR, CORS, headers.
+\end{enumerate}
+
+\section{Conseils méthodologiques}
+\begin{itemize}[nosep]
+  \item Tracer les données utilisateur du point d'entrée jusqu'à la sortie (HTML, SQL, shell, URL) — c'est le fil conducteur des injections.
+  \item Ne jamais se fier au contrôle \emph{uniquement} côté client : tout peut être modifié (Burp).
+  \item En examen, citer \textbf{le mécanisme} (SOP, CSP, prepared statement) avant l'outil commercial.
+  \item Maintenir une liste personnelle de \textbf{CVE} ou incidents (SolarWinds, Heartbleed) comme illustrations de supply chain ou de patch urgent.
+\end{itemize}
+
+\section{Informations complémentaires}
+\begin{itemize}[nosep]
+  \item \textbf{OWASP Cheat Sheet Series} : \url{https://cheatsheetseries.owasp.org/} (XSS, CSRF, CSP, Logging\ldots).
+  \item \textbf{Mozilla Observatory} et \textbf{securityheaders.com} : vérification rapide des en-têtes.
+  \item \textbf{CVE} : \url{https://cve.mitre.org/} pour la veille sur les composants.
+  \item \textbf{ASVS} : grille d'exigences pour auditer une application de façon structurée.
+  \item Normalisation des configurations TLS : guides Mozilla SSL Configuration Generator.
+\end{itemize}
+
+\vfill
+\noindent\textit{Document généré pour compilation PDF ; le contenu pédagogique reflète le support « Chapitre 1 — Bases de la sécurité » et « Chapitre 2 — Sécurité du client web », module Sécurité des applications.}
+
+\end{document}
